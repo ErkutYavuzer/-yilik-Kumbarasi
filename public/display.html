@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İyilik Kumbarası - Gösterim</title>
+    <link rel="stylesheet" href="/css/themes.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* Main container */
+        .display-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            background: url('/images/background.png') no-repeat center center;
+            background-size: cover;
+        }
+
+        /* Background image covers entire viewport - no animation needed */
+
+        /* Floating decorations removed - background image has lanterns and lights */
+        .decorations, .shapes {
+            display: none;
+        }
+
+        /* Header hidden - background image already contains branding */
+        .display-header {
+            display: none;
+        }
+
+        /* Wishes container - positioned below the header area of background */
+        #wishes-container {
+            position: absolute;
+            top: 25%;
+            left: 5%;
+            width: 90%;
+            height: 60%;
+            z-index: 10;
+        }
+
+        #wishes-container.spotlight-mode .wish-card {
+            opacity: 0.3;
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        #wishes-container.spotlight-mode .wish-card.spotlight-active {
+            opacity: 1;
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) scale(2) !important;
+            z-index: 600 !important;
+            filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.6));
+            animation: spotlightPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes spotlightPulse {
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.6));
+            }
+
+            50% {
+                filter: drop-shadow(0 0 60px rgba(255, 215, 0, 0.9));
+            }
+        }
+
+        /* Balloon wish card */
+        .wish-card {
+            position: absolute;
+            width: 210px;
+            cursor: pointer;
+            will-change: left, top, transform;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .balloon-body {
+            position: relative;
+            width: 210px;
+            height: 250px;
+            background: var(--balloon-color, #FF6B6B);
+            border-radius: 50% 50% 45% 45%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            box-shadow:
+                0 12px 40px rgba(0, 0, 0, 0.15),
+                inset 0 -15px 35px rgba(0, 0, 0, 0.12),
+                inset 0 15px 25px rgba(255, 255, 255, 0.25);
+            overflow: hidden;
+        }
+
+        /* Glossy shine */
+        .balloon-body::before {
+            content: '';
+            position: absolute;
+            top: 12%;
+            left: 18%;
+            width: 35%;
+            height: 30%;
+            background: radial-gradient(ellipse, rgba(255, 255, 255, 0.5) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: rotate(-15deg);
+        }
+
+        /* Balloon knot */
+        .balloon-body::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 16px;
+            background: var(--balloon-color, #FF6B6B);
+            clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+            filter: brightness(0.85);
+        }
+
+        /* Balloon string */
+        .balloon-string {
+            width: 2px;
+            height: 60px;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.05));
+            margin-top: -1px;
+            position: relative;
+        }
+
+        .balloon-string::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 50%;
+        }
+
+        .wish-card:hover {
+            z-index: 100
+        }
+
+        .wish-card:hover .balloon-body {
+            box-shadow:
+                0 16px 50px rgba(0, 0, 0, 0.2),
+                inset 0 -10px 30px rgba(0, 0, 0, 0.1),
+                inset 0 10px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .wish-card.entering {
+            animation: balloonPop 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes balloonPop {
+            0% {
+                opacity: 0;
+                transform: translateY(100px) scale(0)
+            }
+
+            60% {
+                transform: translateY(-20px) scale(1.1)
+            }
+
+            80% {
+                transform: translateY(5px) scale(0.95)
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1)
+            }
+        }
+
+        .wish-card .wish-text {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+            line-height: 1.3;
+            word-break: break-word;
+            max-width: 160px;
+            max-height: 130px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            padding: 0 8px;
+        }
+
+        .wish-card img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 50%;
+            display: block;
+            border: 4px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+        }
+
+        .wish-card .child-name {
+            text-align: center;
+            padding: 0 16px;
+            font-size: 16px;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+            line-height: 1.2;
+            max-width: 170px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Empty state */
+        #empty-state {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 50;
+        }
+
+        .empty-icon {
+            font-size: 100px;
+            animation: emptyPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes emptyPulse {
+
+            0%,
+            100% {
+                transform: scale(1) rotate(0)
+            }
+
+            25% {
+                transform: scale(1.1) rotate(-5deg)
+            }
+
+            75% {
+                transform: scale(1.1) rotate(5deg)
+            }
+        }
+
+        .empty-text {
+            font-size: 36px;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 16px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .empty-sub {
+            font-size: 18px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 8px;
+            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Counter */
+        .counter {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 200;
+            background: white;
+            border-radius: 20px;
+            padding: 14px 28px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: 800;
+            color: #333;
+        }
+
+        .counter .counter-icon {
+            font-size: 28px
+        }
+
+        /* Spotlight overlay - arka plan hafif karanlik */
+        #spotlight-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 500;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        #spotlight-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Spotlight isim etiketi */
+        #spotlight-label {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(50px);
+            z-index: 700;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #1a1a35;
+            padding: 16px 40px;
+            border-radius: 30px;
+            font-size: 28px;
+            font-weight: 900;
+            box-shadow: 0 8px 30px rgba(255, 165, 0, 0.4);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        #spotlight-label.active {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* New wish notification */
+        .new-wish-toast {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            background: white;
+            border-radius: 20px;
+            padding: 14px 28px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            z-index: 300;
+            font-size: 20px;
+            font-weight: 800;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .new-wish-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Fullscreen button */
+        .fullscreen-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 200;
+            width: 50px;
+            height: 50px;
+            background: white;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .fullscreen-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Mute button */
+        .mute-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 90px;
+            z-index: 200;
+            width: 50px;
+            height: 50px;
+            background: white;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .mute-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .mute-btn.muted {
+            opacity: 0.5;
+        }
+
+        /* Display confetti */
+        .display-confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            z-index: 300;
+            pointer-events: none;
+            animation: displayConfettiFall 3s ease-out forwards;
+        }
+
+        @keyframes displayConfettiFall {
+            0% {
+                transform: translateY(-20px) rotate(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(900deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="display-container">
+        <!-- Floating shapes -->
+        <div class="shapes" id="shapes"></div>
+
+        <!-- Decorations -->
+        <div class="decorations" id="decorations"></div>
+
+        <!-- Header -->
+        <div class="display-header">
+            <div class="display-title">
+                <span class="title-icon">&#x1F3FA;</span>
+                <span class="title-text">Dilek Kumbarasi</span>
+            </div>
+        </div>
+
+        <!-- Wishes float here -->
+        <div id="wishes-container"></div>
+
+        <!-- Empty state -->
+        <div id="empty-state">
+            <div class="empty-icon">&#x2728;</div>
+            <div class="empty-text">Dilekler Bekleniyor...</div>
+            <div class="empty-sub">Ilk dilek yazildiginda burada gorunecek</div>
+        </div>
+    </div>
+
+    <!-- Spotlight -->
+    <div id="spotlight-overlay"></div>
+    <div id="spotlight-label">🌟 <span id="spotlight-name"></span></div>
+
+    <!-- Controls -->
+    <button class="fullscreen-btn" id="fullscreen-btn" title="Tam Ekran">&#x26F6;</button>
+    <button class="mute-btn" id="mute-btn" title="Ses Aç/Kapa">🔊</button>
+
+    <!-- Counter -->
+    <div class="counter">
+        <span class="counter-icon">&#x2728;</span>
+        <span id="counter-number">0</span> Dilek
+    </div>
+
+    <!-- New wish toast -->
+    <div class="new-wish-toast" id="new-wish-toast">
+        &#x1F389; Yeni Dilek Geldi!
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // Floating shapes and decorations removed - background image has its own decorative elements
+    </script>
+    <script src="js/display.js"></script>
+</body>
+
+</html>

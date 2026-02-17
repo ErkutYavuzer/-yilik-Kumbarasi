@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dilek Kumbarası - Yönetim</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            min-height: 100vh;
+            background:
+                radial-gradient(ellipse at 20% 80%, rgba(120, 60, 180, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(60, 100, 200, 0.3) 0%, transparent 50%),
+                linear-gradient(180deg, #0d0d20 0%, #1a1a35 50%, #0d0d20 100%);
+            color: white;
+            padding: 24px;
+        }
+
+        /* Header */
+        .admin-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-left h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #ffd700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-left .badge {
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: #ffd700;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Nunito', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #1a1a35;
+        }
+
+        .btn-danger {
+            background: rgba(255, 70, 70, 0.2);
+            border: 1px solid rgba(255, 70, 70, 0.3);
+            color: #ff6b6b;
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 70, 70, 0.3);
+        }
+
+        .btn-blue {
+            background: rgba(100, 150, 255, 0.2);
+            border: 1px solid rgba(100, 150, 255, 0.3);
+            color: #6496ff;
+        }
+
+        .btn-blue:hover {
+            background: rgba(100, 150, 255, 0.3);
+        }
+
+        .btn-green {
+            background: rgba(80, 200, 120, 0.2);
+            border: 1px solid rgba(80, 200, 120, 0.3);
+            color: #50c878;
+        }
+
+        .btn-green:hover {
+            background: rgba(80, 200, 120, 0.3);
+        }
+
+        /* Nav links */
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Stats */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 42px;
+            font-weight: 900;
+            color: #ffd700;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        /* Upload area */
+        .upload-section {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .upload-section h2 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .upload-form {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .form-field {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-field label {
+            display: block;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .form-field input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            color: white;
+            font-size: 15px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 600;
+        }
+
+        .form-field input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .form-field input:focus {
+            outline: none;
+            border-color: rgba(255, 215, 0, 0.4);
+        }
+
+        .form-field input[type="file"] {
+            padding: 10px;
+        }
+
+        /* Wishes Grid */
+        .section-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .wishes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .wish-item {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .wish-item:hover {
+            border-color: rgba(255, 215, 0, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .wish-item img {
+            width: 100%;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            display: block;
+        }
+
+        .wish-info {
+            padding: 14px;
+        }
+
+        .wish-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .wish-time {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 12px;
+        }
+
+        .wish-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .wish-actions .btn {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 12px;
+            justify-content: center;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .empty-state .emoji {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state p {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 15px;
+            z-index: 1000;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Confirm Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 900;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: linear-gradient(145deg, #1e1e3a 0%, #15152e 100%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 28px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .modal p {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 24px;
+            font-size: 15px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .modal-actions .btn {
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        /* QR Code section */
+        .qr-section {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .qr-section h2 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .qr-box {
+            display: inline-block;
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .qr-url {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        /* Auto-spotlight section */
+        .auto-spotlight-section {
+            background: linear-gradient(145deg, rgba(255, 215, 0, 0.08) 0%, rgba(255, 165, 0, 0.03) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .auto-spotlight-section h2 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .auto-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .auto-controls select {
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 600;
+        }
+
+        .auto-status {
+            margin-top: 12px;
+            padding: 10px 16px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffd700;
+            display: none;
+        }
+
+        .auto-status.active {
+            display: block;
+        }
+
+        /* Theme selector */
+        .theme-section {
+            background: linear-gradient(145deg, rgba(168, 130, 255, 0.08) 0%, rgba(130, 180, 255, 0.03) 100%);
+            border: 1px solid rgba(168, 130, 255, 0.2);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .theme-section h2 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .theme-option {
+            padding: 12px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 700;
+            font-size: 13px;
+            font-family: 'Nunito', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .theme-option:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .theme-option.active {
+            border-color: #ffd700;
+            background: rgba(255, 215, 0, 0.15);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+        }
+
+        /* Search bar */
+        .search-bar {
+            margin-bottom: 16px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px 20px;
+            padding-left: 44px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 14px;
+            color: white;
+            font-size: 15px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 600;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='rgba(255,255,255,0.4)' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 16px center;
+        }
+
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: rgba(255, 215, 0, 0.4);
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 16px;
+            }
+
+            .admin-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .upload-form {
+                flex-direction: column;
+            }
+
+            .form-field {
+                min-width: 100%;
+            }
+
+            .wishes-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <div class="admin-header">
+        <div class="header-left">
+            <h1>⚙️ Yönetim Paneli</h1>
+            <span class="badge" id="wish-count-badge">0 Dilek</span>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-gold" onclick="location.href='/upload.html'">📱 Dilek Ekle</button>
+            <button class="btn btn-blue" onclick="location.href='/display.html'">🖥️ Gösterim</button>
+            <button class="btn btn-green" onclick="spotlightOff()">💫 Spotlight Kapat</button>
+            <button class="btn btn-danger" onclick="confirmClearAll()">🗑️ Tümünü Sil</button>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-number" id="stat-total">0</div>
+            <div class="stat-label">Toplam Dilek</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="stat-today">0</div>
+            <div class="stat-label">Bugün Eklenen</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="stat-spotlight">—</div>
+            <div class="stat-label">Son Spotlight</div>
+        </div>
+    </div>
+
+    <!-- QR Code -->
+    <div class="qr-section">
+        <h2>📱 QR Kod ile Dilek Yükle</h2>
+        <div class="qr-box" id="qr-container"></div>
+        <div class="qr-url" id="qr-url"></div>
+    </div>
+
+    <!-- Auto Spotlight -->
+    <div class="auto-spotlight-section">
+        <h2>🔄 Otomatik Spotlight (Slayt Gösterisi)</h2>
+        <div class="auto-controls">
+            <select id="auto-delay">
+                <option value="5">5 saniye</option>
+                <option value="10" selected>10 saniye</option>
+                <option value="15">15 saniye</option>
+                <option value="30">30 saniye</option>
+            </select>
+            <button class="btn btn-gold" id="auto-start-btn" onclick="startAutoSpotlight()">▶️ Başlat</button>
+            <button class="btn btn-danger" id="auto-stop-btn" onclick="stopAutoSpotlight()" style="display:none">⏹️
+                Durdur</button>
+        </div>
+        <div class="auto-status" id="auto-status">🔄 Otomatik spotlight çalışıyor...</div>
+    </div>
+
+    <!-- Theme Selector -->
+    <div class="theme-section">
+        <h2>🎨 Gösterim Teması</h2>
+        <div class="theme-grid" id="theme-grid">
+            <button class="theme-option active" data-theme="default" onclick="setTheme('default')">🌌 Kozmik
+                Gece</button>
+            <button class="theme-option" data-theme="birthday" onclick="setTheme('birthday')">🎂 Doğum Günü</button>
+            <button class="theme-option" data-theme="nisan23" onclick="setTheme('nisan23')">🇹🇷 23 Nisan</button>
+            <button class="theme-option" data-theme="bayram" onclick="setTheme('bayram')">🌙 Bayram</button>
+            <button class="theme-option" data-theme="winter" onclick="setTheme('winter')">❄️ Kış</button>
+            <button class="theme-option" data-theme="newyear" onclick="setTheme('newyear')">🎄 Yılbaşı</button>
+            <button class="theme-option" data-theme="spring" onclick="setTheme('spring')">🌸 Bahar</button>
+        </div>
+    </div>
+
+    <!-- Quick Upload -->
+    <div class="upload-section">
+        <h2>📸 Hızlı Dilek Ekle</h2>
+        <div class="upload-form">
+            <div class="form-field">
+                <label>Fotoğraf</label>
+                <input type="file" id="admin-photo" accept="image/*">
+            </div>
+            <div class="form-field">
+                <label>Çocuğun Adı</label>
+                <input type="text" id="admin-name" placeholder="İsim gir...">
+            </div>
+            <button class="btn btn-gold" onclick="adminUpload()" id="admin-upload-btn">✨ Ekle</button>
+        </div>
+    </div>
+
+    <!-- Wishes List -->
+    <div class="section-title">🏺 Tüm Dilekler</div>
+    <div class="search-bar">
+        <input type="text" id="search-input" placeholder="🔍 Dilek ara..." oninput="filterWishes()">
+    </div>
+    <div class="wishes-grid" id="wishes-grid"></div>
+    <div class="empty-state" id="empty-state">
+        <div class="emoji">🏺</div>
+        <p>Henüz dilek eklenmemiş</p>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Confirm Modal -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal">
+            <h3>⚠️ Emin misin?</h3>
+            <p id="modal-text">Bu işlem geri alınamaz.</p>
+            <div class="modal-actions">
+                <button class="btn btn-blue" onclick="closeModal()">İptal</button>
+                <button class="btn btn-danger" id="modal-confirm-btn">Sil</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        let wishes = [];
+
+        // Load wishes
+        async function loadWishes() {
+            try {
+                const res = await fetch('/api/wishes');
+                wishes = await res.json();
+                renderWishes();
+                updateStats();
+            } catch (err) {
+                console.error('Yükleme hatası:', err);
+            }
+        }
+
+        function renderWishes() {
+            const grid = document.getElementById('wishes-grid');
+            const empty = document.getElementById('empty-state');
+
+            if (wishes.length === 0) {
+                grid.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+            grid.innerHTML = wishes.map(wish => `
+                <div class="wish-item" id="wish-${wish.id}">
+                    <img src="${wish.photoUrl}" alt="${wish.childName}" loading="lazy">
+                    <div class="wish-info">
+                        <div class="wish-name">${wish.childName}</div>
+                        <div class="wish-time">${formatTime(wish.timestamp)}</div>
+                        <div class="wish-actions">
+                            <button class="btn btn-gold" onclick="spotlightWish('${wish.id}')">🌟 Spotlight</button>
+                            <button class="btn btn-danger" onclick="confirmDelete('${wish.id}', '${wish.childName}')">🗑️ Sil</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            const total = wishes.length;
+            const today = wishes.filter(w => {
+                const d = new Date(w.timestamp);
+                const now = new Date();
+                return d.toDateString() === now.toDateString();
+            }).length;
+
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-today').textContent = today;
+            document.getElementById('wish-count-badge').textContent = total + ' Dilek';
+
+            const spotlightWish = wishes.find(w => w.isSpotlight);
+            document.getElementById('stat-spotlight').textContent = spotlightWish ? spotlightWish.childName : '—';
+        }
+
+        function formatTime(timestamp) {
+            const d = new Date(timestamp);
+            return d.toLocaleString('tr-TR', {
+                day: '2-digit',
+                month: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Actions
+        async function spotlightWish(id) {
+            try {
+                await fetch(`/api/spotlight/${id}`, { method: 'POST' });
+                showToast('🌟 Spotlight açıldı!');
+                loadWishes();
+            } catch (err) {
+                showToast('❌ Hata oluştu');
+            }
+        }
+
+        async function deleteWish(id) {
+            try {
+                await fetch(`/api/wishes/${id}`, { method: 'DELETE' });
+                showToast('🗑️ Dilek silindi');
+                loadWishes();
+            } catch (err) {
+                showToast('❌ Silme hatası');
+            }
+        }
+
+        async function clearAllWishes() {
+            try {
+                await fetch('/api/wishes', { method: 'DELETE' });
+                showToast('🗑️ Tüm dilekler silindi');
+                loadWishes();
+            } catch (err) {
+                showToast('❌ Hata oluştu');
+            }
+        }
+
+        // Admin Upload
+        async function adminUpload() {
+            const fileInput = document.getElementById('admin-photo');
+            const nameInput = document.getElementById('admin-name');
+            const btn = document.getElementById('admin-upload-btn');
+
+            if (!fileInput.files[0] || !nameInput.value.trim()) {
+                showToast('⚠️ Fotoğraf ve isim gerekli');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = '⏳...';
+
+            try {
+                const formData = new FormData();
+                formData.append('photo', fileInput.files[0]);
+                formData.append('childName', nameInput.value.trim());
+
+                const res = await fetch('/api/upload', { method: 'POST', body: formData });
+                const result = await res.json();
+
+                if (result.success) {
+                    showToast('✨ Dilek eklendi!');
+                    fileInput.value = '';
+                    nameInput.value = '';
+                    loadWishes();
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (err) {
+                showToast('❌ Yükleme hatası');
+            }
+
+            btn.disabled = false;
+            btn.textContent = '✨ Ekle';
+        }
+
+        // Confirm modals
+        let pendingAction = null;
+
+        function confirmDelete(id, name) {
+            document.getElementById('modal-text').textContent = `"${name}" dileğini silmek istediğine emin misin?`;
+            document.getElementById('modal-confirm-btn').onclick = () => {
+                deleteWish(id);
+                closeModal();
+            };
+            document.getElementById('modal-overlay').classList.add('show');
+        }
+
+        function confirmClearAll() {
+            document.getElementById('modal-text').textContent = 'Tüm dilekleri silmek istediğine emin misin? Bu işlem geri alınamaz!';
+            document.getElementById('modal-confirm-btn').onclick = () => {
+                clearAllWishes();
+                closeModal();
+            };
+            document.getElementById('modal-overlay').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('show');
+        }
+
+        // Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // Real-time updates
+        socket.on('new-wish', () => loadWishes());
+        socket.on('wish-deleted', () => loadWishes());
+        socket.on('all-cleared', () => loadWishes());
+
+        // Spotlight Kapat
+        async function spotlightOff() {
+            try {
+                await fetch('/api/spotlight-off', { method: 'POST' });
+                showToast('💫 Spotlight kapatıldı');
+                loadWishes();
+            } catch (err) {
+                showToast('❌ Hata oluştu');
+            }
+        }
+
+        // Otomatik Spotlight
+        async function startAutoSpotlight() {
+            const delay = document.getElementById('auto-delay').value;
+            try {
+                const res = await fetch('/api/auto-spotlight/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ delay: parseInt(delay) })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('auto-start-btn').style.display = 'none';
+                    document.getElementById('auto-stop-btn').style.display = '';
+                    document.getElementById('auto-status').classList.add('active');
+                    showToast('▶️ Otomatik spotlight başladı!');
+                } else {
+                    showToast('⚠️ ' + (data.error || 'Başlatılamadı'));
+                }
+            } catch (err) {
+                showToast('❌ Hata oluştu');
+            }
+        }
+
+        async function stopAutoSpotlight() {
+            try {
+                await fetch('/api/auto-spotlight/stop', { method: 'POST' });
+                document.getElementById('auto-start-btn').style.display = '';
+                document.getElementById('auto-stop-btn').style.display = 'none';
+                document.getElementById('auto-status').classList.remove('active');
+                showToast('⏹️ Otomatik spotlight durduruldu');
+            } catch (err) {
+                showToast('❌ Hata oluştu');
+            }
+        }
+
+        // Sayfa yüklendiğinde auto-spotlight durumunu kontrol et
+        async function checkAutoStatus() {
+            try {
+                const res = await fetch('/api/auto-spotlight/status');
+                const data = await res.json();
+                if (data.active) {
+                    document.getElementById('auto-start-btn').style.display = 'none';
+                    document.getElementById('auto-stop-btn').style.display = '';
+                    document.getElementById('auto-status').classList.add('active');
+                    document.getElementById('auto-delay').value = data.delay;
+                }
+            } catch (e) { }
+        }
+
+        // Tema degistir
+        async function setTheme(theme) {
+            try {
+                await fetch('/api/theme', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ theme })
+                });
+                document.querySelectorAll('.theme-option').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.theme === theme);
+                });
+                showToast('🎨 Tema değiştirildi!');
+            } catch (err) {
+                showToast('❌ Tema hatası');
+            }
+        }
+
+        async function loadCurrentTheme() {
+            try {
+                const res = await fetch('/api/theme');
+                const data = await res.json();
+                document.querySelectorAll('.theme-option').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.theme === data.theme);
+                });
+            } catch (e) { }
+        }
+
+        // Dilek arama
+        function filterWishes() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            const items = document.querySelectorAll('.wish-item');
+            items.forEach(item => {
+                const name = item.querySelector('.wish-name').textContent.toLowerCase();
+                item.style.display = name.includes(query) ? '' : 'none';
+            });
+        }
+
+        // Init
+        loadWishes();
+        checkAutoStatus();
+        loadCurrentTheme();
+
+        // QR Code olustur
+        (function () {
+            var uploadUrl = window.location.protocol + '//' + window.location.host + '/upload.html';
+            var qrImg = document.createElement('img');
+            qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(uploadUrl);
+            qrImg.alt = 'QR Kod';
+            qrImg.style.width = '200px';
+            qrImg.style.height = '200px';
+            document.getElementById('qr-container').appendChild(qrImg);
+            document.getElementById('qr-url').textContent = uploadUrl;
+        })();
+    </script>
+</body>
+
+</html>

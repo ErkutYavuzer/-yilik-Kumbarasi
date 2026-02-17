@@ -1,0 +1,78 @@
+/* === TEMA SİSTEMİ === */
+
+/* Varsayılan tema: Ramazan (İyilik Kumbarası) */
+:root {
+    --bg-gradient-1: #2196F3;
+    --bg-gradient-2: #1976D2;
+    --bg-gradient-3: #1565C0;
+    --accent-1: #ffd700;
+    --accent-2: #ffa500;
+    --glow-color: rgba(255, 215, 0, 0.4);
+    --star-color: rgba(255, 255, 255, 0.8);
+}
+
+/* 🎂 Doğum Günü */
+[data-theme="birthday"] {
+    --bg-gradient-1: #1a0a2e;
+    --bg-gradient-2: #2d1b69;
+    --bg-gradient-3: #16213e;
+    --accent-1: #ff6bcb;
+    --accent-2: #ffb86c;
+    --glow-color: rgba(255, 107, 203, 0.3);
+    --star-color: rgba(255, 184, 108, 0.6);
+}
+
+/* 🇹🇷 23 Nisan */
+[data-theme="nisan23"] {
+    --bg-gradient-1: #0d1117;
+    --bg-gradient-2: #1b2838;
+    --bg-gradient-3: #0d1117;
+    --accent-1: #ff3333;
+    --accent-2: #ffffff;
+    --glow-color: rgba(255, 51, 51, 0.3);
+    --star-color: rgba(255, 255, 255, 0.8);
+}
+
+/* 🌙 Bayram */
+[data-theme="bayram"] {
+    --bg-gradient-1: #0a192f;
+    --bg-gradient-2: #172a45;
+    --bg-gradient-3: #0a192f;
+    --accent-1: #64ffda;
+    --accent-2: #a8d8ea;
+    --glow-color: rgba(100, 255, 218, 0.3);
+    --star-color: rgba(168, 216, 234, 0.6);
+}
+
+/* ❄️ Kış */
+[data-theme="winter"] {
+    --bg-gradient-1: #0c1445;
+    --bg-gradient-2: #1a237e;
+    --bg-gradient-3: #0c1445;
+    --accent-1: #80deea;
+    --accent-2: #e1f5fe;
+    --glow-color: rgba(128, 222, 234, 0.3);
+    --star-color: rgba(225, 245, 254, 0.8);
+}
+
+/* 🎄 Yılbaşı */
+[data-theme="newyear"] {
+    --bg-gradient-1: #1b0000;
+    --bg-gradient-2: #2e0202;
+    --bg-gradient-3: #0d1b00;
+    --accent-1: #ff1744;
+    --accent-2: #69f0ae;
+    --glow-color: rgba(255, 23, 68, 0.3);
+    --star-color: rgba(105, 240, 174, 0.6);
+}
+
+/* 🌸 Bahar */
+[data-theme="spring"] {
+    --bg-gradient-1: #1a0a1e;
+    --bg-gradient-2: #2d1540;
+    --bg-gradient-3: #1a0a1e;
+    --accent-1: #f48fb1;
+    --accent-2: #ce93d8;
+    --glow-color: rgba(244, 143, 177, 0.3);
+    --star-color: rgba(206, 147, 216, 0.6);
+}

@@ -1,0 +1,15 @@
+{
+    "name": "iyilik-kumbarasi",
+    "version": "2.0.0",
+    "description": "Sultangazi Belediyesi - İyilik Kumbarası: Çocukların iyilik dileklerini toplayan ve gösteren interaktif sistem",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js",
+        "dev": "node server.js"
+    },
+    "dependencies": {
+        "express": "^4.18.2",
+        "multer": "^1.4.5-lts.1",
+        "socket.io": "^4.6.1"
+    }
+}

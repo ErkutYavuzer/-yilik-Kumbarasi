@@ -1,0 +1,806 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Dilek Kumbarasi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Nunito', system-ui, sans-serif;
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow: hidden;
+            background: #FFF8F0;
+            position: relative;
+        }
+
+        .bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            background: linear-gradient(160deg, #FFECD2 0%, #FCB69F 30%, #A8E6CF 60%, #88D8F7 100%);
+            background-size: 300% 300%;
+            animation: bgShift 12s ease-in-out infinite;
+        }
+
+        @keyframes bgShift {
+            0% {
+                background-position: 0% 50%
+            }
+
+            50% {
+                background-position: 100% 50%
+            }
+
+            100% {
+                background-position: 0% 50%
+            }
+        }
+
+        .shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.25;
+            animation: shapeFloat 10s ease-in-out infinite;
+        }
+
+        @keyframes shapeFloat {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg) scale(1)
+            }
+
+            50% {
+                transform: translateY(-30px) rotate(180deg) scale(1.1)
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* Steps */
+        .step {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 380px;
+            animation: stepIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .step.active {
+            display: flex
+        }
+
+        @keyframes stepIn {
+            0% {
+                opacity: 0;
+                transform: translateY(40px) scale(0.9)
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1)
+            }
+        }
+
+        /* Step dots */
+        .steps-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 30px
+        }
+
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s
+        }
+
+        .step-dot.active {
+            background: #FF6B6B;
+            transform: scale(1.3);
+            box-shadow: 0 0 12px rgba(255, 107, 107, 0.5)
+        }
+
+        .step-dot.done {
+            background: #4ECDC4
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1)
+        }
+
+        .page-sub {
+            font-size: 15px;
+            color: rgba(0, 0, 0, 0.5);
+            text-align: center;
+            margin-bottom: 28px;
+            font-weight: 600
+        }
+
+        /* STEP 1: Camera */
+        .camera-area {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 32px 24px;
+            box-shadow: 0 16px 50px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .camera-btn {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+            color: white;
+            font-size: 56px;
+            cursor: pointer;
+            box-shadow: 0 12px 40px rgba(255, 107, 107, 0.4);
+            animation: cameraPulse 2s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            transition: transform 0.2s;
+        }
+
+        @keyframes cameraPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 12px 40px rgba(255, 107, 107, 0.4)
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 16px 50px rgba(255, 107, 107, 0.6)
+            }
+        }
+
+        .camera-btn:active {
+            transform: scale(0.92) !important;
+            animation: none
+        }
+
+        .camera-label {
+            font-size: 16px;
+            font-weight: 700;
+            color: #555;
+            margin-top: 8px
+        }
+
+        .gallery-btn {
+            margin-top: 16px;
+            padding: 12px 28px;
+            background: rgba(78, 205, 196, 0.15);
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #4ECDC4;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* Preview */
+        .photo-preview {
+            display: none;
+            width: 100%;
+            margin-top: 16px;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 4px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .photo-preview img {
+            width: 100%;
+            max-height: 150px;
+            object-fit: cover;
+            border-radius: 14px;
+            display: block
+        }
+
+        .photo-preview.show {
+            display: block
+        }
+
+        /* Upload progress bar */
+        .progress-wrapper {
+            width: 100%;
+            margin-top: 16px;
+            display: none;
+        }
+
+        .progress-wrapper.show {
+            display: block;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #4ECDC4, #26D0CE);
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: rgba(0, 0, 0, 0.4);
+            text-align: center;
+            margin-top: 6px;
+        }
+
+        .next-btn {
+            margin-top: 24px;
+            padding: 16px 48px;
+            background: linear-gradient(135deg, #4ECDC4, #26D0CE);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-size: 18px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 8px 28px rgba(78, 205, 196, 0.4);
+            transition: all 0.2s;
+            display: none;
+            letter-spacing: 0.5px;
+            font-family: inherit;
+        }
+
+        .next-btn.show {
+            display: block
+        }
+
+        .next-btn:active {
+            transform: scale(0.95)
+        }
+
+        /* STEP 2: Name */
+        .name-card {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 32px 24px;
+            box-shadow: 0 16px 50px rgba(0, 0, 0, 0.1);
+        }
+
+        .name-emoji {
+            font-size: 56px;
+            text-align: center;
+            margin-bottom: 16px
+        }
+
+        .name-label {
+            font-size: 16px;
+            font-weight: 700;
+            color: #555;
+            margin-bottom: 12px;
+            text-align: center
+        }
+
+        .name-input {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(78, 205, 196, 0.08);
+            border: 3px solid rgba(78, 205, 196, 0.2);
+            border-radius: 16px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .name-input::placeholder {
+            color: rgba(0, 0, 0, 0.25);
+            font-weight: 600
+        }
+
+        .name-input:focus {
+            outline: none;
+            border-color: #4ECDC4;
+            background: rgba(78, 205, 196, 0.05);
+            box-shadow: 0 0 0 6px rgba(78, 205, 196, 0.1);
+        }
+
+        .back-link {
+            margin-top: 16px;
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            color: rgba(0, 0, 0, 0.4);
+            font-family: inherit;
+        }
+
+        /* STEP 3: Confirm */
+        .jar-icon {
+            font-size: 100px;
+            text-align: center;
+            margin-bottom: 16px;
+            animation: jarBounce 1.5s ease-in-out infinite
+        }
+
+        @keyframes jarBounce {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0)
+            }
+
+            25% {
+                transform: translateY(-10px) rotate(-3deg)
+            }
+
+            75% {
+                transform: translateY(-10px) rotate(3deg)
+            }
+        }
+
+        .preview-info {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .preview-info img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 16px;
+            border: 3px solid rgba(255, 107, 107, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .preview-name {
+            font-size: 22px;
+            font-weight: 800;
+            color: #333
+        }
+
+        .preview-note {
+            font-size: 13px;
+            color: rgba(0, 0, 0, 0.4);
+            margin-top: 6px;
+            font-weight: 600
+        }
+
+        .throw-btn {
+            width: 100%;
+            padding: 20px;
+            border: none;
+            border-radius: 20px;
+            font-size: 20px;
+            font-weight: 900;
+            cursor: pointer;
+            font-family: inherit;
+            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+            color: white;
+            letter-spacing: 0.5px;
+            box-shadow: 0 10px 35px rgba(255, 107, 107, 0.4);
+            transition: all 0.2s;
+            animation: throwPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes throwPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 10px 35px rgba(255, 107, 107, 0.4)
+            }
+
+            50% {
+                box-shadow: 0 14px 45px rgba(255, 107, 107, 0.6)
+            }
+        }
+
+        .throw-btn:active {
+            transform: scale(0.95) !important;
+            animation: none
+        }
+
+        .throw-btn:disabled {
+            opacity: 0.6;
+            animation: none
+        }
+
+        /* SUCCESS */
+        .success-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(160deg, #FFECD2, #FCB69F, #A8E6CF);
+            background-size: 200% 200%;
+            animation: bgShift 6s ease-in-out infinite;
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-screen.show {
+            display: flex
+        }
+
+        .success-jar {
+            font-size: 120px;
+            animation: jarDrop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)
+        }
+
+        @keyframes jarDrop {
+            0% {
+                transform: translateY(-60px) scale(0.5);
+                opacity: 0
+            }
+
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1
+            }
+        }
+
+        .success-msg {
+            font-size: 32px;
+            font-weight: 900;
+            color: #333;
+            margin-top: 16px;
+            animation: fadeUp 0.6s 0.3s both
+        }
+
+        .success-sub {
+            font-size: 16px;
+            color: rgba(0, 0, 0, 0.5);
+            font-weight: 600;
+            margin-top: 8px;
+            animation: fadeUp 0.6s 0.5s both
+        }
+
+        @keyframes fadeUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px)
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .confetti-piece {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            z-index: 1001;
+            pointer-events: none;
+            animation: confettiFall 2.5s ease-out forwards;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-20px) rotate(0);
+                opacity: 1
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(900deg);
+                opacity: 0
+            }
+        }
+
+        /* Hidden file inputs */
+        .hidden-input {
+            position: absolute;
+            left: -9999px;
+            opacity: 0
+        }
+
+        @media(max-height:640px) {
+            .page-title {
+                font-size: 22px
+            }
+
+            .camera-btn {
+                width: 110px;
+                height: 110px;
+                font-size: 44px
+            }
+
+            .jar-icon {
+                font-size: 72px
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg"></div>
+    <div class="shapes" id="shapes"></div>
+
+    <div class="container">
+
+        <!-- STEP 1: Photo -->
+        <div class="step active" id="step1">
+            <div class="steps-bar">
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+            </div>
+            <div class="page-title">Dilegin Ne? &#x1F4AB;</div>
+            <div class="page-sub">Kagida yaz, fotografini cek!</div>
+
+            <div class="camera-area">
+                <button class="camera-btn" id="cameraBtn"
+                    onclick="document.getElementById('fileInput').click()">&#x1F4F8;</button>
+                <div class="camera-label">Fotograf Cek / Sec</div>
+                <div class="camera-label" id="loadingLabel" style="display:none;color:#FF6B6B">Yukleniyor...</div>
+            </div>
+
+            <div class="photo-preview" id="photoPreview">
+                <img id="previewImg" src="" alt="Onizleme">
+            </div>
+
+            <button class="next-btn" id="nextBtn1" onclick="goStep(2)">Devam Et &#x27A1;&#xFE0F;</button>
+
+            <input type="file" accept="image/*" class="hidden-input" id="fileInput" onchange="handlePhoto(this)">
+        </div>
+
+        <!-- STEP 2: Name -->
+        <div class="step" id="step2">
+            <div class="steps-bar">
+                <div class="step-dot done"></div>
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+            </div>
+            <div class="name-card">
+                <div class="name-emoji">&#x1F476;</div>
+                <div class="name-label">Adin Ne Guzel Cocuk?</div>
+                <input type="text" class="name-input" id="nameInput" placeholder="Adini yaz..." autocomplete="off"
+                    maxlength="30">
+            </div>
+            <button class="next-btn show" id="nameNextBtn" onclick="goStep(3)"
+                style="opacity:0.4;pointer-events:none">Devam Et &#x27A1;&#xFE0F;</button>
+            <button class="back-link" onclick="goStep(1)">&#x2B05;&#xFE0F; Geri Don</button>
+        </div>
+
+        <!-- STEP 3: Confirm -->
+        <div class="step" id="step3">
+            <div class="steps-bar">
+                <div class="step-dot done"></div>
+                <div class="step-dot done"></div>
+                <div class="step-dot active"></div>
+            </div>
+            <div class="jar-icon">&#x1F3FA;</div>
+            <div class="preview-info">
+                <img id="confirmImg" src="" alt="Preview">
+                <div class="preview-name" id="confirmName"></div>
+            </div>
+            <div class="progress-wrapper" id="progressWrapper">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">Yükleniyor...</div>
+            </div>
+            <button class="throw-btn" id="throwBtn" onclick="submitWish()">
+                &#x2728; Kumbaraya At! &#x2728;
+            </button>
+            <button class="back-link" onclick="goStep(2)">&#x2B05;&#xFE0F; Geri Don</button>
+        </div>
+    </div>
+
+    <!-- Success -->
+    <div class="success-screen" id="successScreen">
+        <div class="success-jar">&#x1F389;</div>
+        <div class="success-msg">Dilek Eklendi!</div>
+        <div class="success-sub">Harikaaaa! &#x1F31F;</div>
+    </div>
+
+    <script>
+        // Shapes
+        (function () {
+            var c = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#A8E6CF', '#FF8E8E', '#88D8F7', '#DDA0DD', '#FFB347'];
+            var s = document.getElementById('shapes');
+            for (var i = 0; i < 15; i++) {
+                var d = document.createElement('div'); d.className = 'shape';
+                var size = 20 + Math.random() * 60;
+                d.style.width = size + 'px'; d.style.height = size + 'px';
+                d.style.left = Math.random() * 100 + '%'; d.style.top = Math.random() * 100 + '%';
+                d.style.background = c[Math.floor(Math.random() * c.length)];
+                d.style.animationDelay = Math.random() * 10 + 's';
+                d.style.animationDuration = (8 + Math.random() * 8) + 's';
+                if (Math.random() > 0.5) d.style.borderRadius = '30%';
+                s.appendChild(d);
+            }
+        })();
+
+        var currentStep = 1;
+        var selectedFile = null;
+        var nameInput = document.getElementById('nameInput');
+
+
+
+        function handlePhoto(input) {
+            if (!input.files || !input.files[0]) return;
+            selectedFile = input.files[0];
+            // Gercek onizleme goster
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('previewImg').src = e.target.result;
+                document.getElementById('photoPreview').classList.add('show');
+            };
+            reader.readAsDataURL(selectedFile);
+            document.getElementById('nextBtn1').classList.add('show');
+            document.getElementById('loadingLabel').style.display = 'none';
+        }
+
+        nameInput.addEventListener('input', function () {
+            var btn = document.getElementById('nameNextBtn');
+            if (nameInput.value.trim().length >= 2) {
+                btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
+            } else {
+                btn.style.opacity = '0.4'; btn.style.pointerEvents = 'none';
+            }
+        });
+
+        function goStep(n) {
+            if (n === 3) {
+                document.getElementById('confirmName').textContent = nameInput.value.trim();
+                // Confirm sayfasinda foto onizleme goster
+                var ci = document.getElementById('confirmImg');
+                if (ci && selectedFile) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) { ci.src = e.target.result; ci.style.display = ''; };
+                    reader.readAsDataURL(selectedFile);
+                }
+            }
+            document.getElementById('step' + currentStep).classList.remove('active');
+            currentStep = n;
+            var el = document.getElementById('step' + n);
+            el.style.animation = 'none'; el.offsetHeight; el.style.animation = '';
+            el.classList.add('active');
+        }
+
+        function submitWish() {
+            if (!selectedFile) return alert('Fotograf gerekli!');
+            var btn = document.getElementById('throwBtn');
+            btn.disabled = true; btn.textContent = 'Gönderiliyor...';
+
+            var formData = new FormData();
+            formData.append('photo', selectedFile);
+            formData.append('childName', nameInput.value.trim());
+
+            // Progress goster
+            var progressWrapper = document.getElementById('progressWrapper');
+            var progressFill = document.getElementById('progressFill');
+            var progressText = document.getElementById('progressText');
+            progressWrapper.classList.add('show');
+            progressFill.style.width = '30%';
+            progressText.textContent = 'Yükleniyor...';
+
+            fetch('/api/upload', { method: 'POST', body: formData })
+                .then(function (r) {
+                    progressFill.style.width = '80%';
+                    return r.json();
+                })
+                .then(function (data) {
+                    progressFill.style.width = '100%';
+                    progressText.textContent = 'Tamamlandı!';
+                    if (data.success) {
+                        fireConfetti();
+                        document.getElementById('successScreen').classList.add('show');
+                        setTimeout(function () {
+                            document.getElementById('successScreen').classList.remove('show');
+                            fullReset();
+                        }, 3500);
+                    } else {
+                        alert('Hata: ' + (data.error || 'Bilinmeyen'));
+                        btn.disabled = false; btn.textContent = 'Kumbaraya At!';
+                        progressWrapper.classList.remove('show');
+                    }
+                })
+                .catch(function (err) {
+                    alert('Gönderme hatası: ' + err.message);
+                    btn.disabled = false; btn.textContent = 'Kumbaraya At!';
+                    progressWrapper.classList.remove('show');
+                });
+        }
+
+        function fullReset() {
+            selectedFile = null;
+            nameInput.value = '';
+            document.getElementById('photoPreview').classList.remove('show');
+            document.getElementById('previewImg').src = '';
+            document.getElementById('nextBtn1').classList.remove('show');
+            document.getElementById('nameNextBtn').style.opacity = '0.4';
+            document.getElementById('nameNextBtn').style.pointerEvents = 'none';
+            document.getElementById('throwBtn').disabled = false;
+            document.getElementById('throwBtn').textContent = 'Kumbaraya At!';
+            document.getElementById('fileInput').value = '';
+            document.getElementById('progressWrapper').classList.remove('show');
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('confirmImg').src = '';
+            document.getElementById('step' + currentStep).classList.remove('active');
+            currentStep = 1; document.getElementById('step1').classList.add('active');
+        }
+
+        function fireConfetti() {
+            var colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#FF8E8E', '#A8E6CF', '#DDA0DD', '#FFB347', '#88D8F7'];
+            for (var i = 0; i < 40; i++) {
+                var c = document.createElement('div'); c.className = 'confetti-piece';
+                c.style.left = Math.random() * 100 + '%'; c.style.top = '-10px';
+                c.style.background = colors[Math.floor(Math.random() * colors.length)];
+                c.style.animationDelay = (Math.random() * 0.8) + 's';
+                var w = 6 + Math.random() * 10; c.style.width = w + 'px'; c.style.height = w + 'px';
+                if (Math.random() > 0.5) c.style.borderRadius = '50%';
+                document.body.appendChild(c);
+                setTimeout(function (el) { el.remove() }, 3300, c);
+            }
+        }
+    </script>
+</body>
+
+</html>
