@@ -54,3 +54,5 @@ Telefon (upload.html) ──HTTP POST──▶ server.js (Express/Multer) ──
 ```
 BASLAT.bat  (veya: npm start)
 ```
+
+- 🟢 QR kod bağlantı IP sorunu düzeltildi.
