@@ -37,7 +37,14 @@ if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
 }
 
+// Uploads Archive klasörünü oluştur
+const archiveDir = path.join(uploadsDir, 'archive');
+if (!fs.existsSync(archiveDir)) {
+    fs.mkdirSync(archiveDir, { recursive: true });
+}
+
 const dataFile = path.join(dataDir, 'wishes.json');
+const archiveFile = path.join(dataDir, 'archive_wishes.json');
 
 // JSON dosyasından dilekleri yükle
 function loadWishes() {
@@ -58,6 +65,30 @@ function saveWishes() {
         fs.writeFileSync(dataFile, JSON.stringify(wishes, null, 2), 'utf8');
     } catch (err) {
         console.error('Veri kaydetme hatası:', err.message);
+    }
+}
+
+// Arşivlenen dilekleri yükle
+function loadArchiveWishes() {
+    try {
+        if (fs.existsSync(archiveFile)) {
+            const data = fs.readFileSync(archiveFile, 'utf8');
+            return JSON.parse(data);
+        }
+    } catch (err) {
+        console.error('Arşiv yükleme hatası:', err.message);
+    }
+    return [];
+}
+
+// Arşive dilek ekle ve kaydet
+function saveToArchive(wish) {
+    let archive = loadArchiveWishes();
+    archive.push(wish);
+    try {
+        fs.writeFileSync(archiveFile, JSON.stringify(archive, null, 2), 'utf8');
+    } catch (err) {
+        console.error('Arşiv kaydetme hatası:', err.message);
     }
 }
 
@@ -340,7 +371,7 @@ app.get('/api/wishes', (req, res) => {
 function getLocalIP() {
     const nets = require('os').networkInterfaces();
     let localIP = 'localhost';
-    
+
     // Ağ arayüzlerini tara ve 192., 10., veya belli 172. ile başlayan (yaygın LAN IP'leri) adresi bul
     for (const name of Object.keys(nets)) {
         for (const net of nets[name]) {
@@ -348,12 +379,12 @@ function getLocalIP() {
             if (net.family === 'IPv4' && !net.internal) {
                 // Hyper-V Default Switch'i atla (genelde 172.2x ile başlar)
                 if (name.toLowerCase().includes('default switch')) continue;
-                
+
                 // Özellikle 192.168.x.x gibi yaygın yerel ağ adreslerine öncelik ver
                 if (net.address.startsWith('192.168.') || net.address.startsWith('10.')) {
                     return net.address;
                 }
-                
+
                 // Eğer hiçbiri eşleşmezse, ilk bulduğunu kaydet ama döngüye devam et (daha iyi bir eşleşme olabilir diye)
                 if (localIP === 'localhost') {
                     localIP = net.address;
@@ -369,7 +400,7 @@ app.get('/api/local-ip', (req, res) => {
     res.json({ ip: getLocalIP() });
 });
 
-// Tek dilek sil
+// Tek dilek sil (ARŞİVE TAŞI)
 app.delete('/api/wishes/:id', (req, res) => {
     const { id } = req.params;
     const wishIndex = wishes.findIndex(w => w.id === id);
@@ -380,38 +411,54 @@ app.delete('/api/wishes/:id', (req, res) => {
 
     const wish = wishes[wishIndex];
 
-    // Dosyayi sil (varsa)
+    // Fotoğrafı Arşiv Klasörüne Taşı
     if (wish.photoUrl) {
-        const filePath = path.join(__dirname, wish.photoUrl);
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
+        const oldPath = path.join(__dirname, wish.photoUrl);
+        const filename = path.basename(wish.photoUrl);
+        const newPath = path.join(archiveDir, filename);
+
+        if (fs.existsSync(oldPath)) {
+            fs.renameSync(oldPath, newPath); // Dosyayı silme, taşı
+            wish.photoUrl = `/uploads/archive/${filename}`; // URL'yi güncelle
         }
     }
 
+    // JSON'da Arşive Taşı
+    wish.archivedAt = new Date().toISOString();
+    saveToArchive(wish);
+
+    // Aktif listeden çıkar
     wishes.splice(wishIndex, 1);
     saveWishes();
     io.emit('wish-deleted', { id });
-    console.log(`🗑️ Dilek silindi: ${wish.childName}`);
-    res.json({ success: true });
+    console.log(`🗄️ Dilek arşivlendi: ${wish.childName}`);
+    res.json({ success: true, archived: true });
 });
 
-// Tüm dilekleri sil
+// Tüm dilekleri sil (TÜMÜNÜ ARŞİVE TAŞI)
 app.delete('/api/wishes', (req, res) => {
-    // Tüm fotoğrafları sil
     wishes.forEach(wish => {
+        // Fotoğrafı Arşive Taşı
         if (wish.photoUrl) {
-            const filePath = path.join(__dirname, wish.photoUrl);
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
+            const oldPath = path.join(__dirname, wish.photoUrl);
+            const filename = path.basename(wish.photoUrl);
+            const newPath = path.join(archiveDir, filename);
+
+            if (fs.existsSync(oldPath)) {
+                fs.renameSync(oldPath, newPath);
+                wish.photoUrl = `/uploads/archive/${filename}`;
             }
         }
+        // Arşive yazmak için objeyi güncelle
+        wish.archivedAt = new Date().toISOString();
+        saveToArchive(wish); // Tek tek arşive bas
     });
 
     wishes = [];
     saveWishes();
     io.emit('all-cleared');
-    console.log('🗑️ Tüm dilekler silindi');
-    res.json({ success: true });
+    console.log('🗄️ Tüm dilekler arşive kaldırıldı');
+    res.json({ success: true, archived: true });
 });
 
 // Socket.io bağlantıları

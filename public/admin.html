@@ -1005,6 +1005,118 @@
             margin: 20px 0;
         }
 
+        /* ── AUTH & TABLE ── */
+        .auth-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius);
+            padding: 32px;
+            width: 90%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 14px;
+            margin: 20px 0;
+            background: var(--bg2);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            text-align: center;
+            letter-spacing: 4px;
+        }
+
+        .auth-input:focus {
+            border-color: var(--accent);
+        }
+
+        .auth-error {
+            color: var(--red);
+            font-size: 13px;
+            font-weight: 700;
+            display: none;
+            margin-top: 12px;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .data-table th {
+            background: var(--bg2);
+            padding: 14px 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text3);
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--card-border);
+            white-space: nowrap;
+        }
+
+        .data-table td {
+            padding: 14px 20px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--card-border);
+            vertical-align: middle;
+        }
+
+        .data-table tr:hover td {
+            background: var(--card-hover);
+        }
+
+        .data-table img {
+            width: 64px;
+            height: 64px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid var(--card-border);
+            transition: transform 0.2s;
+        }
+
+        .data-table img:hover {
+            transform: scale(1.1);
+        }
+
+        .ocr-text {
+            font-size: 13px;
+            color: var(--text2);
+            max-width: 250px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            white-space: normal;
+            line-height: 1.5;
+        }
+
         /* ── RESPONSIVE ── */
         @media (max-width: 768px) {
             .sidebar {
@@ -1027,6 +1139,19 @@
 </head>
 
 <body>
+
+    <!-- ── AUTH OVERLAY ── -->
+    <div class="auth-overlay" id="auth-overlay">
+        <div class="auth-card">
+            <h2 style="margin-bottom:5px">🔒 Admin Girişi</h2>
+            <p style="color:var(--text3); font-size:14px">Paneli görüntülemek için şifre girin.</p>
+            <input type="password" id="auth-pass" class="auth-input" placeholder="••••" autocomplete="off"
+                onkeypress="if(event.key === 'Enter') checkAuth()">
+            <button class="btn btn-primary" onclick="checkAuth()"
+                style="width:100%; justify-content:center; padding:12px;">Giriş Yap</button>
+            <p class="auth-error" id="auth-error">Hatalı şifre!</p>
+        </div>
+    </div>
 
     <!-- SIDEBAR -->
     <aside class="sidebar">
@@ -1316,12 +1441,27 @@
             <div class="tab-panel" id="tab-wishes">
                 <div class="search-box">
                     <span class="search-icon">🔍</span>
-                    <input type="text" placeholder="Dilek ara..." oninput="filterWishes()">
+                    <input type="text" placeholder="İsim, metin veya tarih ara..." oninput="filterWishes()">
                 </div>
-                <div class="wishes-grid" id="wishes-grid"></div>
+
+                <div class="table-responsive" id="wishes-table-container" style="display:none;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Görsel</th>
+                                <th>Çocuk Adı</th>
+                                <th>Okunan Metin (OCR)</th>
+                                <th>Tarih</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wishes-tbody"></tbody>
+                    </table>
+                </div>
+
                 <div class="empty" id="empty-state">
                     <div class="emoji">🏺</div>
-                    <p>Henüz dilek eklenmemiş</p>
+                    <p>Henüz dilek eklenmemiş veya aramayla eşleşen sonuç yok.</p>
                 </div>
             </div>
 
@@ -1351,6 +1491,21 @@
         let modalAction = null;
         let autoTimer = null;
         let autoIndex = 0;
+
+        // ─── AUTHENTICATION ───
+        if (sessionStorage.getItem('adminAuth') === 'true') {
+            document.getElementById('auth-overlay').style.display = 'none';
+        }
+        function checkAuth() {
+            const pass = document.getElementById('auth-pass').value;
+            if (pass === '1234') {
+                sessionStorage.setItem('adminAuth', 'true');
+                document.getElementById('auth-overlay').style.display = 'none';
+            } else {
+                document.getElementById('auth-error').style.display = 'block';
+                setTimeout(() => document.getElementById('auth-error').style.display = 'none', 3000);
+            }
+        }
 
         // ─── UI MODE (Dark / Light) ───
         const savedMode = localStorage.getItem('adminUIMode') || 'dark';
@@ -1401,27 +1556,36 @@
         }
 
         function renderWishes() {
-            const grid = document.getElementById('wishes-grid');
+            const tbody = document.getElementById('wishes-tbody');
+            const tableContainer = document.getElementById('wishes-table-container');
             const empty = document.getElementById('empty-state');
             if (!wishes.length) {
-                grid.innerHTML = '';
+                tbody.innerHTML = '';
+                tableContainer.style.display = 'none';
                 empty.style.display = 'block';
                 return;
             }
+            tableContainer.style.display = 'block';
             empty.style.display = 'none';
-            grid.innerHTML = wishes.map(w => `
-            <div class="wish-item" id="w-${w.id}">
-                <img src="${w.photoUrl}" alt="${w.childName}" loading="lazy">
-                <div class="wish-meta">
-                    <div class="wish-name">${w.childName}</div>
-                    <div class="wish-time">${formatTime(w.timestamp)}</div>
-                    <div class="wish-actions">
-                        <button class="btn btn-ghost" onclick="spotlightWish('${w.id}')" style="font-size:11px">🌟</button>
-                        <button class="btn btn-danger" onclick="confirmDelete('${w.id}','${w.childName}')" style="font-size:11px">🗑️</button>
+
+            tbody.innerHTML = [...wishes].reverse().map(w => `
+            <tr class="wish-row" id="w-${w.id}">
+                <td>
+                    <a href="${w.photoUrl}" target="_blank" title="Fotoğrafı büyük gör">
+                        <img src="${w.photoUrl}" alt="${w.childName}" loading="lazy">
+                    </a>
+                </td>
+                <td style="font-weight:600;">${w.childName}</td>
+                <td><div class="ocr-text" title="${(w.wishText || 'Okunamadı veya metin yok').replace(/"/g, '&quot;')}">${w.wishText || '<span style="color:var(--text3);font-style:italic">Veri yok</span>'}</div></td>
+                <td style="color:var(--text2);font-size:13px">${formatTime(w.timestamp)}</td>
+                <td>
+                    <div class="wish-actions" style="display:flex; gap:6px;">
+                        <button class="btn btn-ghost" onclick="spotlightWish('${w.id}')" style="padding:6px 10px; font-size:12px;">🌟 Spotlight</button>
+                        <button class="btn btn-danger" onclick="confirmDelete('${w.id}','${w.childName}')" style="padding:6px 10px; font-size:12px;">🗑️</button>
                     </div>
-                </div>
-            </div>
-        `).join('');
+                </td>
+            </tr>
+            `).join('');
         }
 
         function renderRecent() {
@@ -1461,9 +1625,24 @@
 
         function filterWishes() {
             const q = document.querySelector('#tab-wishes .search-box input').value.toLowerCase();
-            document.querySelectorAll('#wishes-grid .wish-item').forEach(el => {
-                el.style.display = el.querySelector('.wish-name').textContent.toLowerCase().includes(q) ? '' : 'none';
+            let visibleCount = 0;
+            document.querySelectorAll('#wishes-tbody .wish-row').forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const isMatch = text.includes(q);
+                row.style.display = isMatch ? '' : 'none';
+                if (isMatch) visibleCount++;
             });
+
+            const tableContainer = document.getElementById('wishes-table-container');
+            const empty = document.getElementById('empty-state');
+
+            if (visibleCount === 0 && wishes.length > 0) {
+                tableContainer.style.display = 'none';
+                empty.style.display = 'block';
+            } else if (visibleCount > 0) {
+                tableContainer.style.display = 'block';
+                empty.style.display = 'none';
+            }
         }
 
         // ─── ACTIONS ───
