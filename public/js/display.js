@@ -246,7 +246,7 @@ class WishDisplay {
 
         // Mevcut tüm kartlara ölçeği anında uygula
         this.wishCards.forEach(cardData => {
-            cardData.element.style.transform = `scale(${scale}) rotate(${cardData.rotation}deg)`;
+            cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${scale}) rotate(${cardData.rotation}deg)`;
         });
     }
 
@@ -257,11 +257,10 @@ class WishDisplay {
             this.hideSpotlight();
         });
 
-        // Pencere boyutu değişince pozisyonları güncelle
+        // Pencere boyutu değişince pozisyonları güncelle (Y sınırlandırması kaldırıldı)
         window.addEventListener('resize', () => {
-            this.wishCards.forEach(cardData => {
-                this.clampPosition(cardData);
-            });
+            // Balonlar yeni algoritmada tamamen özgür aktığı için resize sırasında 
+            // balonların yerini zorla sınırlandırmaya gerek yoktur.
         });
 
         // Fullscreen
@@ -348,14 +347,17 @@ class WishDisplay {
 
         // X ekseninde rastgele bir konum
         let x = padding + Math.random() * Math.max(0, maxX - padding);
-        // Y ekseninde ekranın üstünden başlat (animasyon yukarıdan aşağıya akacak)
-        let y = -600 - Math.random() * 500;
-
-        card.style.left = x + 'px';
-        card.style.top = y + 'px';
+        // Y ekseni: Hem başlangıçta yoğunluğu dağıtmak hem de sonsuz yağmur efekti için 
+        // daha geniş bir aralığa yayıyoruz. İlk yüklenen kartlar daha yukarıdan gelecek.
+        const spawnOffset = this.wishCards.length * 150;
+        let y = -600 - spawnOffset - Math.random() * 1000;
 
         const rotation = (Math.random() - 0.5) * 8;
-        card.style.transform = `rotate(${rotation}deg)`;
+
+        // CSS left/top yerine performansı artırmak için GPU hızlandırmalı transform3d kullanıyoruz.
+        card.style.left = '0px';
+        card.style.top = '0px';
+        card.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rotation}deg)`;
 
         card.addEventListener('click', () => {
             this.showSpotlight(wish);
@@ -385,22 +387,29 @@ class WishDisplay {
 
     // === ANIMATION WITHOUT PHYSICS (TOP-TO-BOTTOM) ===
     startFloatingAnimation() {
+        // Layout Thrashing Fix: Cache the dimensions outside the animation loop
+        // Otherwise reading offsetWidth inside the 60FPS loop for 380 items causes 22,800 layout recalcs per second!
+        let cw = this.container.offsetWidth;
+        let ch = this.container.offsetHeight;
+
+        window.addEventListener('resize', () => {
+            cw = this.container.offsetWidth;
+            ch = this.container.offsetHeight;
+        });
+
         const animate = () => {
             const cards = this.wishCards;
 
             const currentScale = this.displaySettings.scaleMultiplier || 1.0;
             const currentSpeedMulti = this.displaySettings.speedMultiplier || 1.0;
+            const paddingSides = -200;
+            const maxX = cw;
 
             cards.forEach(cardData => {
                 // Admin panelinden gelen hızı doğrudan harekete çarparak uygula
                 cardData.x += cardData.vx * currentSpeedMulti;
                 cardData.y += cardData.vy * currentSpeedMulti;
                 cardData.rotation += cardData.rotationSpeed;
-
-                const cw = this.container.offsetWidth;
-                const ch = this.container.offsetHeight;
-                const paddingSides = -200;
-                const maxX = cw;
 
                 // Yan duvarlardan hafifçe sekmesi (drift sınırı)
                 if (cardData.x < paddingSides) { cardData.x = paddingSides; cardData.vx *= -1; }
@@ -412,14 +421,13 @@ class WishDisplay {
 
                 // Balon ekranın altından tamamen çıktığında tekrar yukarı fırlat
                 if (cardData.y > ch + 200) {
-                    cardData.y = -600 - Math.random() * 500;
+                    cardData.y = -600 - Math.random() * 2000;
                     cardData.x = Math.random() * maxX;
                 }
 
-                // DOM elementine pozisyon ve scale uygula
-                cardData.element.style.left = cardData.x + 'px';
-                cardData.element.style.top = cardData.y + 'px';
-                cardData.element.style.transform = `scale(${currentScale}) rotate(${cardData.rotation}deg)`;
+                // SADECE GÖRÜNTÜ MATRİSİNİ VE EKSENİNİ (GPU) GÜNCELLE
+                // 'left' ve 'top' değiştirmek tarayıcıya korkunç bir layout reflow yükü bindirir (Lag Sebebi)
+                cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${currentScale}) rotate(${cardData.rotation}deg)`;
             });
 
             requestAnimationFrame(animate);
@@ -429,13 +437,9 @@ class WishDisplay {
     }
 
     clampPosition(cardData) {
-        const cw = this.container.offsetWidth;
-        const ch = this.container.offsetHeight;
-        const padding = 60;
-        const maxX = cw - 500;
-        const maxY = ch - 700;
-        cardData.x = Math.max(padding, Math.min(maxX, cardData.x));
-        cardData.y = Math.max(padding, Math.min(maxY, cardData.y));
+        // Balonların yukarıdan (ekstra negatif Y değerlerinden) doğmasını sağlamak 
+        // ve serbestçe aşağı akabilmesini bozmamak için bu kısıtlamalar kaldırılmıştır.
+        // Yeni Kar/Yağmur akışında X ve Y ekseni tamamen serbest bırakılmalıdır.
     }
 
     updateCounter() {

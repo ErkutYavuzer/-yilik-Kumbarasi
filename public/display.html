@@ -94,7 +94,8 @@
             position: absolute;
             width: 520px;
             cursor: pointer;
-            will-change: left, top, transform;
+            will-change: transform;
+            /* Optimized GPU rendering */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -114,11 +115,8 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            box-shadow:
-                0 20px 60px rgba(0, 0, 0, 0.2),
-                0 8px 25px rgba(0, 0, 0, 0.1),
-                inset 0 -30px 50px rgba(0, 0, 0, 0.15),
-                inset 0 30px 40px rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            /* Optimized for speed */
             overflow: hidden;
             transition: box-shadow 0.3s, transform 0.3s;
         }
@@ -195,54 +193,14 @@
         }
 
         .wish-card:hover .balloon-body {
-            box-shadow:
-                0 25px 70px rgba(0, 0, 0, 0.25),
-                0 0 60px rgba(var(--balloon-color-rgb, 255, 107, 107), 0.3),
-                inset 0 -20px 40px rgba(0, 0, 0, 0.1),
-                inset 0 20px 30px rgba(255, 255, 255, 0.35);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            /* Optimized for speed */
             transform: scale(1.05);
         }
 
-        /* Collision bounce animation */
-        .wish-card.bumped .balloon-body {
-            animation: bumpPulse 0.4s ease-out;
-        }
+        /* Collision bounce animation removed */
 
-        @keyframes bumpPulse {
-            0% {
-                transform: scale(1);
-            }
-
-            30% {
-                transform: scale(1.12);
-            }
-
-            60% {
-                transform: scale(0.95);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        /* Exaggerated floating bob animation */
-        .wish-card {
-            animation: gentleBob var(--bob-duration, 4s) ease-in-out infinite;
-            animation-delay: var(--bob-delay, 0s);
-        }
-
-        @keyframes gentleBob {
-
-            0%,
-            100% {
-                margin-top: 0;
-            }
-
-            50% {
-                margin-top: -40px;
-            }
-        }
+        /* The exaggerated margin-top floating bob animation was removed for performance */
 
         .wish-card.entering {
             animation: balloonPop 1s cubic-bezier(0.34, 1.56, 0.64, 1);
