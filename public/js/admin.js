@@ -805,12 +805,14 @@ async function startRaffle() {
         } else {
             showToast('❌ Hata: ' + (data.error || 'Çekiliş yapılamadı'));
             btnStart.disabled = false;
-            btnStart.textContent = '🎉 Çekilişi Başlat';
+            btnStart.innerHTML = '<i data-lucide="party-popper" style="width:20px;height:20px;"></i> Çekilişi Başlat';
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
     } catch (e) {
         showToast('❌ Bağlantı hatası!');
         btnStart.disabled = false;
-        btnStart.textContent = '🎉 Çekilişi Başlat';
+        btnStart.innerHTML = '<i data-lucide="party-popper" style="width:20px;height:20px;"></i> Çekilişi Başlat';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 }
 
@@ -822,7 +824,8 @@ async function closeRaffleDisplay() {
         // Formu sıfırla
         document.getElementById('btn-raffle-start').style.display = 'flex';
         document.getElementById('btn-raffle-start').disabled = false;
-        document.getElementById('btn-raffle-start').textContent = '🎉 Tekrar Çekiliş Yap';
+        document.getElementById('btn-raffle-start').innerHTML = '<i data-lucide="party-popper" style="width:20px;height:20px;"></i> Tekrar Çekiliş Yap';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
         document.getElementById('btn-raffle-close').style.display = 'none';
 
     } catch (e) {
@@ -941,8 +944,17 @@ function showToast(msg) {
     try {
         const res = await fetch('/api/local-ip');
         const data = await res.json();
-        const port = window.location.port ? ':' + window.location.port : '';
-        const url = `http://${data.ip}${port}/upload`;
+        let url = '';
+        const currentHost = window.location.hostname;
+
+        // Eğer uygulama bir domain üzerinden (dilek-kumbarasi.mindops.net vs) açılmışsa o domaini kullan
+        if (currentHost !== 'localhost' && currentHost !== '127.0.0.1') {
+            url = `${window.location.protocol}//${window.location.host}/upload`;
+        } else {
+            // Localhost'tan girildiyse ağdaki diğer cihazların bağlanabilmesi için sunucu IP'sini kullan
+            const port = window.location.port ? ':' + window.location.port : '';
+            url = `http://${data.ip}${port}/upload`;
+        }
 
         const container = document.getElementById('qr-container');
         const urlEl = document.getElementById('qr-url');

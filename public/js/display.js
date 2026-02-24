@@ -237,8 +237,17 @@ class WishDisplay {
 
     // === AYARLARI UYGULA ===
     applyDisplaySettings() {
-        // Mevcut tüm kartlara büyüklük çarpanını CSS değişkeni olarak uygula
-        document.documentElement.style.setProperty('--card-scale', this.displaySettings.scaleMultiplier);
+        const scale = this.displaySettings.scaleMultiplier || 1.0;
+        const speed = this.displaySettings.speedMultiplier || 1.0;
+        console.log(`📺 Ayarlar uygulanıyor: Hız=${speed}x, Ölçek=${scale}x`);
+
+        // CSS değişkenini ayarla (transform'da kullanılıyor)
+        document.documentElement.style.setProperty('--card-scale', scale);
+
+        // Mevcut tüm kartlara ölçeği anında uygula
+        this.wishCards.forEach(cardData => {
+            cardData.element.style.transform = `scale(${scale}) rotate(${cardData.rotation}deg)`;
+        });
     }
 
     // === EVENTS ===
@@ -481,11 +490,10 @@ class WishDisplay {
                     cardData.vy = (cardData.vy / speed) * maxSpeed;
                 }
 
-                // Ekranda kartın görünümünü güncelle. Çarpışma ölçeği var(--card-scale) ile de destekleniyor.
+                // Ekranda kartın görünümünü güncelle
                 cardData.element.style.left = cardData.x + 'px';
                 cardData.element.style.top = cardData.y + 'px';
-                // ScaleCSS, CSS variables ile balloonBody'ye uygulanabilir ancak burada root element scaling ile yapıyoruz
-                cardData.element.style.transform = `scale(var(--card-scale, 1)) rotate(${cardData.rotation}deg)`;
+                cardData.element.style.transform = `scale(${currentScale}) rotate(${cardData.rotation}deg)`;
             });
 
             requestAnimationFrame(animate);
