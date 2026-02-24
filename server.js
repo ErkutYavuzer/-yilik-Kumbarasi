@@ -606,6 +606,10 @@ function getLocalIP() {
 
 // Yerel IP adresini getir
 app.get('/api/local-ip', (req, res) => {
+    if (process.env.PUBLIC_DOMAIN) {
+        let domain = process.env.PUBLIC_DOMAIN.replace(/^https?:\/\//, '');
+        return res.json({ ip: domain, isCustomUrl: true });
+    }
     res.json({ ip: getLocalIP() });
 });
 

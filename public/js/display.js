@@ -343,19 +343,13 @@ class WishDisplay {
 
         // Remove constraints so they can spawn edge-to-edge
         const cw = this.container.offsetWidth;
-        const ch = this.container.offsetHeight;
         const padding = 0;
         const maxX = cw - 520;
-        const maxY = ch - 600;
 
+        // X ekseninde rastgele bir konum
         let x = padding + Math.random() * Math.max(0, maxX - padding);
-        let y = padding + Math.random() * Math.max(0, maxY - padding);
-
-        // Logo Obstacle avoidance on spawn (approx x: 1300 to 2900, y: 0 to 480)
-        const logoLeft = 1300, logoRight = 2900, logoBottom = 480;
-        if (x + 520 > logoLeft && x < logoRight && y < logoBottom) {
-            y = logoBottom + 50 + Math.random() * 200; // Force spawn successfully below logo
-        }
+        // Y ekseninde ekranın üstünden başlat (animasyon yukarıdan aşağıya akacak)
+        let y = -600 - Math.random() * 500;
 
         card.style.left = x + 'px';
         card.style.top = y + 'px';
@@ -374,8 +368,8 @@ class WishDisplay {
             element: card,
             x: x,
             y: y,
-            vx: (Math.random() - 0.5) * 10,     // Slashed speed to 10 for relaxed gliding
-            vy: (Math.random() - 0.5) * 10,     // Slashed speed to 10 for relaxed gliding
+            vx: (Math.random() - 0.5) * 1.5,    // Sadece hafif sağ/sol sallanma drifti
+            vy: 1.5 + Math.random() * 2,        // Sabit dikey hız, yukarıdan aşağıya doğru süzülme
             rotation: rotation,
             rotationSpeed: (Math.random() - 0.5) * 0.8, // Reduced rotation for calmer movement
             radius: 260
@@ -389,108 +383,40 @@ class WishDisplay {
         }
     }
 
-    // === ANIMATION WITH COLLISION PHYSICS ===
+    // === ANIMATION WITHOUT PHYSICS (TOP-TO-BOTTOM) ===
     startFloatingAnimation() {
-        const COLLISION_DAMPING = 0.8; // energy loss on collision
-        const BASE_MIN_DIST = 420; // minimum distance between balloon centers (at 1x scale)
-
         const animate = () => {
             const cards = this.wishCards;
 
-            // Ayarlara göre çarpışma mesafesini (MIN_DIST) uyarla
             const currentScale = this.displaySettings.scaleMultiplier || 1.0;
             const currentSpeedMulti = this.displaySettings.speedMultiplier || 1.0;
-            const MIN_DIST = BASE_MIN_DIST * currentScale;
 
-            // Move all cards
             cards.forEach(cardData => {
-                cardData.x += cardData.vx;
-                cardData.y += cardData.vy;
+                // Admin panelinden gelen hızı doğrudan harekete çarparak uygula
+                cardData.x += cardData.vx * currentSpeedMulti;
+                cardData.y += cardData.vy * currentSpeedMulti;
                 cardData.rotation += cardData.rotationSpeed;
 
-                // Wall bounds
                 const cw = this.container.offsetWidth;
                 const ch = this.container.offsetHeight;
+                const paddingSides = -200;
+                const maxX = cw;
 
-                const paddingSides = -100; // Let them float slightly out of bounds before bouncing
-                const paddingTop = -100;
-
-                // Calculate max boundaries (balloon dims: 520x600) + allowing 100px overlap off-camera
-                const maxX = cw - 420;
-                const maxY = ch - 500;
-
-                // Bounce off general walls
+                // Yan duvarlardan hafifçe sekmesi (drift sınırı)
                 if (cardData.x < paddingSides) { cardData.x = paddingSides; cardData.vx *= -1; }
                 if (cardData.x > maxX) { cardData.x = maxX; cardData.vx *= -1; }
-                if (cardData.y < paddingTop) { cardData.y = paddingTop; cardData.vy *= -1; }
-                if (cardData.y > maxY) { cardData.y = maxY; cardData.vy *= -1; }
-
-                // Logo Obstacle Removed - Balloons fly freely everywhere
 
                 if (Math.abs(cardData.rotation) > 15) {
                     cardData.rotationSpeed *= -1;
                 }
-            });
 
-            // Collision detection between all pairs
-            for (let i = 0; i < cards.length; i++) {
-                for (let j = i + 1; j < cards.length; j++) {
-                    const a = cards[i];
-                    const b = cards[j];
-                    const dx = b.x - a.x;
-                    const dy = b.y - a.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-
-                    if (dist < MIN_DIST && dist > 0) {
-                        // Normalize collision vector
-                        const nx = dx / dist;
-                        const ny = dy / dist;
-
-                        // Relative velocity
-                        const dvx = a.vx - b.vx;
-                        const dvy = a.vy - b.vy;
-                        const dvDotN = dvx * nx + dvy * ny;
-
-                        // Only resolve if approaching
-                        if (dvDotN > 0) {
-                            // Elastic bounce
-                            a.vx -= dvDotN * nx * COLLISION_DAMPING;
-                            a.vy -= dvDotN * ny * COLLISION_DAMPING;
-                            b.vx += dvDotN * nx * COLLISION_DAMPING;
-                            b.vy += dvDotN * ny * COLLISION_DAMPING;
-
-                            // Separate overlapping balloons
-                            const overlap = MIN_DIST - dist;
-                            a.x -= nx * overlap * 0.5;
-                            a.y -= ny * overlap * 0.5;
-                            b.x += nx * overlap * 0.5;
-                            b.y += ny * overlap * 0.5;
-
-                            // Visual bump effect
-                            this.triggerBump(a.element, b.element);
-
-                            // Spawn sparkles at collision point
-                            const cx = (a.x + b.x) / 2 + 230;
-                            const cy = (a.y + b.y) / 2 + 270;
-                            this.spawnSparkles(cx, cy);
-                        }
-                    }
-                }
-            }
-
-            // Apply speed limit for relaxed 4k velocities, çarpılarak admin panelinden gelen hız ekleniyor
-            cards.forEach(cardData => {
-                // Base speed limit is 6, multiplied by settings
-                const maxSpeed = 6 * currentSpeedMulti;
-
-                // Anlık hızı mevcut karta ait global çarpan ile güncelle
-                const speed = Math.sqrt(cardData.vx * cardData.vx + cardData.vy * cardData.vy);
-                if (speed > maxSpeed) {
-                    cardData.vx = (cardData.vx / speed) * maxSpeed;
-                    cardData.vy = (cardData.vy / speed) * maxSpeed;
+                // Balon ekranın altından tamamen çıktığında tekrar yukarı fırlat
+                if (cardData.y > ch + 200) {
+                    cardData.y = -600 - Math.random() * 500;
+                    cardData.x = Math.random() * maxX;
                 }
 
-                // Ekranda kartın görünümünü güncelle
+                // DOM elementine pozisyon ve scale uygula
                 cardData.element.style.left = cardData.x + 'px';
                 cardData.element.style.top = cardData.y + 'px';
                 cardData.element.style.transform = `scale(${currentScale}) rotate(${cardData.rotation}deg)`;
@@ -500,48 +426,6 @@ class WishDisplay {
         };
 
         animate();
-    }
-
-    // Trigger bump animation on collision
-    triggerBump(el1, el2) {
-        el1.classList.add('bumped');
-        el2.classList.add('bumped');
-        setTimeout(() => {
-            el1.classList.remove('bumped');
-            el2.classList.remove('bumped');
-        }, 400);
-    }
-
-    // Spawn sparkle particles at collision point
-    spawnSparkles(x, y) {
-        const sparkleColors = ['#FFD700', '#FFA500', '#FF6B6B', '#4ECDC4', '#fff'];
-        for (let i = 0; i < 6; i++) {
-            const spark = document.createElement('div');
-            spark.style.cssText = `
-                position: absolute;
-                left: ${x}px;
-                top: ${y}px;
-                width: 12px;
-                height: 12px;
-                background: ${sparkleColors[Math.floor(Math.random() * sparkleColors.length)]};
-                border-radius: 50%;
-                pointer-events: none;
-                z-index: 100;
-                opacity: 1;
-                transition: all 0.6s ease-out;
-            `;
-            this.container.appendChild(spark);
-            // Fly outward
-            const angle = (Math.PI * 2 / 6) * i;
-            const dist = 40 + Math.random() * 60;
-            requestAnimationFrame(() => {
-                spark.style.left = (x + Math.cos(angle) * dist) + 'px';
-                spark.style.top = (y + Math.sin(angle) * dist) + 'px';
-                spark.style.opacity = '0';
-                spark.style.transform = 'scale(0)';
-            });
-            setTimeout(() => spark.remove(), 600);
-        }
     }
 
     clampPosition(cardData) {

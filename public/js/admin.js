@@ -947,11 +947,17 @@ function showToast(msg) {
         let url = '';
         const currentHost = window.location.hostname;
 
+        // Eğer sunucudan özel bir domain (PUBLIC_DOMAIN) ayarlanmışsa öncelikli olarak onu kullan
+        if (data.isCustomUrl) {
+            // Eğer HTTPS veya HTTP yoksa güvenli varsayılan olarak https ekle
+            url = `https://${data.ip}/upload`;
+        }
         // Eğer uygulama bir domain üzerinden (dilek-kumbarasi.mindops.net vs) açılmışsa o domaini kullan
-        if (currentHost !== 'localhost' && currentHost !== '127.0.0.1') {
+        else if (currentHost !== 'localhost' && currentHost !== '127.0.0.1') {
             url = `${window.location.protocol}//${window.location.host}/upload`;
-        } else {
-            // Localhost'tan girildiyse ağdaki diğer cihazların bağlanabilmesi için sunucu IP'sini kullan
+        }
+        // Localhost'tan girildiyse ağdaki diğer cihazların bağlanabilmesi için sunucu IP'sini kullan
+        else {
             const port = window.location.port ? ':' + window.location.port : '';
             url = `http://${data.ip}${port}/upload`;
         }
