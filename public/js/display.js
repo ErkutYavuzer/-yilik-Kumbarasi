@@ -14,6 +14,7 @@ class WishDisplay {
 
         this.wishes = [];
         this.wishCards = [];
+        this.allServerWishes = []; // Tüm dilek havuzu eklendi
         this.socket = null;
         this.isMuted = false;
         this.audioCtx = null;
@@ -137,18 +138,31 @@ class WishDisplay {
     connectSocket() {
         this.socket = io();
 
-        this.socket.on('all-wishes', (wishes) => {
-            console.log('📥 Mevcut dilekler:', wishes.length);
+        this.socket.on('all-wishes', (serverWishes) => {
+            console.log('📥 Mevcut dilekler:', serverWishes.length);
             // Reconnect'te duplicate olmaması icin once temizle
             this.container.querySelectorAll('.wish-card').forEach(c => c.remove());
             this.wishes = [];
             this.wishCards = [];
-            wishes.forEach(wish => this.addWish(wish, false));
+
+            // Gerçek toplam sayıyı saklayalım ki sayaçta doğrusu yazsın
+            this.totalWishesCount = serverWishes.length;
+            this.allServerWishes = [...serverWishes]; // Tüm veriyi havuza al
+
+            // Görsel kalabalığı (Density) düşürmek için Limit 15'e çekildi
+            const maxVisible = 15;
+            const shuffled = [...serverWishes].sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, maxVisible);
+
+            selected.forEach(wish => this.addWish(wish, false));
             this.updateCounter();
         });
 
         this.socket.on('new-wish', (wish) => {
             console.log('🎈 Yeni dilek:', wish.childName);
+            if (this.totalWishesCount !== undefined) {
+                this.totalWishesCount++;
+            }
             this.addWish(wish, true);
             this.updateCounter();
             this.showNewWishToast(wish.childName);
@@ -168,7 +182,11 @@ class WishDisplay {
 
         this.socket.on('wish-deleted', (data) => {
             console.log('🗑️ Dilek silindi:', data.id);
+            if (this.totalWishesCount !== undefined) {
+                this.totalWishesCount = Math.max(0, this.totalWishesCount - 1);
+            }
             this.removeWish(data.id);
+            this.allServerWishes = this.allServerWishes.filter(w => w.id !== data.id); // Havuzdan da sil
             this.updateCounter();
         });
 
@@ -182,6 +200,12 @@ class WishDisplay {
                     const textHtml = wish.wishText ? '<div class="wish-text">' + wish.wishText.replace(/\\n/g, '<br>') + '</div>' : '';
                     body.innerHTML = textHtml + '<div class="child-name">' + wish.childName + '</div>';
                 }
+            }
+
+            // Havuzdaki veriyi de güncelle
+            const poolIndex = this.allServerWishes.findIndex(w => w.id === wish.id);
+            if (poolIndex > -1) {
+                this.allServerWishes[poolIndex] = wish;
             }
 
             // Dizi içindeki orjinal veriyi de güncelle (spotlight için gerekli)
@@ -200,6 +224,7 @@ class WishDisplay {
 
         this.socket.on('all-cleared', () => {
             console.log('🗑️ Tüm dilekler silindi');
+            this.totalWishesCount = 0;
             this.clearAll();
         });
 
@@ -333,6 +358,18 @@ class WishDisplay {
             <div class="balloon-string"></div>
         `;
 
+        // Görsel kalabalığı azaltmak için ekran maksimum limit koruması (15 Balon)
+        const maxVisible = 15;
+        if (this.wishCards.length >= maxVisible) {
+            // En eski giren balonu ekran dizisinden çıkart ve DOM'dan sil
+            const oldestCard = this.wishCards.shift();
+            if (oldestCard && oldestCard.element) {
+                const wishIdToRemove = oldestCard.element.dataset.wishId;
+                this.wishes = this.wishes.filter(w => w.id !== wishIdToRemove);
+                oldestCard.element.remove();
+            }
+        }
+
         // Remove constraints so they can spawn edge-to-edge
         const cw = this.container.offsetWidth;
         const ch = this.container.offsetHeight;
@@ -413,10 +450,21 @@ class WishDisplay {
                     cardData.rotationSpeed *= -1;
                 }
 
-                // Balon ekranın tavanından tamamen çıktığında tekrar aşağı fırlat
+                // Balon ekranın tavanından tamamen çıktığında tekrar aşağı fırlat ve İÇERİĞİNİ GÜNCELLE
                 if (cardData.y < -600) {
                     cardData.y = ch + 200 + Math.random() * 2000;
                     cardData.x = Math.random() * maxX;
+
+                    // Havuzda birden fazla dilek varsa farklı, rastgele bir dilek seç ve balona uygula
+                    if (this.allServerWishes && this.allServerWishes.length > 0) {
+                        const randomWish = this.allServerWishes[Math.floor(Math.random() * this.allServerWishes.length)];
+                        cardData.element.dataset.wishId = randomWish.id;
+
+                        const textEl = cardData.element.querySelector('.wish-text');
+                        const nameEl = cardData.element.querySelector('.child-name');
+                        if (textEl && randomWish.wishText) textEl.innerHTML = randomWish.wishText.replace(/\n/g, '<br>');
+                        if (nameEl && randomWish.childName) nameEl.textContent = randomWish.childName;
+                    }
                 }
 
                 // SADECE GÖRÜNTÜ MATRİSİNİ VE EKSENİNİ (GPU) GÜNCELLE
@@ -437,7 +485,8 @@ class WishDisplay {
     }
 
     updateCounter() {
-        this.counterNumber.textContent = this.wishes.length;
+        const count = this.totalWishesCount !== undefined ? this.totalWishesCount : this.wishes.length;
+        this.counterNumber.textContent = count;
     }
 
     // === SPOTLIGHT ===
