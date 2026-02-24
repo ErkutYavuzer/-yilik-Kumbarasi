@@ -454,18 +454,30 @@ class WishDisplay {
                     const logoCenterX = cw * 0.50; // Tam orta nokta
 
                     // Sağa mı sola mı itilecek? Balon o an hangi yarıdasa o tarafa kavis çizer.
+                    // YUMUŞATILMIŞ İTME (Soft Repulsion)
+                    const maxSlideSpeed = 2.5; // Maksimum yana kayma hızı limiti
+                    const pushForce = 0.05; // Her karedeki itme gücü (azaltıldı)
+
                     if (cardData.x < logoCenterX) {
-                        // Sol yarıda: Kuvvetle sola fırlat
-                        cardData.vx -= 0.15 * currentSpeedMulti;
+                        // Sol yarıda: Yavaşça sola it
+                        cardData.vx -= pushForce * currentSpeedMulti;
+                        if (cardData.vx < -maxSlideSpeed) cardData.vx = -maxSlideSpeed;
                     } else {
-                        // Sağ yarıda: Kuvvetle sağa fırlat
-                        cardData.vx += 0.15 * currentSpeedMulti;
+                        // Sağ yarıda: Yavaşça sağa it
+                        cardData.vx += pushForce * currentSpeedMulti;
+                        if (cardData.vx > maxSlideSpeed) cardData.vx = maxSlideSpeed;
                     }
                 }
 
                 // Yan duvarlardan hafifçe sekmesi (drift sınırı)
-                if (cardData.x < paddingSides) { cardData.x = paddingSides; cardData.vx *= -1; }
-                if (cardData.x > maxX) { cardData.x = maxX; cardData.vx *= -1; }
+                if (cardData.x < paddingSides) {
+                    cardData.x = paddingSides;
+                    cardData.vx *= -0.3; // Sert sekme yerine hızı büyük oranda sönümle
+                }
+                if (cardData.x > maxX) {
+                    cardData.x = maxX;
+                    cardData.vx *= -0.3; // Sert sekme yerine hızı büyük oranda sönümle 
+                }
 
                 if (Math.abs(cardData.rotation) > 15) {
                     cardData.rotationSpeed *= -1;
