@@ -442,6 +442,27 @@ class WishDisplay {
                 cardData.y += cardData.vy * currentSpeedMulti;
                 cardData.rotation += cardData.rotationSpeed;
 
+                // === LOGO ÇARPIŞMA (REPULSION) ALGORİTMASI ===
+                // Logonun 1920x1080 ekrandaki kapsadığı hayali yeşil kutu (Bounding Box)
+                const logoStartX = cw * 0.25; // %25'ten başlar
+                const logoEndX = cw * 0.75;   // %75'e kadar (toplam genişlik %50)
+                const logoBottomY = ch * 0.45; // Görünmez kutunun alt sınırı (%45)
+
+                // Eğer balonun merkez noktası logonun altından o tehlikeli bölgeye girmek üzereyse
+                if (cardData.y < logoBottomY && cardData.y > 0 && cardData.x > logoStartX && cardData.x < logoEndX) {
+                    // Balon tehlikeli kutuya girdiği an itme kuvveti başlar (Force Field)
+                    const logoCenterX = cw * 0.50; // Tam orta nokta
+
+                    // Sağa mı sola mı itilecek? Balon o an hangi yarıdasa o tarafa kavis çizer.
+                    if (cardData.x < logoCenterX) {
+                        // Sol yarıda: Kuvvetle sola fırlat
+                        cardData.vx -= 0.15 * currentSpeedMulti;
+                    } else {
+                        // Sağ yarıda: Kuvvetle sağa fırlat
+                        cardData.vx += 0.15 * currentSpeedMulti;
+                    }
+                }
+
                 // Yan duvarlardan hafifçe sekmesi (drift sınırı)
                 if (cardData.x < paddingSides) { cardData.x = paddingSides; cardData.vx *= -1; }
                 if (cardData.x > maxX) { cardData.x = maxX; cardData.vx *= -1; }
