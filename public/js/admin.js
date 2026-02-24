@@ -772,46 +772,44 @@ function setDisplaySettingsUI(data) {
 
 // ─── RAFFLE (ÇEKİLİŞ) ───
 async function startRaffle() {
-    const count = document.getElementById('raffle-count').value || 3;
     const btnStart = document.getElementById('btn-raffle-start');
     btnStart.disabled = true;
-    btnStart.textContent = '⏳ Çekiliş Yapılıyor...';
+    btnStart.innerHTML = '⏳ Çekiliyor...';
 
     try {
         const res = await fetch('/api/raffle/start', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ count: parseInt(count) })
+            body: JSON.stringify({ count: 1 })
         });
 
         const data = await res.json();
 
         if (data.success && data.winners) {
-            showToast('🎁 Çekiliş ekranda başladı!');
+            showToast('🎁 Sıradaki talihli ekranda belirdi!');
 
             // Butonları güncelle
             btnStart.style.display = 'none';
             document.getElementById('btn-raffle-close').style.display = 'flex';
 
-            // Admin logunu göster
+            // Admin logunu göster (Yığılmalı)
             const listEl = document.getElementById('raffle-results-list');
-            listEl.innerHTML = data.winners.map((w, i) =>
-                `<li style="background:var(--card-hover); padding:10px 15px; border-radius:8px; border-left:4px solid var(--accent); display:flex; justify-content:space-between;">
-                    <span style="font-weight:bold;">${i + 1}. Talihli</span>
-                    <span>${w.childName}</span>
-                 </li>`
-            ).join('');
+            const newWinner = `<li style="background:var(--card-hover); padding:10px 15px; border-radius:8px; border-left:4px solid var(--accent); display:flex; justify-content:space-between;">
+                    <span style="font-weight:bold;">Sıradaki Talihli</span>
+                    <span>${data.winners[0].childName}</span>
+                 </li>`;
+            listEl.innerHTML += newWinner;
             document.getElementById('raffle-results-container').style.display = 'block';
         } else {
             showToast('❌ Hata: ' + (data.error || 'Çekiliş yapılamadı'));
             btnStart.disabled = false;
-            btnStart.innerHTML = '<i data-lucide="party-popper" style="width:20px;height:20px;"></i> Çekilişi Başlat';
+            btnStart.innerHTML = '<i data-lucide="party-popper" style="width:20px;height:20px;"></i> Sıradaki Talihliyi Çek';
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
     } catch (e) {
         showToast('❌ Bağlantı hatası!');
         btnStart.disabled = false;
-        btnStart.innerHTML = '<i data-lucide="party-popper" style="width:20px;height:20px;"></i> Çekilişi Başlat';
+        btnStart.innerHTML = '<i data-lucide="party-popper" style="width:20px;height:20px;"></i> Sıradaki Talihliyi Çek';
         if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 }
@@ -824,14 +822,31 @@ async function closeRaffleDisplay() {
         // Formu sıfırla
         document.getElementById('btn-raffle-start').style.display = 'flex';
         document.getElementById('btn-raffle-start').disabled = false;
-        document.getElementById('btn-raffle-start').innerHTML = '<i data-lucide="party-popper" style="width:20px;height:20px;"></i> Tekrar Çekiliş Yap';
+        document.getElementById('btn-raffle-start').innerHTML = '<i data-lucide="party-popper" style="width:20px;height:20px;"></i> Sıradaki Talihliyi Çek';
         if (typeof lucide !== 'undefined') lucide.createIcons();
         document.getElementById('btn-raffle-close').style.display = 'none';
 
+        // Seçim varsa kapat
     } catch (e) {
-        showToast('❌ Hata oluştu');
+        showToast('Hata oluştu');
     }
 }
+
+async function resetRaffleMemory() {
+    if (!confirm('Çekiliş hafızasını sıfırlamak (çıkanların tekrar çıkabilmesine izin vermek) istediğinizden emin misiniz?')) return;
+    try {
+        const res = await fetch('/api/raffle/reset', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            showToast('🔄 Çekiliş hafızası sıfırlandı.');
+            document.getElementById('raffle-results-list').innerHTML = '';
+            document.getElementById('raffle-results-container').style.display = 'none';
+        }
+    } catch (e) {
+        showToast('Hata oluştu');
+    }
+}
+
 
 // ─── STATS (İSTATİSTİKLER) ───
 let myChart = null;

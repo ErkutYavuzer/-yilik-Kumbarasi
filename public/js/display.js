@@ -117,26 +117,19 @@ class WishDisplay {
         winners.forEach((w, idx) => {
             const item = document.createElement('div');
             item.className = 'raffle-item';
-            // Renk paletinden sırayla çekelim veya rainbow
-            item.innerHTML = `<div style="font-size:24px; color:rgba(255,255,255,0.7); margin-bottom:10px;">${idx + 1}. Talihli</div>
-                              <div style="color:#FFD700; text-shadow:0 0 20px rgba(255,215,0,0.5);">${w.childName}</div>`;
+            // Tekil gösterim için daha vurgulu metin
+            item.innerHTML = `<div style="font-size:32px; color:rgba(255,255,255,0.9); margin-bottom:15px;">Sıradaki Talihli!</div>
+                              <div style="color:#FFD700; font-size: 80px; text-shadow:0 0 30px rgba(255,215,0,0.8);">${w.childName}</div>`;
             container.appendChild(item);
 
-            // Her ismin gelişi arasında 1.5 saniye bırakarak heyecan yarat
+            // Biraz heyecan yaratıp göster
             setTimeout(() => {
                 this.playSound('newWish'); // Davul/zil sesi efekti
                 item.classList.add('reveal');
 
-                // O ismin kutlaması için mini konfeti
-                this.fireConfetti(30);
-
-                // Son kişi açıklandığında büyük final konfetisi
-                if (idx === winners.length - 1) {
-                    setTimeout(() => {
-                        this.fireConfetti(150);
-                    }, 500);
-                }
-            }, (idx + 1) * 1500); // 1.5s, 3.0s, 4.5s...
+                // Büyük final konfetisi
+                this.fireConfetti(150);
+            }, 1500);
         });
     }
 
@@ -342,15 +335,16 @@ class WishDisplay {
 
         // Remove constraints so they can spawn edge-to-edge
         const cw = this.container.offsetWidth;
+        const ch = this.container.offsetHeight;
         const padding = 0;
         const maxX = cw - 520;
 
         // X ekseninde rastgele bir konum
         let x = padding + Math.random() * Math.max(0, maxX - padding);
-        // Y ekseni: Hem başlangıçta yoğunluğu dağıtmak hem de sonsuz yağmur efekti için 
-        // daha geniş bir aralığa yayıyoruz. İlk yüklenen kartlar daha yukarıdan gelecek.
+        // Y ekseni: Hem başlangıçta yoğunluğu dağıtmak hem de sonsuz uçuş efekti için 
+        // daha geniş bir aralığa yayıyoruz. İlk yüklenen kartlar daha aşağıdan gelecek.
         const spawnOffset = this.wishCards.length * 150;
-        let y = -600 - spawnOffset - Math.random() * 1000;
+        let y = ch + 200 + spawnOffset + Math.random() * 1000;
 
         const rotation = (Math.random() - 0.5) * 8;
 
@@ -371,7 +365,7 @@ class WishDisplay {
             x: x,
             y: y,
             vx: (Math.random() - 0.5) * 1.5,    // Sadece hafif sağ/sol sallanma drifti
-            vy: 1.5 + Math.random() * 2,        // Sabit dikey hız, yukarıdan aşağıya doğru süzülme
+            vy: -(1.5 + Math.random() * 2),     // Aşağıdan yukarıya doğru süzülme (Negatif Y)
             rotation: rotation,
             rotationSpeed: (Math.random() - 0.5) * 0.8, // Reduced rotation for calmer movement
             radius: 260
@@ -419,9 +413,9 @@ class WishDisplay {
                     cardData.rotationSpeed *= -1;
                 }
 
-                // Balon ekranın altından tamamen çıktığında tekrar yukarı fırlat
-                if (cardData.y > ch + 200) {
-                    cardData.y = -600 - Math.random() * 2000;
+                // Balon ekranın tavanından tamamen çıktığında tekrar aşağı fırlat
+                if (cardData.y < -600) {
+                    cardData.y = ch + 200 + Math.random() * 2000;
                     cardData.x = Math.random() * maxX;
                 }
 

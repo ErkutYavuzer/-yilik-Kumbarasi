@@ -497,14 +497,13 @@
                     </p>
 
                     <div style="display: flex; flex-direction: column; gap: 15px; max-width: 400px;">
-                        <div class="field">
-                            <label style="color:var(--text2); font-weight:600;">Seçilecek Şanslı Sayısı</label>
-                            <input type="number" id="raffle-count" value="3" min="1" max="10"
-                                style="padding:12px; border-radius:8px; border:1px solid var(--card-border); background:var(--bg2); color:white;">
-                        </div>
                         <button class="btn btn-primary" id="btn-raffle-start" onclick="startRaffle()"
                             style="padding:14px; font-size:16px; justify-content:center; background: linear-gradient(135deg, #FF6B6B, #FF8E8E);">
-                            <i data-lucide="party-popper" style="width:20px;height:20px;"></i> Çekilişi Başlat
+                            <i data-lucide="party-popper" style="width:20px;height:20px;"></i> Sıradaki Talihliyi Çek
+                        </button>
+                        <button class="btn btn-ghost" id="btn-raffle-reset" onclick="resetRaffleMemory()"
+                            style="padding:14px; font-size:16px; justify-content:center;">
+                            <i data-lucide="rotate-ccw" style="width:20px;height:20px;"></i> Çekiliş Hafızasını Sıfırla
                         </button>
                         <button class="btn btn-ghost" id="btn-raffle-close" onclick="closeRaffleDisplay()"
                             style="padding:14px; font-size:16px; justify-content:center; display:none;">

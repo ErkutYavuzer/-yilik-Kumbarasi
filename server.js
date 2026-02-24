@@ -43,6 +43,12 @@ if (!fs.existsSync(archiveDir)) {
     fs.mkdirSync(archiveDir, { recursive: true });
 }
 
+// Oturum (Session) Arşivleri için klasör oluştur
+const sessionsDir = path.join(dataDir, 'sessions');
+if (!fs.existsSync(sessionsDir)) {
+    fs.mkdirSync(sessionsDir, { recursive: true });
+}
+
 const dataFile = path.join(dataDir, 'wishes.json');
 const archiveFile = path.join(dataDir, 'archive_wishes.json');
 const rejectedFile = path.join(dataDir, 'rejected_wishes.json');
@@ -138,6 +144,9 @@ app.use(express.json());
 // Dilekleri dosyadan yükle
 let wishes = loadWishes();
 console.log(`📂 ${wishes.length} dilek yüklendi.`);
+
+// Çekiliş Hafızası (Bu oturumda çıkan talihlilerin ID'lerini tutar)
+let drawnWishes = [];
 
 // AI Moderasyon ayarlari
 let moderationSettings = {
@@ -454,33 +463,32 @@ app.post('/api/theme', (req, res) => {
 
 // === ÇEKİLİŞ (RAFFLE) SİSTEMİ ===
 app.post('/api/raffle/start', (req, res) => {
-    let { count } = req.body;
-    count = parseInt(count) || 3;
+    // Adet yerine her defasında 1 kişi seçeceğiz
+    const count = 1;
 
     if (!wishes || wishes.length === 0) {
         return res.status(400).json({ error: 'Çekiliş yapılacak dilek yok.' });
     }
 
-    // İsim bazında tekilleştirme (aynı çocuğun 2 kere kazanmasını engellemek için)
+    // İsim bazında tekilleştirme ve DAHA ÖNCE ÇIKMAMIŞ olanları filtreleme
     const uniqueWishes = [];
     const seenNames = new Set();
 
-    // Güvenlik ve mantık: en son atılan dileği baz alarak tekilleştirelim (tercihen)
     // wishes dizisini tersten dolaşarak en güncel olanları alır
     for (let i = wishes.length - 1; i >= 0; i--) {
         const w = wishes[i];
-        if (!seenNames.has(w.childName.toLowerCase())) {
-            seenNames.add(w.childName.toLowerCase());
+        const lowerName = w.childName.toLowerCase();
+
+        // Daha önce çıkanlar listesinde (drawnWishes) varsa veya bu döngüde eklendiyse atla
+        if (!drawnWishes.includes(w.id) && !seenNames.has(lowerName)) {
+            seenNames.add(lowerName);
             uniqueWishes.push(w);
         }
     }
 
     if (uniqueWishes.length === 0) {
-        return res.status(400).json({ error: 'Geçerli eşsiz katılımcı bulunamadı.' });
+        return res.status(400).json({ error: 'Çekilişe katılacak yeni/kalmış kimse bulunamadı! Hafızayı sıfırlayın.' });
     }
-
-    // İstenen sayı katılımcıdan fazlaysa, maksimum katılımcı sayısı kadar seç
-    const actualCount = Math.min(count, uniqueWishes.length);
 
     // Rastgele karıştırma (Fisher-Yates)
     for (let i = uniqueWishes.length - 1; i > 0; i--) {
@@ -488,11 +496,13 @@ app.post('/api/raffle/start', (req, res) => {
         [uniqueWishes[i], uniqueWishes[j]] = [uniqueWishes[j], uniqueWishes[i]];
     }
 
-    // Kazananları seç
-    const winners = uniqueWishes.slice(0, actualCount);
+    // 1 Kazanan seç
+    const winners = uniqueWishes.slice(0, count);
 
-    console.log(`🎁 ÇEKİLİŞ BAŞLADI! Kazanan Sayısı: ${actualCount}`);
-    winners.forEach((w, idx) => console.log(`  🎉 ${idx + 1}. ${w.childName}`));
+    // Çekilen kişiyi (veya kişileri) hafızaya kaydet
+    winners.forEach(w => drawnWishes.push(w.id));
+
+    console.log(`🎁 ÇEKİLİŞ YAPILDI! Sıradaki Kazanan: ${winners[0].childName}`);
 
     // Ekrana duyur
     io.emit('raffle-winners', winners);
@@ -503,6 +513,12 @@ app.post('/api/raffle/start', (req, res) => {
 app.post('/api/raffle/close', (req, res) => {
     io.emit('raffle-close');
     console.log(`🎁 ÇEKİLİŞ EKRANI KAPATILDI.`);
+    res.json({ success: true });
+});
+
+app.post('/api/raffle/reset', (req, res) => {
+    drawnWishes = [];
+    console.log(`🔄 Çekiliş hafızası sıfırlandı.`);
     res.json({ success: true });
 });
 
@@ -648,8 +664,23 @@ app.delete('/api/wishes/:id', (req, res) => {
     res.json({ success: true, archived: true });
 });
 
-// Tüm dilekleri sil (TÜMÜNÜ ARŞİVE TAŞI)
+// Tüm dilekleri sil (TÜMÜNÜ OTURUM OLARAK ARŞİVE TAŞI)
 app.delete('/api/wishes', (req, res) => {
+    if (wishes.length > 0) {
+        // Oturum Dosyası Adı (session_YYYYMMDD_HHMMSS.json)
+        const now = new Date();
+        const timestamp = now.toISOString().replace(/[:.]/g, '-');
+        const sessionFile = path.join(sessionsDir, `session_${timestamp}.json`);
+
+        // Aktif veriyi olduğu gibi session dosyasına yazdır
+        try {
+            fs.writeFileSync(sessionFile, JSON.stringify(wishes, null, 2), 'utf8');
+            console.log(`🗂️ Oturum Arşivlendi: ${sessionFile}`);
+        } catch (err) {
+            console.error('Oturum arşivleme hatası:', err.message);
+        }
+    }
+
     wishes.forEach(wish => {
         // Fotoğrafı Arşive Taşı
         if (wish.photoUrl) {
@@ -662,12 +693,13 @@ app.delete('/api/wishes', (req, res) => {
                 wish.photoUrl = `/uploads/archive/${filename}`;
             }
         }
-        // Arşive yazmak için objeyi güncelle
+        // Mevcut toplu arşiv mantığı (archive_wishes.json) da korunsun
         wish.archivedAt = new Date().toISOString();
-        saveToArchive(wish); // Tek tek arşive bas
+        saveToArchive(wish);
     });
 
     wishes = [];
+    drawnWishes = []; // Silinince hafızası da temizlensin
     saveWishes();
     io.emit('all-cleared');
     console.log('🗄️ Tüm dilekler arşive kaldırıldı');
