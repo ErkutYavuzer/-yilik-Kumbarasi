@@ -17,6 +17,7 @@ class WishDisplay {
         this.socket = null;
         this.isMuted = false;
         this.audioCtx = null;
+        this.displaySettings = { speedMultiplier: 1.0, scaleMultiplier: 1.0 }; // Global ekran ayarları
 
         this.init();
     }
@@ -77,22 +78,66 @@ class WishDisplay {
     }
 
     // === CONFETTI ===
-    fireConfetti() {
-        const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#FF8E8E', '#A8E6CF', '#DDA0DD', '#FFB347', '#88D8F7'];
-        for (let i = 0; i < 50; i++) {
-            const c = document.createElement('div');
-            c.className = 'display-confetti';
-            c.style.left = Math.random() * 100 + '%';
-            c.style.top = '-10px';
-            c.style.background = colors[Math.floor(Math.random() * colors.length)];
-            c.style.animationDelay = (Math.random() * 1) + 's';
-            const w = 6 + Math.random() * 12;
-            c.style.width = w + 'px';
-            c.style.height = w + 'px';
-            if (Math.random() > 0.5) c.style.borderRadius = '50%';
-            document.body.appendChild(c);
-            setTimeout(() => c.remove(), 4000);
+    fireConfetti(amount = 50) {
+        const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#A8E6CF', '#FF8E8E'];
+
+        for (let i = 0; i < amount; i++) {
+            const conf = document.createElement('div');
+            conf.className = 'display-confetti';
+            conf.style.left = Math.random() * 100 + 'vw';
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.animationDelay = Math.random() * 2 + 's';
+            conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
+
+            document.body.appendChild(conf);
+
+            // Temizle
+            setTimeout(() => {
+                if (conf && conf.parentNode) {
+                    conf.remove();
+                }
+            }, 5000);
         }
+    }
+
+    // === RAFFLE ANIMATION ===
+    showRaffleAnimation(winners) {
+        const overlay = document.getElementById('raffle-overlay');
+        const container = document.getElementById('raffle-winners-container');
+
+        if (!overlay || !container || !winners || winners.length === 0) return;
+
+        // Önceki sonuçları temizle
+        container.innerHTML = '';
+
+        // Modal'ı göster
+        overlay.classList.add('show');
+
+        // Şanslı kalpleri "raffle-item" stiliyle hazırla ama gizli tut (opacity 0 - reveal class'ı yok)
+        winners.forEach((w, idx) => {
+            const item = document.createElement('div');
+            item.className = 'raffle-item';
+            // Renk paletinden sırayla çekelim veya rainbow
+            item.innerHTML = `<div style="font-size:24px; color:rgba(255,255,255,0.7); margin-bottom:10px;">${idx + 1}. Talihli</div>
+                              <div style="color:#FFD700; text-shadow:0 0 20px rgba(255,215,0,0.5);">${w.childName}</div>`;
+            container.appendChild(item);
+
+            // Her ismin gelişi arasında 1.5 saniye bırakarak heyecan yarat
+            setTimeout(() => {
+                this.playSound('newWish'); // Davul/zil sesi efekti
+                item.classList.add('reveal');
+
+                // O ismin kutlaması için mini konfeti
+                this.fireConfetti(30);
+
+                // Son kişi açıklandığında büyük final konfetisi
+                if (idx === winners.length - 1) {
+                    setTimeout(() => {
+                        this.fireConfetti(150);
+                    }, 500);
+                }
+            }, (idx + 1) * 1500); // 1.5s, 3.0s, 4.5s...
+        });
     }
 
     // === SOCKET ===
@@ -134,15 +179,66 @@ class WishDisplay {
             this.updateCounter();
         });
 
+        this.socket.on('wish-updated', (wish) => {
+            console.log('✏️ Dilek guncellendi:', wish.childName);
+            const cardData = this.wishCards.find(c => c.element.dataset.wishId === wish.id);
+            if (cardData && cardData.element) {
+                // Balonu yeni verilerle güncelle
+                const body = cardData.element.querySelector('.balloon-body');
+                if (body) {
+                    const textHtml = wish.wishText ? '<div class="wish-text">' + wish.wishText.replace(/\\n/g, '<br>') + '</div>' : '';
+                    body.innerHTML = textHtml + '<div class="child-name">' + wish.childName + '</div>';
+                }
+            }
+
+            // Dizi içindeki orjinal veriyi de güncelle (spotlight için gerekli)
+            const idx = this.wishes.findIndex(w => w.id === wish.id);
+            if (idx !== -1) {
+                this.wishes[idx] = wish;
+            }
+
+            // Eğer o an bu dilek Spotlight modundaysa, spotlight penceresindeki yazıyı da güncelle
+            if (this.spotlightOverlay.classList.contains('show') &&
+                this.spotlightWishText &&
+                this.wishes[idx].isSpotlight) {
+                this.spotlightWishText.textContent = wish.wishText || '';
+            }
+        });
+
         this.socket.on('all-cleared', () => {
             console.log('🗑️ Tüm dilekler silindi');
             this.clearAll();
+        });
+
+        // === RAFFLE (ÇEKİLİŞ) SOCKET OLAYLARI ===
+        this.socket.on('raffle-winners', (winners) => {
+            console.log('🎁 Çekiliş Sonuçları Geldi!', winners);
+            this.showRaffleAnimation(winners);
+        });
+
+        this.socket.on('raffle-close', () => {
+            console.log('🎁 Çekiliş Ekranı Kapatıldı');
+            const overlay = document.getElementById('raffle-overlay');
+            if (overlay) overlay.classList.remove('show');
         });
 
         this.socket.on('theme-change', (theme) => {
             console.log('🎨 Tema değişti:', theme);
             this.applyTheme(theme);
         });
+
+        // EKRAN AYARLARI SOCKET
+        this.socket.on('display-settings', (settings) => {
+            console.log('📺 Ekran Ayarları Geldi:', settings);
+            this.displaySettings = { ...this.displaySettings, ...settings };
+            this.applyDisplaySettings();
+        });
+    }
+
+    // === AYARLARI UYGULA ===
+    applyDisplaySettings() {
+        // Mevcut tüm kartlara büyüklük çarpanını CSS değişkeni olarak uygula
+        document.documentElement.style.setProperty('--card-scale', this.displaySettings.scaleMultiplier);
     }
 
     // === EVENTS ===
@@ -230,7 +326,7 @@ class WishDisplay {
 
         card.innerHTML = `
             <div class="balloon-body">
-                ${wish.wishText ? `<div class="wish-text">${wish.wishText.replace(/\n/g, '<br>')}</div>` : '<div class="wish-text" style="font-size:20px;opacity:0.6;font-weight:600;">(Fotoğraftan yazı okunamadı)</div>'}
+                ${wish.wishText ? `<div class="wish-text">${wish.wishText.replace(/\n/g, '<br>')}</div>` : ''}
                 <div class="child-name">${wish.childName}</div>
             </div>
             <div class="balloon-string"></div>
@@ -287,10 +383,15 @@ class WishDisplay {
     // === ANIMATION WITH COLLISION PHYSICS ===
     startFloatingAnimation() {
         const COLLISION_DAMPING = 0.8; // energy loss on collision
-        const MIN_DIST = 420; // minimum distance between balloon centers
+        const BASE_MIN_DIST = 420; // minimum distance between balloon centers (at 1x scale)
 
         const animate = () => {
             const cards = this.wishCards;
+
+            // Ayarlara göre çarpışma mesafesini (MIN_DIST) uyarla
+            const currentScale = this.displaySettings.scaleMultiplier || 1.0;
+            const currentSpeedMulti = this.displaySettings.speedMultiplier || 1.0;
+            const MIN_DIST = BASE_MIN_DIST * currentScale;
 
             // Move all cards
             cards.forEach(cardData => {
@@ -368,18 +469,23 @@ class WishDisplay {
                 }
             }
 
-            // Apply speed limit for relaxed 4k velocities
+            // Apply speed limit for relaxed 4k velocities, çarpılarak admin panelinden gelen hız ekleniyor
             cards.forEach(cardData => {
-                const maxSpeed = 6; // Slashed from 12 to 6 (50% slower)
+                // Base speed limit is 6, multiplied by settings
+                const maxSpeed = 6 * currentSpeedMulti;
+
+                // Anlık hızı mevcut karta ait global çarpan ile güncelle
                 const speed = Math.sqrt(cardData.vx * cardData.vx + cardData.vy * cardData.vy);
                 if (speed > maxSpeed) {
                     cardData.vx = (cardData.vx / speed) * maxSpeed;
                     cardData.vy = (cardData.vy / speed) * maxSpeed;
                 }
 
+                // Ekranda kartın görünümünü güncelle. Çarpışma ölçeği var(--card-scale) ile de destekleniyor.
                 cardData.element.style.left = cardData.x + 'px';
                 cardData.element.style.top = cardData.y + 'px';
-                cardData.element.style.transform = `rotate(${cardData.rotation}deg)`;
+                // ScaleCSS, CSS variables ile balloonBody'ye uygulanabilir ancak burada root element scaling ile yapıyoruz
+                cardData.element.style.transform = `scale(var(--card-scale, 1)) rotate(${cardData.rotation}deg)`;
             });
 
             requestAnimationFrame(animate);

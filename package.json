@@ -1,12 +1,30 @@
 {
     "name": "iyilik-kumbarasi",
-    "version": "2.0.0",
-    "description": "Sultangazi Belediyesi - İyilik Kumbarası: Çocukların iyilik dileklerini toplayan ve gösteren interaktif sistem",
+    "version": "3.0.0",
+    "description": "Sultangazi Belediyesi - İyilik Kumbarası: Çocukların iyilik dileklerini toplayan ve gösteren interaktif etkinlik sistemi",
     "main": "server.js",
     "scripts": {
         "start": "node server.js",
         "dev": "node server.js"
     },
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ErkutYavuzer/-yilik-Kumbarasi.git"
+    },
+    "author": "Erkut Yavuzer",
+    "license": "MIT",
+    "keywords": [
+        "iyilik-kumbarasi",
+        "sultangazi",
+        "belediye",
+        "etkinlik",
+        "dilek",
+        "socket.io",
+        "real-time"
+    ],
     "dependencies": {
         "dotenv": "^17.3.1",
         "express": "^4.18.2",

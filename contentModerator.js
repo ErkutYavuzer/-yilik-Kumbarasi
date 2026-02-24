@@ -19,7 +19,7 @@ function buildTextPrompt(strictness) {
         ? `REJECT if the text contains ANY of the following:
 - Profanity, swear words, insults (Turkish or English)
 - Sexual content, violence, hate speech
-- Spam or meaningless characters (aaaa, 1234, !!!! etc.)
+- Hard spam or purely random characters (e.g. jfkasdjfks, 12345). NOTE: Words like 'test', 'deneme', 'merhaba' are NOT spam, allow them.
 - Personal info (phone number, address)
 - NEGATIVE WISHES or CURSES: "may X fail/die/suffer/go bankrupt", "I hate X", anything wishing harm or misfortune
 - Complaints, anger, frustration about companies, people, or situations
@@ -31,17 +31,17 @@ ALLOW only if:
 - A simple child name
 - Clearly wholesome content`
         : lenient
-        ? `REJECT ONLY if the text contains EXPLICIT:
+            ? `REJECT ONLY if the text contains EXPLICIT:
 - Obvious profanity or swear words
 - Sexual content
 - Direct violence threats
 - Clear spam (aaaa, 1234...)
 
 ALLOW everything else including mildly negative comments or complaints.`
-        : `REJECT if the text contains ANY of the following:
+            : `REJECT if the text contains ANY of the following:
 - Profanity, swear words, insults (Turkish or English)
 - Sexual content, violence, hate speech
-- Spam or meaningless characters (aaaa, 1234, !!!! etc.)
+- Hard spam or purely random characters (e.g. jfkasdjfks). NOTE: Words like 'test', 'deneme', 'selam' are ALLOWED.
 - Personal info (phone number, address)
 - NEGATIVE WISHES or CURSES: "may X fail/die/suffer/go bankrupt", "I hate X", anything wishing harm or misfortune on anyone/anything (e.g. "Turk Telekom iflas etsin", "ogretmenim berbat")
 - Complaints, anger, or frustration about companies or people
@@ -71,12 +71,12 @@ Analyze the photo by checking BOTH:
 
 ALLOW only if image and any text are genuinely kind and child-appropriate.`
         : lenient
-        ? `REJECT ONLY if:
+            ? `REJECT ONLY if:
 - Visual: explicit nudity or sexual content
 - Text: obvious profanity or direct threats
 
 ALLOW everything else.`
-        : `REJECT if EITHER the visual content OR any written text is inappropriate or negative.
+            : `REJECT if EITHER the visual content OR any written text is inappropriate or negative.
 - Visual: nudity, sexual content, extreme violence, hate symbols, personal documents
 - Text: profanity, sexual language, insults, negative wishes (X iflas etsin, I hate X)
 
@@ -93,9 +93,14 @@ ALLOW if both image and visible text are clean, positive, and child-appropriate.
 async function moderateText(text, settings = {}) {
     const { model, strictness } = { ...DEFAULT_SETTINGS, ...settings };
 
+    if (!process.env.ANTIGRAVITY_API_KEY) {
+        console.warn('⚠️ ANTIGRAVITY_API_KEY tanımlanmamış — moderasyon atlanıyor');
+        return { allowed: true, reason: 'API key eksik — geçiriliyor' };
+    }
+
     const client = new OpenAI({
-        baseURL: process.env.ANTIGRAVITY_BASE_URL || 'https://antigravity.mindops.net/v1',
-        apiKey: process.env.ANTIGRAVITY_API_KEY || 'sk-antigravity-lejyon-2026',
+        baseURL: process.env.ANTIGRAVITY_BASE_URL,
+        apiKey: process.env.ANTIGRAVITY_API_KEY,
         timeout: 60000,
     });
 
@@ -129,9 +134,14 @@ async function moderateText(text, settings = {}) {
 async function moderateImage(filePath, settings = {}) {
     const { model, strictness } = { ...DEFAULT_SETTINGS, ...settings };
 
+    if (!process.env.ANTIGRAVITY_API_KEY) {
+        console.warn('⚠️ ANTIGRAVITY_API_KEY tanımlanmamış — görsel moderasyon atlanıyor');
+        return { allowed: true, reason: 'API key eksik — geçiriliyor' };
+    }
+
     const client = new OpenAI({
-        baseURL: process.env.ANTIGRAVITY_BASE_URL || 'https://antigravity.mindops.net/v1',
-        apiKey: process.env.ANTIGRAVITY_API_KEY || 'sk-antigravity-lejyon-2026',
+        baseURL: process.env.ANTIGRAVITY_BASE_URL,
+        apiKey: process.env.ANTIGRAVITY_API_KEY,
         timeout: 60000,
     });
 

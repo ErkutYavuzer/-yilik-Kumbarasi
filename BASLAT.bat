@@ -3,7 +3,7 @@ title Iyilik Kumbarasi - Baslatiliyor...
 color 0B
 echo.
 echo  ============================================
-echo   IYILIK KUMBARASI v2.0 - Proje Baslatici
+echo   IYILIK KUMBARASI v3.0 - Proje Baslatici
 echo  ============================================
 echo.
 
@@ -29,7 +29,8 @@ echo  Adresler:
 echo    Yukleme Sayfasi : http://localhost:3000/upload
 echo    Ekran Gorunumu  : http://localhost:3000/display
 echo    Admin Paneli    : http://localhost:3000/admin
-echo    Mobil (LAN)     : http://192.168.2.75:3000/upload
+echo.
+echo  NOT: Telefondan erismek icin terminaldeki LAN IP adresini kullanin.
 echo.
 
 timeout /t 1 /nobreak >nul

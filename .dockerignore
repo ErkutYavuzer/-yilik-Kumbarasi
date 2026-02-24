@@ -1,0 +1,14 @@
+node_modules/
+uploads/
+data/
+.git/
+.gitignore
+.env
+.env.example
+*.md
+*.bat
+*.log
+.vscode/
+.idea/
+debug_response.js
+test_mod.js

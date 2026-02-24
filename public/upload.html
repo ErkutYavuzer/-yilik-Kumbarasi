@@ -226,6 +226,74 @@
             font-family: inherit;
         }
 
+        /* ── TABS (YENİ EKLENEN FOTOGRAF/YAZI SEÇİMİ) ── */
+        .type-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 16px;
+            padding: 6px;
+            margin-bottom: 24px;
+            width: 100%;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .type-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px 10px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 800;
+            color: rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .type-tab.active {
+            background: white;
+            color: #FF6B6B;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        /* YAZI MODU İÇİN (YENİ) */
+        .text-area-wrapper {
+            display: none;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .text-area-wrapper.show {
+            display: block;
+        }
+
+        .dilek-textarea {
+            width: 100%;
+            height: 160px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 3px solid rgba(78, 205, 196, 0.3);
+            border-radius: 18px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            resize: none;
+            font-family: inherit;
+            line-height: 1.5;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+
+        .dilek-textarea:focus {
+            outline: none;
+            border-color: #4ECDC4;
+            box-shadow: 0 0 0 6px rgba(78, 205, 196, 0.15);
+        }
+
+        .dilek-textarea::placeholder {
+            color: rgba(0, 0, 0, 0.3);
+            font-style: italic;
+        }
+
         /* Preview */
         .photo-preview {
             display: none;
@@ -294,13 +362,21 @@
             cursor: pointer;
             box-shadow: 0 8px 28px rgba(78, 205, 196, 0.4);
             transition: all 0.2s;
-            display: none;
+            display: block;
+            /* Artik her zaman gorunur */
+            opacity: 0.4;
+            /* Baslangicta soluk */
+            pointer-events: none;
+            /* Baslangicta tiklanamaz */
             letter-spacing: 0.5px;
             font-family: inherit;
         }
 
         .next-btn.show {
-            display: block
+            opacity: 1;
+            /* Kosul saganinca netlesir */
+            pointer-events: auto;
+            /* Kosul saganinca tiklanabilir */
         }
 
         .next-btn:active {
@@ -591,9 +667,16 @@
                 <div class="step-dot"></div>
             </div>
             <div class="page-title">Dilegin Ne? &#x1F4AB;</div>
-            <div class="page-sub">Kagida yaz, fotografini cek!</div>
+            <div class="page-sub">Kagida yaz veya hemen klavyenden gir!</div>
 
-            <div class="camera-area">
+            <!-- FOTOĞRAF / YAZI SEÇİMİ (YENİ) -->
+            <div class="type-tabs">
+                <div class="type-tab active" id="tab-photo" onclick="switchInputMode('photo')">📸 Fotoğraf</div>
+                <div class="type-tab" id="tab-text" onclick="switchInputMode('text')">✍️ Yazı</div>
+            </div>
+
+            <!-- FOTOĞRAF ALANI -->
+            <div class="camera-area" id="camera-area">
                 <button class="camera-btn" id="cameraBtn"
                     onclick="document.getElementById('fileInput').click()">&#x1F4F8;</button>
                 <div class="camera-label">Fotograf Cek / Sec</div>
@@ -602,6 +685,12 @@
 
             <div class="photo-preview" id="photoPreview">
                 <img id="previewImg" src="" alt="Onizleme">
+            </div>
+
+            <!-- YAZI ALANI (YENİ) -->
+            <div class="text-area-wrapper" id="text-area-wrapper">
+                <textarea class="dilek-textarea" id="dilekInput" placeholder="Dileğini klavyeden buraya yazabilirsin..."
+                    maxlength="400"></textarea>
             </div>
 
             <button class="next-btn" id="nextBtn1" onclick="goStep(2)">Devam Et &#x27A1;&#xFE0F;</button>
@@ -679,21 +768,50 @@
 
         var currentStep = 1;
         var selectedFile = null;
+        var currentMode = 'photo'; // 'photo' veya 'text' (YENİ)
         var nameInput = document.getElementById('nameInput');
+        var textInput = document.getElementById('dilekInput'); // (YENİ)
 
+        // ─── MOD SEÇİMİ EKLENDİ (FOTO/YAZI) ───
+        function switchInputMode(mode) {
+            currentMode = mode;
+            // Tab Aktifliği
+            document.getElementById('tab-photo').classList.toggle('active', mode === 'photo');
+            document.getElementById('tab-text').classList.toggle('active', mode === 'text');
 
+            // Panellerin Gizlenip Açılması
+            document.getElementById('camera-area').style.display = (mode === 'photo') ? 'block' : 'none';
+            document.getElementById('photoPreview').style.display = (mode === 'photo' && selectedFile) ? 'block' : 'none';
+            document.getElementById('text-area-wrapper').classList.toggle('show', mode === 'text');
+
+            checkStep1Valid();
+        }
+
+        // 1. Adımda devam et butonunun gösterilip gizlenmesi
+        function checkStep1Valid() {
+            var btn = document.getElementById('nextBtn1');
+            if (currentMode === 'photo') {
+                if (selectedFile) btn.classList.add('show');
+                else btn.classList.remove('show');
+            } else {
+                if (textInput.value.trim().length >= 5) btn.classList.add('show');
+                else btn.classList.remove('show');
+            }
+        }
+
+        // Metin yazarken kontrol
+        textInput.addEventListener('input', checkStep1Valid);
 
         function handlePhoto(input) {
             if (!input.files || !input.files[0]) return;
             selectedFile = input.files[0];
-            // Gercek onizleme goster
             var reader = new FileReader();
             reader.onload = function (e) {
                 document.getElementById('previewImg').src = e.target.result;
-                document.getElementById('photoPreview').classList.add('show');
+                if (currentMode === 'photo') document.getElementById('photoPreview').style.display = 'block';
             };
             reader.readAsDataURL(selectedFile);
-            document.getElementById('nextBtn1').classList.add('show');
+            checkStep1Valid();
             document.getElementById('loadingLabel').style.display = 'none';
         }
 
@@ -709,13 +827,29 @@
         function goStep(n) {
             if (n === 3) {
                 document.getElementById('confirmName').textContent = nameInput.value.trim();
-                // Confirm sayfasinda foto onizleme goster
+
+                // Onay (Confirm) sayfasında fotoğraf yerine metin gösterebiliriz (YENİ)
                 var ci = document.getElementById('confirmImg');
-                if (ci && selectedFile) {
-                    var reader = new FileReader();
-                    reader.onload = function (e) { ci.src = e.target.result; ci.style.display = ''; };
-                    reader.readAsDataURL(selectedFile);
+                var note = document.querySelector('.preview-note') || document.createElement('div');
+                note.className = 'preview-note';
+
+                if (currentMode === 'photo') {
+                    if (ci && selectedFile) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) { ci.src = e.target.result; ci.style.display = ''; };
+                        reader.readAsDataURL(selectedFile);
+                    }
+                    note.textContent = '📸 Fotoğraf ile Gönderiliyor';
+                } else {
+                    // Yazı modu
+                    ci.style.display = 'none';
+                    note.textContent = '✍️ Yazı ile Gönderiliyor: "' + textInput.value.trim().substring(0, 30) + (textInput.value.length > 30 ? '...' : '') + '"';
                 }
+
+                if (!document.querySelector('.preview-note')) {
+                    document.querySelector('.preview-info').appendChild(note);
+                }
+
             }
             document.getElementById('step' + currentStep).classList.remove('active');
             currentStep = n;
@@ -725,15 +859,23 @@
         }
 
         function submitWish() {
-            if (!selectedFile) return alert('Fotograf gerekli!');
+            // (DEĞİŞTİRİLDİ) Ya fotoğraf olacak ya da metin!
+            if (currentMode === 'photo' && !selectedFile) return alert('Fotograf zorunlu!');
+            if (currentMode === 'text' && textInput.value.trim().length < 5) return alert('Dilek metni en az 5 karakter olmalı!');
+
             var btn = document.getElementById('throwBtn');
             btn.disabled = true; btn.textContent = 'Gönderiliyor...';
 
             var formData = new FormData();
-            formData.append('photo', selectedFile);
             formData.append('childName', nameInput.value.trim());
 
-            // Progress goster
+            // Modun bilgisine göre veriyi gönder
+            if (currentMode === 'photo') {
+                formData.append('photo', selectedFile);
+            } else {
+                formData.append('manualText', textInput.value.trim());
+            }
+
             var progressWrapper = document.getElementById('progressWrapper');
             var progressFill = document.getElementById('progressFill');
             var progressText = document.getElementById('progressText');
@@ -772,8 +914,13 @@
         function fullReset() {
             selectedFile = null;
             nameInput.value = '';
-            document.getElementById('photoPreview').classList.remove('show');
+            textInput.value = '';
+
+            // Tab'leri sıfırla
+            switchInputMode('photo');
+            document.getElementById('photoPreview').style.display = 'none';
             document.getElementById('previewImg').src = '';
+
             document.getElementById('nextBtn1').classList.remove('show');
             document.getElementById('nameNextBtn').style.opacity = '0.4';
             document.getElementById('nameNextBtn').style.pointerEvents = 'none';
@@ -783,6 +930,10 @@
             document.getElementById('progressWrapper').classList.remove('show');
             document.getElementById('progressFill').style.width = '0%';
             document.getElementById('confirmImg').src = '';
+
+            var note = document.querySelector('.preview-note');
+            if (note) note.remove();
+
             document.getElementById('step' + currentStep).classList.remove('active');
             currentStep = 1; document.getElementById('step1').classList.add('active');
         }

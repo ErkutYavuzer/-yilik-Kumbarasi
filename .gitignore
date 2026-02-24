@@ -1,5 +1,23 @@
+# Dependencies
 node_modules/
+
+# Runtime data
 uploads/
 data/
 *.log
+
+# Environment
 .env
+
+# IDE & OS
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+Thumbs.db
+.DS_Store
+
+# Debug/Test (safety net)
+debug_response.js
+test_mod.js
