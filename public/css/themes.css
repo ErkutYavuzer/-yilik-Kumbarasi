@@ -543,15 +543,9 @@ html,
 }
 
 
-/* Logo layer mask for TT theme — center-top area for branding */
+/* Logo layer mask for TT theme — devre dışı, display-header z:200 ile zaten üstte */
 [data-theme="turktelekom"] .logo-layer {
-    background:
-        radial-gradient(ellipse 2400px 900px at 50% -5%, rgba(0, 100, 220, 0.6) 0%, transparent 70%),
-        radial-gradient(circle 250px at 8% 25%, rgba(0, 120, 255, 0.15) 0%, transparent 100%),
-        radial-gradient(circle 350px at 88% 15%, rgba(0, 80, 200, 0.12) 0%, transparent 100%),
-        radial-gradient(circle 200px at 15% 70%, rgba(0, 100, 220, 0.1) 0%, transparent 100%),
-        radial-gradient(circle 300px at 75% 65%, rgba(0, 60, 180, 0.1) 0%, transparent 100%),
-        linear-gradient(175deg, #001030 0%, #001a42 15%, #002560 35%, #002d6e 50%, #002560 65%, #001a42 85%, #001030 100%) !important;
+    display: none;
 }
 
 /* TT theme balloon glow */
