@@ -486,12 +486,14 @@ html,
 
 [data-theme="turktelekom"] .title-logo {
     display: block;
-    width: 540px;
-    height: auto;
+    width: 420px;
+    height: 115px;
+    object-fit: cover;
+    object-position: center 55%;
+    border-radius: 8px;
     filter:
         drop-shadow(0 0 30px rgba(0, 120, 255, 0.5))
-        drop-shadow(0 0 60px rgba(0, 80, 200, 0.3))
-        brightness(1.15);
+        drop-shadow(0 0 60px rgba(0, 80, 200, 0.3));
     animation: ttLogoGlow 3s ease-in-out infinite alternate;
 }
 
@@ -499,14 +501,12 @@ html,
     from {
         filter:
             drop-shadow(0 0 20px rgba(0, 120, 255, 0.4))
-            drop-shadow(0 0 40px rgba(0, 80, 200, 0.2))
-            brightness(1.05);
+            drop-shadow(0 0 40px rgba(0, 80, 200, 0.2));
     }
     to {
         filter:
             drop-shadow(0 0 40px rgba(0, 140, 255, 0.7))
-            drop-shadow(0 0 80px rgba(0, 100, 220, 0.4))
-            brightness(1.2);
+            drop-shadow(0 0 80px rgba(0, 100, 220, 0.4));
     }
 }
 
