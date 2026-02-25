@@ -597,6 +597,21 @@ app.post('/api/theme', (req, res) => {
     res.json({ success: true, theme: currentTheme });
 });
 
+// === GÖSTERİM MODU SİSTEMİ ===
+let currentDisplayMode = 'balloon'; // 'balloon' veya 'lantern'
+
+app.get('/api/display-mode', (req, res) => {
+    res.json({ displayMode: currentDisplayMode });
+});
+
+app.post('/api/display-mode', (req, res) => {
+    const { displayMode } = req.body;
+    currentDisplayMode = displayMode || 'balloon';
+    io.emit('display-mode-change', currentDisplayMode);
+    console.log(`🎭 Gösterim modu değiştirildi: ${currentDisplayMode}`);
+    res.json({ success: true, displayMode: currentDisplayMode });
+});
+
 // === ÇEKİLİŞ (RAFFLE) SİSTEMİ ===
 app.post('/api/raffle/start', (req, res) => {
     // Adet yerine her defasında 1 kişi seçeceğiz

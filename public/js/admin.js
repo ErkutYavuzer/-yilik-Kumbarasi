@@ -714,6 +714,22 @@ async function loadCurrentTheme() {
     } catch (e) { }
 }
 
+// ─── DISPLAY MODE ───
+async function setDisplayMode(mode) {
+    await fetch('/api/display-mode', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ displayMode: mode }) });
+    document.querySelectorAll('.display-mode-option').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+    showToast('Gösterim modu değiştirildi!');
+}
+
+async function loadCurrentDisplayMode() {
+    try {
+        const res = await fetch('/api/display-mode');
+        const data = await res.json();
+        document.querySelectorAll('.display-mode-option').forEach(b => b.classList.toggle('active', b.dataset.mode === data.displayMode));
+    } catch (e) { }
+}
+loadCurrentDisplayMode();
+
 // ─── AUTO SPOTLIGHT ───
 async function startAutoSpotlight() {
     if (!wishes.length) { showToast('⚠️ Dilek yok!'); return; }

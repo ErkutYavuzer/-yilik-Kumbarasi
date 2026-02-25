@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dilek-kumbarasi-beta
+  namespace: dilek-kumbarasi-beta
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dilek-kumbarasi-beta
+  template:
+    metadata:
+      labels:
+        app: dilek-kumbarasi-beta
+    spec:
+      containers:
+        - name: dilek-kumbarasi-beta
+          image: ghcr.io/ayavuzer/dilek-kumbarasi:beta
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          env:
+            - name: ANTIGRAVITY_BASE_URL
+              value: https://antigravity2.mindops.net/v1
+            - name: ANTIGRAVITY_API_KEY
+              value: sk-antigravity-lejyon-2026
+            - name: PUBLIC_DOMAIN
+              value: https://dilek-kumbarasi-beta.mindops.net
+          volumeMounts:
+            - mountPath: /app/uploads
+              name: dilek-storage
+              subPath: uploads
+            - mountPath: /app/data
+              name: dilek-storage
+              subPath: data
+      imagePullSecrets:
+        - name: ghcr-secret
+      volumes:
+        - name: dilek-storage
+          persistentVolumeClaim:
+            claimName: dilek-kumbarasi-beta-pvc

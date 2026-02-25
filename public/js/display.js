@@ -19,11 +19,13 @@ class WishDisplay {
         this.isMuted = false;
         this.audioCtx = null;
         this.displaySettings = { speedMultiplier: 1.0, scaleMultiplier: 1.0 }; // Global ekran ayarları
+        this.displayMode = 'balloon'; // 'balloon' veya 'lantern'
 
         this.init();
     }
 
-    init() {
+    async init() {
+        await this.loadDisplayMode();
         this.connectSocket();
         this.bindEvents();
         this.startFloatingAnimation();
@@ -150,7 +152,7 @@ class WishDisplay {
             this.allServerWishes = [...serverWishes]; // Tüm veriyi havuza al
 
             // Görsel kalabalığı (Density) düşürmek için Limit 15'e çekildi
-            const maxVisible = 15;
+            const maxVisible = this.displayMode === 'lantern' ? 8 : 15;
             const shuffled = [...serverWishes].sort(() => 0.5 - Math.random());
             const selected = shuffled.slice(0, maxVisible);
 
@@ -195,7 +197,7 @@ class WishDisplay {
             const cardData = this.wishCards.find(c => c.element.dataset.wishId === wish.id);
             if (cardData && cardData.element) {
                 // Balonu yeni verilerle güncelle
-                const body = cardData.element.querySelector('.balloon-body');
+                const body = cardData.element.querySelector('.balloon-body') || cardData.element.querySelector('.lantern-parchment');
                 if (body) {
                     const textHtml = wish.wishText ? '<div class="wish-text">' + wish.wishText.replace(/\\n/g, '<br>') + '</div>' : '';
                     body.innerHTML = textHtml + '<div class="child-name">' + wish.childName + '</div>';
@@ -250,6 +252,21 @@ class WishDisplay {
             console.log('📺 Ekran Ayarları Geldi:', settings);
             this.displaySettings = { ...this.displaySettings, ...settings };
             this.applyDisplaySettings();
+        });
+
+        this.socket.on('display-mode-change', (mode) => {
+            console.log('🎭 Gösterim modu değişti:', mode);
+            this.displayMode = mode;
+            // Tüm kartları temizle ve yeni modda yeniden oluştur
+            this.container.querySelectorAll('.wish-card').forEach(c => c.remove());
+            this.wishCards = [];
+            this.wishes = [];
+            const maxVisible = this.displayMode === 'lantern' ? 8 : 15;
+            if (this.allServerWishes && this.allServerWishes.length > 0) {
+                const shuffled = [...this.allServerWishes].sort(() => 0.5 - Math.random());
+                const selected = shuffled.slice(0, maxVisible);
+                selected.forEach(wish => this.addWish(wish, false));
+            }
         });
     }
 
@@ -341,25 +358,38 @@ class WishDisplay {
         const palette = balloonPalette[Math.floor(Math.random() * balloonPalette.length)];
 
         const card = document.createElement('div');
-        card.className = 'wish-card' + (animate ? ' entering' : '');
         card.dataset.wishId = wish.id;
-        card.style.setProperty('--balloon-color', palette.color);
-        card.style.setProperty('--balloon-color-dark', palette.dark);
-        card.style.setProperty('--balloon-color-rgb', palette.rgb);
-        // Random bob animation timing for natural feel
-        card.style.setProperty('--bob-duration', (3 + Math.random() * 3) + 's');
-        card.style.setProperty('--bob-delay', (Math.random() * -5) + 's');
 
-        card.innerHTML = `
-            <div class="balloon-body">
-                ${wish.wishText ? `<div class="wish-text">${wish.wishText.replace(/\n/g, '<br>')}</div>` : ''}
-                <div class="child-name">${wish.childName}</div>
-            </div>
-            <div class="balloon-string"></div>
-        `;
+        if (this.displayMode === 'lantern') {
+            card.className = 'wish-card lantern-mode' + (animate ? ' entering' : '');
+            card.innerHTML = `
+                <div class="lantern-body">
+                    <div class="lantern-flame"></div>
+                </div>
+                <div class="lantern-string"></div>
+                <div class="lantern-parchment">
+                    ${wish.wishText ? `<div class="wish-text">${wish.wishText.replace(/\n/g, '<br>')}</div>` : ''}
+                    <div class="child-name">${wish.childName}</div>
+                </div>
+            `;
+        } else {
+            card.className = 'wish-card' + (animate ? ' entering' : '');
+            card.style.setProperty('--balloon-color', palette.color);
+            card.style.setProperty('--balloon-color-dark', palette.dark);
+            card.style.setProperty('--balloon-color-rgb', palette.rgb);
+            card.style.setProperty('--bob-duration', (3 + Math.random() * 3) + 's');
+            card.style.setProperty('--bob-delay', (Math.random() * -5) + 's');
+            card.innerHTML = `
+                <div class="balloon-body">
+                    ${wish.wishText ? `<div class="wish-text">${wish.wishText.replace(/\n/g, '<br>')}</div>` : ''}
+                    <div class="child-name">${wish.childName}</div>
+                </div>
+                <div class="balloon-string"></div>
+            `;
+        }
 
         // Görsel kalabalığı azaltmak için ekran maksimum limit koruması (15 Balon)
-        const maxVisible = 15;
+        const maxVisible = this.displayMode === 'lantern' ? 8 : 15;
         if (this.wishCards.length >= maxVisible) {
             // En eski giren balonu ekran dizisinden çıkart ve DOM'dan sil
             const oldestCard = this.wishCards.shift();
@@ -374,16 +404,25 @@ class WishDisplay {
         const cw = this.container.offsetWidth;
         const ch = this.container.offsetHeight;
         const padding = 0;
-        const maxX = cw - 520;
+        const cardWidth = this.displayMode === 'lantern' ? 400 : 520;
+        const maxX = cw - cardWidth;
 
-        // X ekseninde rastgele bir konum
-        let x = padding + Math.random() * Math.max(0, maxX - padding);
+        // X ekseninde konum — fener modunda sütun bazlı dağılım
+        let x;
+        if (this.displayMode === 'lantern') {
+            const columns = 8;
+            const colWidth = Math.max(0, maxX) / columns;
+            const colIndex = this.wishCards.length % columns;
+            x = colIndex * colWidth + Math.random() * colWidth * 0.6 + colWidth * 0.2;
+        } else {
+            x = padding + Math.random() * Math.max(0, maxX - padding);
+        }
         // Y ekseni: Hem başlangıçta yoğunluğu dağıtmak hem de sonsuz uçuş efekti için 
         // daha geniş bir aralığa yayıyoruz. İlk yüklenen kartlar daha aşağıdan gelecek.
-        const spawnOffset = this.wishCards.length * 150;
+        const spawnOffset = this.wishCards.length * (this.displayMode === 'lantern' ? 250 : 150);
         let y = ch + 200 + spawnOffset + Math.random() * 1000;
 
-        const rotation = (Math.random() - 0.5) * 8;
+        const rotation = (Math.random() - 0.5) * (this.displayMode === 'lantern' ? 3 : 8);
 
         // CSS left/top yerine performansı artırmak için GPU hızlandırmalı transform3d kullanıyoruz.
         card.style.left = '0px';
@@ -401,11 +440,11 @@ class WishDisplay {
             element: card,
             x: x,
             y: y,
-            vx: (Math.random() - 0.5) * 1.5,    // Sadece hafif sağ/sol sallanma drifti
-            vy: -(1.5 + Math.random() * 2),     // Aşağıdan yukarıya doğru süzülme (Negatif Y)
+            vx: (Math.random() - 0.5) * (this.displayMode === 'lantern' ? 0.5 : 1.5),
+            vy: -(this.displayMode === 'lantern' ? (1.0 + Math.random() * 1.2) : (1.5 + Math.random() * 2)),
             rotation: rotation,
-            rotationSpeed: (Math.random() - 0.5) * 0.8, // Reduced rotation for calmer movement
-            radius: 260
+            rotationSpeed: (Math.random() - 0.5) * (this.displayMode === 'lantern' ? 0.15 : 0.8),
+            radius: this.displayMode === 'lantern' ? 300 : 260
         };
         this.wishCards.push(cardData);
 
@@ -466,6 +505,25 @@ class WishDisplay {
                         // Sağ yarıda: Yavaşça sağa it
                         cardData.vx += pushForce * currentSpeedMulti;
                         if (cardData.vx > maxSlideSpeed) cardData.vx = maxSlideSpeed;
+                    }
+                }
+
+                // === FENER ARASI İTME (LANTERN REPULSION) ===
+                if (this.displayMode === 'lantern') {
+                    const repulseRadius = 450; // Piksel mesafe eşiği
+                    const repulseForce = 0.08;
+                    for (let j = 0; j < cards.length; j++) {
+                        const other = cards[j];
+                        if (other === cardData) continue;
+                        const dx = cardData.x - other.x;
+                        const dy = cardData.y - other.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < repulseRadius && dist > 1) {
+                            const force = repulseForce * (1 - dist / repulseRadius);
+                            cardData.vx += (dx / dist) * force;
+                            // Y ekseninde çok az itme — dikey akışı bozmamak için
+                            cardData.vy += (dy / dist) * force * 0.15;
+                        }
                     }
                 }
 
@@ -606,6 +664,14 @@ class WishDisplay {
         } else {
             document.documentElement.setAttribute('data-theme', theme);
         }
+    }
+
+    async loadDisplayMode() {
+        try {
+            const res = await fetch('/api/display-mode');
+            const data = await res.json();
+            this.displayMode = data.displayMode || 'balloon';
+        } catch (e) { }
     }
 }
 

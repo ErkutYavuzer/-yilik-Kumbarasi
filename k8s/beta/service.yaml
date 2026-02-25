@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dilek-kumbarasi-beta
+  namespace: dilek-kumbarasi-beta
+spec:
+  type: ClusterIP
+  selector:
+    app: dilek-kumbarasi-beta
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 3000

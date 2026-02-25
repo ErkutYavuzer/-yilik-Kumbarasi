@@ -403,8 +403,8 @@
             <!-- ── TEMA ── -->
             <div class="tab-panel" id="tab-theme">
                 <div class="card">
-                    <div class="card-title"><i data-lucide="palette"
-                            style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Gösterim Teması
+                    <div class="card-title"><i data-lucide="image"
+                            style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Arkaplan Teması
                     </div>
                     <div class="theme-grid" id="theme-grid">
                         <button class="theme-option active" data-theme="iyilik" onclick="setTheme('iyilik')"><i
@@ -439,6 +439,21 @@
                                 data-lucide="flower-2"
                                 style="width:16px;height:16px;margin:auto;display:block;margin-bottom:6px;"></i>
                             Bahar</button>
+                    </div>
+                </div>
+                <div class="card" style="margin-top:20px;">
+                    <div class="card-title"><i data-lucide="eye"
+                            style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Gösterim Teması
+                    </div>
+                    <div class="theme-grid" id="display-mode-grid">
+                        <button class="display-mode-option theme-option active" data-mode="balloon" onclick="setDisplayMode('balloon')"><i
+                                data-lucide="circle"
+                                style="width:16px;height:16px;margin:auto;display:block;margin-bottom:6px;"></i>
+                            Balon</button>
+                        <button class="display-mode-option theme-option" data-mode="lantern" onclick="setDisplayMode('lantern')"><i
+                                data-lucide="flame"
+                                style="width:16px;height:16px;margin:auto;display:block;margin-bottom:6px;"></i>
+                            Dilek Feneri</button>
                     </div>
                 </div>
             </div>
@@ -753,7 +768,7 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/admin.js"></script>
+    <script src="/js/admin.js?v=2.0.0"></script>
     <script>
         // Init Lucide Icons
         document.addEventListener('DOMContentLoaded', () => {
