@@ -118,9 +118,23 @@ class WishDisplay {
         winners.forEach((w, idx) => {
             const item = document.createElement('div');
             item.className = 'raffle-item';
+
+            let extraContent = '';
+            if (w.photoUrl || w.wishText) {
+                extraContent += `<div class="raffle-content-container">`;
+                if (w.photoUrl) {
+                    extraContent += `<img src="${w.photoUrl}" class="raffle-wish-photo" alt="Dilek Fotoğrafı">`;
+                }
+                if (w.wishText) {
+                    extraContent += `<div class="raffle-wish-text">"${w.wishText.replace(/\\n/g, '<br>')}"</div>`;
+                }
+                extraContent += `</div>`;
+            }
+
             // Tekil gösterim için daha vurgulu metin
             item.innerHTML = `<div style="font-size:32px; color:rgba(255,255,255,0.9); margin-bottom:15px;">Sıradaki Talihli!</div>
-                              <div style="color:#FFD700; font-size: 80px; text-shadow:0 0 30px rgba(255,215,0,0.8);">${w.childName}</div>`;
+                              <div style="color:#FFD700; font-size: 80px; text-shadow:0 0 30px rgba(255,215,0,0.8);">${w.childName}</div>
+                              ${extraContent}`;
             container.appendChild(item);
 
             // Biraz heyecan yaratıp göster
