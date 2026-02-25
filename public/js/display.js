@@ -605,7 +605,6 @@ class WishDisplay {
             cards.forEach(cardData => {
                 // Admin panelinden gelen hızı doğrudan harekete çarparak uygula
                 cardData.y += cardData.vy * currentSpeedMulti;
-                cardData.rotation += cardData.rotationSpeed;
 
                 // === FENER SALINIMU (SINÜS) — sadece lantern modunda ===
                 if (this.displayMode === 'lantern') {
@@ -661,6 +660,12 @@ class WishDisplay {
                     // Balon modu — eski davranış
                     cardData.x += cardData.vx * currentSpeedMulti;
 
+                    // Rotasyon güncelle + sınır kontrolü
+                    cardData.rotation += cardData.rotationSpeed;
+                    if (Math.abs(cardData.rotation) > 15) {
+                        cardData.rotationSpeed *= -1;
+                    }
+
                     // Yan duvarlardan hafifçe sekmesi
                     if (cardData.x < paddingSides) {
                         cardData.x = paddingSides;
@@ -669,11 +674,6 @@ class WishDisplay {
                     if (cardData.x > maxX) {
                         cardData.x = maxX;
                         cardData.vx *= -0.3;
-                    }
-
-                    // Rotasyon sınırı — ±15 derecede geri döner
-                    if (Math.abs(cardData.rotation) > 15) {
-                        cardData.rotationSpeed *= -1;
                     }
 
                     // Balon ekranın tavanından tamamen çıktığında tekrar aşağı fırlat
