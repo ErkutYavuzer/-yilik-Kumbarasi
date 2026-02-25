@@ -16,7 +16,7 @@ class WishDisplay {
         this.wishCards = [];
         this.allServerWishes = []; // Tüm dilek havuzu eklendi
         this.socket = null;
-        this.isMuted = false;
+        this.isMuted = true; // Ses kalıcı olarak devre dışı
         this.audioCtx = null;
         this.displaySettings = { speedMultiplier: 1.0, scaleMultiplier: 1.0 }; // Global ekran ayarları
 
@@ -27,56 +27,13 @@ class WishDisplay {
         this.connectSocket();
         this.bindEvents();
         this.startFloatingAnimation();
-        this.setupAudio();
+        // this.setupAudio(); // Ses sistemi devre dışı
         this.loadTheme();
     }
 
-    // === AUDIO ===
-    setupAudio() {
-        // AudioContext'i kullanici etkilesiminde olustur (autoplay policy)
-        const createCtx = () => {
-            if (!this.audioCtx) {
-                this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            document.removeEventListener('click', createCtx);
-        };
-        document.addEventListener('click', createCtx);
-    }
-
-    playSound(type) {
-        if (this.isMuted || !this.audioCtx) return;
-        try {
-            const ctx = this.audioCtx;
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-
-            if (type === 'newWish') {
-                // Mutlu "ding" sesi
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(880, ctx.currentTime);
-                osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.1);
-                osc.frequency.setValueAtTime(1320, ctx.currentTime + 0.2);
-                gain.gain.setValueAtTime(0.3, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-                osc.start(ctx.currentTime);
-                osc.stop(ctx.currentTime + 0.5);
-            } else if (type === 'spotlight') {
-                // Buyulu spotlight sesi
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(440, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3);
-                osc.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.6);
-                gain.gain.setValueAtTime(0.2, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
-                osc.start(ctx.currentTime);
-                osc.stop(ctx.currentTime + 0.8);
-            }
-        } catch (e) {
-            // Ses calmazsa sessizce devam et
-        }
-    }
+    // === AUDIO (DEVRE DIŞI) ===
+    setupAudio() { /* Ses sistemi kalıcı olarak kapatıldı */ }
+    playSound(type) { /* Tüm sesler devre dışı */ }
 
     // === CONFETTI ===
     fireConfetti(amount = 500) {
