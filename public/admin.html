@@ -9,7 +9,7 @@
         rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js removed - causing infinite growth bug -->
     <link rel="stylesheet" href="/css/admin.css">
 </head>
 
@@ -476,13 +476,7 @@
                     </div>
                 </div>
 
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-                    <div class="card" style="min-height:300px;">
-                        <div class="card-title"><i data-lucide="line-chart"
-                                style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Günlük
-                            Dağılım Grafiği</div>
-                        <canvas id="statsChart" style="width:100%; height:250px;"></canvas>
-                    </div>
+                <div style="display:grid; grid-template-columns:1fr; gap:20px;">
                     <div class="card">
                         <div class="card-title">📅 Geçmiş Günlerin Dökümü</div>
                         <div class="table-responsive">

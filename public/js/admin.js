@@ -999,7 +999,7 @@ async function resetRaffleMemory() {
 
 
 // ─── STATS (İSTATİSTİKLER) ───
-let myChart = null;
+
 
 async function loadStats() {
     try {
@@ -1032,60 +1032,6 @@ async function loadStats() {
                 }
             }
 
-            // Grafiği Çiz
-            if (myChart) {
-                myChart.destroy();
-            }
-
-            const chartData = [...stats.wishesByDate].reverse();
-            const ctxEl = document.getElementById('statsChart');
-            if (ctxEl) {
-                const ctx = ctxEl.getContext('2d');
-                Chart.defaults.color = "rgba(255,255,255,0.7)";
-                Chart.defaults.font.family = "'Inter', sans-serif";
-
-                myChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: chartData.map(r => r.date),
-                        datasets: [{
-                            label: 'Gönderilen Dilek Sayısı',
-                            data: chartData.map(r => r.count),
-                            borderColor: '#FF6B6B',
-                            backgroundColor: 'rgba(255, 107, 107, 0.2)',
-                            borderWidth: 3,
-                            pointBackgroundColor: '#4ECDC4',
-                            pointBorderColor: '#fff',
-                            pointRadius: 5,
-                            pointHoverRadius: 7,
-                            fill: true,
-                            tension: 0.3
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                backgroundColor: 'rgba(15,17,23,0.9)',
-                                titleColor: '#fff',
-                                bodyColor: '#FF6B6B',
-                                padding: 10,
-                                cornerRadius: 8
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: { color: 'rgba(255,255,255,0.05)' },
-                                ticks: { stepSize: 1 }
-                            },
-                            x: { grid: { display: false } }
-                        }
-                    }
-                });
-            }
         }
     } catch (e) {
         console.error("Stats Error:", e);

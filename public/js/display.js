@@ -116,24 +116,54 @@ class WishDisplay {
         // Modal'ı göster
         overlay.classList.add('show');
 
-        // Şanslı kalpleri "raffle-item" stiliyle hazırla ama gizli tut (opacity 0 - reveal class'ı yok)
         winners.forEach((w, idx) => {
             const item = document.createElement('div');
             item.className = 'raffle-item';
-            // Tekil gösterim için daha vurgulu metin
+            // Kazananın adı + dileği gösterilecek
+            const wishHtml = w.wishText ? `<div style="font-size:36px; color:rgba(255,255,255,0.85); margin-top:20px; font-style:italic; line-height:1.4; max-width:1200px;">"${w.wishText}"</div>` : '';
             item.innerHTML = `<div style="font-size:32px; color:rgba(255,255,255,0.9); margin-bottom:15px;">Sıradaki Talihli!</div>
-                              <div style="color:#FFD700; font-size: 80px; text-shadow:0 0 30px rgba(255,215,0,0.8);">${w.childName}</div>`;
+                              <div style="color:#FFD700; font-size: 80px; text-shadow:0 0 30px rgba(255,215,0,0.8);">${w.childName}</div>${wishHtml}`;
             container.appendChild(item);
 
-            // Biraz heyecan yaratıp göster
+            // 3 saniyelik görsel şölen
             setTimeout(() => {
-                this.playSound('newWish'); // Davul/zil sesi efekti
+                this.playSound('spotlight');
                 item.classList.add('reveal');
 
-                // Büyük final konfetisi
-                this.fireConfetti(150);
+                // Yoğun konfeti patlaması — 3 saniye boyunca 3 dalga
+                this.fireConfetti(200);
+                setTimeout(() => this.fireConfetti(150), 1000);
+                setTimeout(() => this.fireConfetti(100), 2000);
+
+                // Altın parıltı efekti
+                this.fireGoldenSparkles();
             }, 1500);
         });
+    }
+
+    // === GOLDEN SPARKLES (Çekiliş kutlama efekti) ===
+    fireGoldenSparkles() {
+        const colors = ['#FFD700', '#FFA500', '#FFEC8B', '#FFE4B5', '#FFFFFF'];
+        for (let i = 0; i < 80; i++) {
+            const spark = document.createElement('div');
+            spark.style.cssText = `
+                position: absolute;
+                width: ${4 + Math.random() * 8}px;
+                height: ${4 + Math.random() * 8}px;
+                background: ${colors[Math.floor(Math.random() * colors.length)]};
+                border-radius: 50%;
+                z-index: 10001;
+                pointer-events: none;
+                left: ${30 + Math.random() * 40}%;
+                top: ${20 + Math.random() * 40}%;
+                animation: sparkleExplode ${1.5 + Math.random() * 2}s ease-out forwards;
+                animation-delay: ${Math.random() * 2}s;
+                opacity: 0;
+                box-shadow: 0 0 ${6 + Math.random() * 10}px ${colors[Math.floor(Math.random() * colors.length)]};
+            `;
+            document.body.appendChild(spark);
+            setTimeout(() => { if (spark.parentNode) spark.remove(); }, 5000);
+        }
     }
 
     // === SOCKET ===
@@ -481,32 +511,8 @@ class WishDisplay {
                 cardData.y += cardData.vy * currentSpeedMulti;
                 cardData.rotation += cardData.rotationSpeed;
 
-                // === LOGO ÇARPIŞMA (REPULSION) ALGORİTMASI ===
-                // Logonun 1920x1080 ekrandaki kapsadığı hayali yeşil kutu (Bounding Box)
-                const logoStartX = cw * 0.25; // %25'ten başlar
-                const logoEndX = cw * 0.75;   // %75'e kadar (toplam genişlik %50)
-                const logoBottomY = ch * 0.45; // Görünmez kutunun alt sınırı (%45)
-
-                // Eğer balonun merkez noktası logonun altından o tehlikeli bölgeye girmek üzereyse
-                if (cardData.y < logoBottomY && cardData.y > 0 && cardData.x > logoStartX && cardData.x < logoEndX) {
-                    // Balon tehlikeli kutuya girdiği an itme kuvveti başlar (Force Field)
-                    const logoCenterX = cw * 0.50; // Tam orta nokta
-
-                    // Sağa mı sola mı itilecek? Balon o an hangi yarıdasa o tarafa kavis çizer.
-                    // YUMUŞATILMIŞ İTME (Soft Repulsion)
-                    const maxSlideSpeed = 2.5; // Maksimum yana kayma hızı limiti
-                    const pushForce = 0.05; // Her karedeki itme gücü (azaltıldı)
-
-                    if (cardData.x < logoCenterX) {
-                        // Sol yarıda: Yavaşça sola it
-                        cardData.vx -= pushForce * currentSpeedMulti;
-                        if (cardData.vx < -maxSlideSpeed) cardData.vx = -maxSlideSpeed;
-                    } else {
-                        // Sağ yarıda: Yavaşça sağa it
-                        cardData.vx += pushForce * currentSpeedMulti;
-                        if (cardData.vx > maxSlideSpeed) cardData.vx = maxSlideSpeed;
-                    }
-                }
+                // Logo repulsion removed — balloons now pass freely under header banner
+                // The .logo-layer CSS clip-path handles visual layering
 
                 // === FENER ARASI İTME (LANTERN REPULSION) ===
                 if (this.displayMode === 'lantern') {
