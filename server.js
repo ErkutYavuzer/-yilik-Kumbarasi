@@ -236,6 +236,91 @@ app.get('/api/archive', (req, res) => {
     res.json(archived);
 });
 
+// Oturumları (Sessions) Listele
+app.get('/api/sessions', (req, res) => {
+    try {
+        if (!fs.existsSync(sessionsDir)) {
+            return res.json([]);
+        }
+
+        const files = fs.readdirSync(sessionsDir).filter(f => f.endsWith('.json') && !f.endsWith('.restored.json'));
+        const sessions = files.map(file => {
+            const filePath = path.join(sessionsDir, file);
+            const stats = fs.statSync(filePath);
+            const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+
+            return {
+                filename: file,
+                createdAt: stats.birthtime,
+                count: data.length
+            };
+        });
+
+        // En yeniler üstte
+        res.json(sessions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+    } catch (e) {
+        console.error('Oturum okuma hatası:', e);
+        res.status(500).json({ error: 'Oturumlar okunamadı' });
+    }
+});
+
+// Oturumu topluca geri yükle
+app.post('/api/sessions/:filename/restore', (req, res) => {
+    const { filename } = req.params;
+    const sessionFile = path.join(sessionsDir, filename);
+
+    if (!fs.existsSync(sessionFile)) {
+        return res.status(404).json({ error: 'Oturum dosyası bulunamadı' });
+    }
+
+    try {
+        const sessionWishes = JSON.parse(fs.readFileSync(sessionFile, 'utf8'));
+        let archive = loadArchiveWishes();
+        let restoredCount = 0;
+
+        sessionWishes.forEach(sw => {
+            const wishIndex = archive.findIndex(aw => aw.id === sw.id);
+            if (wishIndex !== -1) {
+                const wishToRestore = archive[wishIndex];
+
+                // Fotoğrafı Geri Al
+                if (wishToRestore.photoUrl && wishToRestore.photoUrl.includes('/uploads/archive/')) {
+                    const fname = path.basename(wishToRestore.photoUrl);
+                    const oldPath = path.join(archiveDir, fname);
+                    const newPath = path.join(uploadsDir, fname);
+
+                    if (fs.existsSync(oldPath)) {
+                        fs.renameSync(oldPath, newPath);
+                        wishToRestore.photoUrl = `/uploads/${fname}`;
+                    }
+                }
+
+                delete wishToRestore.archivedAt;
+
+                // Aktif listeye ekle, arşivden sil
+                wishes.push(wishToRestore);
+                archive.splice(wishIndex, 1);
+                restoredCount++;
+                io.emit('new-wish', wishToRestore); // Canlı ekrana yansıt
+            }
+        });
+
+        // Veritabanını güncelle
+        saveWishes();
+        fs.writeFileSync(archiveFile, JSON.stringify(archive, null, 2), 'utf8');
+
+        // Oturum dosyasının adını değiştirerek geri yüklendiğini işaretle
+        fs.renameSync(sessionFile, sessionFile.replace('.json', '.restored.json'));
+
+        console.log(`♻️ ${restoredCount} dilek '${filename}' oturumundan geri yüklendi.`);
+        res.json({ success: true, count: restoredCount });
+
+    } catch (e) {
+        console.error('Oturum kurtarma hatası:', e);
+        res.status(500).json({ error: 'Oturum kurtarılamadı' });
+    }
+});
+
 // Arşivden dileği geri yükle
 app.post('/api/restore/:id', (req, res) => {
     const { id } = req.params;
@@ -576,7 +661,10 @@ app.post('/api/raffle/reset', (req, res) => {
 // === İSTATİSTİKLER (STATS) ===
 app.get('/api/stats', (req, res) => {
     try {
-        const totalWishes = wishes.length;
+        const archivedWishes = loadArchiveWishes();
+        const allWishes = [...wishes, ...archivedWishes]; // Toplam İstatistik Havuzu
+
+        const totalWishes = allWishes.length;
 
         // Zaman hesaplamaları için
         const today = new Date();
@@ -590,7 +678,7 @@ app.get('/api/stats', (req, res) => {
         // Tarihe göre gruplanmış veriler { "GG/AA/YYYY": adet }
         const dateGroups = {};
 
-        wishes.forEach(w => {
+        allWishes.forEach(w => {
             const wishDate = new Date(w.timestamp);
 
             // Bugün kontrolü

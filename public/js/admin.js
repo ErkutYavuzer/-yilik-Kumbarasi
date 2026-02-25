@@ -470,6 +470,8 @@ async function loadArchivedWishes() {
         const res = await fetch('/api/archive');
         const archiveWishes = await res.json();
         renderArchivedWishes(archiveWishes);
+        // Oturumları (Sessions) da yükle
+        loadSessions();
     } catch (e) {
         console.error('Arşiv yüklenirken hata:', e);
     }
@@ -511,6 +513,7 @@ function renderArchivedWishes(archiveWishes = []) {
         </tr>
         `).join('');
         if (typeof lucide !== 'undefined') lucide.createIcons();
+        if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 }
 
@@ -521,11 +524,71 @@ async function restoreWish(id) {
         if (data.success) {
             showToast('♻️ Dilek başarıyla geri yüklendi!');
             loadArchivedWishes(); // Arşiv listesini güncelle
-            loadWishes();         // Aktif listeyi arkaplanda güncelle
+            if (typeof loadStats === 'function') loadStats();
         } else {
             showToast('Hata: ' + (data.error || 'Geri yükleme başarısız'));
         }
     } catch (e) {
+        showToast('Bağlantı hatası!');
+    }
+}
+
+async function loadSessions() {
+    try {
+        const res = await fetch('/api/sessions');
+        const sessions = await res.json();
+        renderSessions(sessions);
+    } catch (e) {
+        console.error('Oturumlar yüklenirken hata:', e);
+    }
+}
+
+function renderSessions(sessions = []) {
+    const tbody = document.getElementById('sessions-tbody');
+    const emptyState = document.getElementById('sessions-empty-state');
+    const tableContainer = document.getElementById('sessions-table-container');
+
+    if (sessions.length === 0) {
+        if (tableContainer) tableContainer.style.display = 'none';
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+    }
+
+    if (tableContainer) tableContainer.style.display = 'block';
+    if (emptyState) emptyState.style.display = 'none';
+
+    if (tbody) {
+        tbody.innerHTML = sessions.map(s => `
+        <tr class="wish-row">
+            <td style="font-weight:600;"><i data-lucide="folder-archive" style="width:16px;height:16px;vertical-align:text-bottom;margin-right:4px;"></i>${s.filename}</td>
+            <td style="color:var(--text2);font-size:13px">${new Date(s.createdAt).toLocaleString('tr-TR')}</td>
+            <td style="color:var(--accent);font-weight:600;">${s.count} Dilek</td>
+            <td>
+                <div class="wish-actions">
+                    <button class="btn btn-primary" onclick="restoreSession('${s.filename}')" style="padding:6px 12px; font-size:13px; font-weight:600;" title="Tümünü Geri Yükle"><i data-lucide="package-plus" style="width:16px;height:16px;"></i> Oturumu Geri Yükle</button>
+                </div>
+            </td>
+        </tr>
+        `).join('');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+}
+
+async function restoreSession(filename) {
+    if (!confirm('DİKKAT: Bu oturumdaki TÜM dilekler geri yüklenecektir. Onaylıyor musunuz?')) return;
+
+    try {
+        const res = await fetch(`/api/sessions/${filename}/restore`, { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            showToast(`♻️ ${data.count} dilek başarıyla geri yüklendi!`);
+            loadArchivedWishes();
+            if (typeof loadStats === 'function') loadStats();
+        } else {
+            showToast('Hata: ' + (data.error || 'Oturum geri yüklenemedi.'));
+        }
+    } catch (e) {
+        console.error('Oturum kurtarma hatası:', e);
         showToast('Bağlantı hatası!');
     }
 }

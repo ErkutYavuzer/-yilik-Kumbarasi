@@ -653,6 +653,42 @@
                                 style="width:48px;height:48px;color:inherit;opacity:0.5;"></i></div>
                         <p>Arşivde silinmiş dilek bulunmuyor.</p>
                     </div>
+
+                    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--card-border);">
+                        <div class="card-title" style="color:var(--accent);"><i data-lucide="package-search"
+                                style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Arşivlenmiş
+                            Oturumlar (Toplu Silmeler)
+                        </div>
+                        <p style="color:var(--text3); font-size:14px; margin-bottom: 20px;">
+                            "Tümünü Sil" eylemi ile kaydedilen eski oturumların içindeki tüm dilekleri tek seferde aktif
+                            listeye geri alabilirsiniz.
+                        </p>
+
+                        <div class="table-responsive" id="sessions-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Oturum/Dosya Adı</th>
+                                        <th>Silinme Tarihi</th>
+                                        <th>İçerik</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sessions-tbody">
+                                    <tr>
+                                        <td colspan="4" style="text-align:center; color:var(--text3);">Oturum bilgileri
+                                            yükleniyor...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="empty" id="sessions-empty-state" style="display:none; padding-top:40px;">
+                            <div class="emoji"><i data-lucide="inbox"
+                                    style="width:48px;height:48px;color:inherit;opacity:0.5;"></i></div>
+                            <p>Arşivde kayıtlı oturum (session) bulunmuyor.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
