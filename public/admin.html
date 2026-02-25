@@ -620,74 +620,83 @@
             <!-- ── ARŞİV & KURTARMA ── -->
             <div class="tab-panel" id="tab-archive">
                 <div class="card">
-                    <div class="card-title" style="color:var(--accent);"><i data-lucide="archive-restore"
-                            style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Silinen
-                        Dilekleri Geri Yükle
+                    <!-- ÜST KISIM: OTURUMLAR (SESSIONS) -->
+                    <div class="card-title" style="color:var(--accent);"><i data-lucide="package-search"
+                            style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Arşivlenmiş
+                        Oturumlar (Toplu Silmeler)
                     </div>
                     <p style="color:var(--text3); font-size:14px; margin-bottom: 20px;">
-                        Yanlışlıkla silinen veya arşive kaldırılan dilekleri buradan aktif listeye ("Tüm Dilekler" ve
-                        canlı ekrana) geri döndürebilirsiniz.
+                        "Tümünü Sil" eylemi ile kaydedilen eski oturumların içindeki tüm dilekleri tek seferde aktif
+                        listeye geri alabilirsiniz.
                     </p>
 
-                    <div class="table-responsive" id="archive-table-container">
+                    <div class="table-responsive" id="sessions-table-container">
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>Görsel</th>
-                                    <th>Çocuk Adı</th>
+                                    <th>Oturum/Dosya Adı</th>
                                     <th>Silinme Tarihi</th>
+                                    <th>İçerik</th>
                                     <th>İşlemler</th>
                                 </tr>
                             </thead>
-                            <tbody id="archive-tbody">
+                            <tbody id="sessions-tbody">
                                 <tr>
-                                    <td colspan="4" style="text-align:center; color:var(--text3);">Arşivlenmiş dilekler
+                                    <td colspan="4" style="text-align:center; color:var(--text3);">Oturum bilgileri
                                         yükleniyor...</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <div class="empty" id="archive-empty-state" style="display:none; padding-top:40px;">
+                    <div class="empty" id="sessions-empty-state" style="display:none; padding-top:40px;">
                         <div class="emoji"><i data-lucide="inbox"
                                 style="width:48px;height:48px;color:inherit;opacity:0.5;"></i></div>
-                        <p>Arşivde silinmiş dilek bulunmuyor.</p>
+                        <p>Arşivde kayıtlı oturum (session) bulunmuyor.</p>
                     </div>
 
+                    <!-- ALT KISIM: TEKİL DİLEKLER (ACCORDION İÇİNDE) -->
                     <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--card-border);">
-                        <div class="card-title" style="color:var(--accent);"><i data-lucide="package-search"
-                                style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Arşivlenmiş
-                            Oturumlar (Toplu Silmeler)
-                        </div>
-                        <p style="color:var(--text3); font-size:14px; margin-bottom: 20px;">
-                            "Tümünü Sil" eylemi ile kaydedilen eski oturumların içindeki tüm dilekleri tek seferde aktif
-                            listeye geri alabilirsiniz.
-                        </p>
+                        <details style="cursor: default;">
+                            <summary
+                                style="cursor: pointer; outline: none; font-weight: bold; color: var(--text2); display: flex; align-items: center; gap: 8px; padding: 10px; background: var(--bg2); border-radius: 8px; border: 1px solid var(--card-border);">
+                                <i data-lucide="list" style="width:18px;height:18px;"></i> Tek Tek Silinen Dilekleri
+                                Göster
+                            </summary>
 
-                        <div class="table-responsive" id="sessions-table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Oturum/Dosya Adı</th>
-                                        <th>Silinme Tarihi</th>
-                                        <th>İçerik</th>
-                                        <th>İşlemler</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="sessions-tbody">
-                                    <tr>
-                                        <td colspan="4" style="text-align:center; color:var(--text3);">Oturum bilgileri
-                                            yükleniyor...</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                            <div style="margin-top: 20px;">
+                                <p style="color:var(--text3); font-size:14px; margin-bottom: 20px;">
+                                    Bireysel olarak çöp kutusu ikonuyla veya arşive kaldırdığınız tekil dilekleri
+                                    buradan geri yükleyebilirsiniz.
+                                </p>
 
-                        <div class="empty" id="sessions-empty-state" style="display:none; padding-top:40px;">
-                            <div class="emoji"><i data-lucide="inbox"
-                                    style="width:48px;height:48px;color:inherit;opacity:0.5;"></i></div>
-                            <p>Arşivde kayıtlı oturum (session) bulunmuyor.</p>
-                        </div>
+                                <div class="table-responsive" id="archive-table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Görsel</th>
+                                                <th>Çocuk Adı</th>
+                                                <th>Silinme Tarihi</th>
+                                                <th>İşlemler</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="archive-tbody">
+                                            <tr>
+                                                <td colspan="4" style="text-align:center; color:var(--text3);">
+                                                    Arşivlenmiş dilekler
+                                                    yükleniyor...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="empty" id="archive-empty-state" style="display:none; padding-top:40px;">
+                                    <div class="emoji"><i data-lucide="inbox"
+                                            style="width:48px;height:48px;color:inherit;opacity:0.5;"></i></div>
+                                    <p>Arşivde silinmiş tekil dilek bulunmuyor.</p>
+                                </div>
+                            </div>
+                        </details>
                     </div>
                 </div>
             </div>
