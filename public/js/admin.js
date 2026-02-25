@@ -502,7 +502,7 @@ function renderArchivedWishes(archiveWishes = []) {
                 `}
             </td>
             <td style="font-weight:600;">${w.childName}</td>
-            <td style="color:var(--text2);font-size:13px">${w.archivedAt ? formatTime(w.archivedAt) : formatTime(w.timestamp)}</td>
+            <td style="color:var(--text2);font-size:13px">${new Date(w.archivedAt || w.timestamp).toLocaleString('tr-TR')}</td>
             <td>
                 <div class="wish-actions">
                     <button class="btn btn-primary" onclick="restoreWish('${w.id}')" style="padding:6px 12px; font-size:13px; font-weight:600;" title="Geri Yükle"><i data-lucide="archive-restore" style="width:16px;height:16px;"></i> Geri Yükle</button>
