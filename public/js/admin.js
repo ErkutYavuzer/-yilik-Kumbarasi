@@ -354,7 +354,7 @@ function confirmDeleteSelected() {
     const selected = document.querySelectorAll('.wish-check:checked');
     if (selected.length === 0) return;
 
-    document.getElementById('modal-text').textContent = `${selected.length} adet dilek silinecek. Geri alınamaz.`;
+    document.getElementById('modal-text').textContent = `${selected.length} adet dilek arşive kaldırılacak. Arşivden geri yüklenebilir.`;
     modalAction = () => deleteSelectedWishes();
     document.getElementById('modal-confirm-btn').textContent = 'Seçilenleri Sil';
     document.getElementById('modal-overlay').classList.add('show');
@@ -648,14 +648,14 @@ async function saveEditedWish() {
 }
 
 function confirmDelete(id, name) {
-    document.getElementById('modal-text').textContent = `"${name}" dileği silinecek. Geri alınamaz.`;
+    document.getElementById('modal-text').textContent = `${name} isimli dilek arşive kaldırılacak. Sonradan geri yüklenebilir.`;
     modalAction = () => deleteWish(id);
     document.getElementById('modal-confirm-btn').textContent = 'Sil';
     document.getElementById('modal-overlay').classList.add('show');
 }
 
 function confirmClearAll() {
-    document.getElementById('modal-text').textContent = 'Tüm dilekler ve fotoğraflar silinecek. Geri alınamaz.';
+    document.getElementById('modal-text').textContent = "Tüm dilekler ve fotoğraflar arşive kaldırılacak ve bir 'Oturum' olarak kaydedilecek. Arşivden geri yüklenebilir.";
     modalAction = clearAllWishes;
     document.getElementById('modal-confirm-btn').textContent = 'Tümünü Sil';
     document.getElementById('modal-overlay').classList.add('show');
