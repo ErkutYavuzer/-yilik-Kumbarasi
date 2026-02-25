@@ -543,10 +543,7 @@ html,
 }
 
 
-/* Logo layer mask for TT theme — devre dışı, display-header z:200 ile zaten üstte */
-[data-theme="turktelekom"] .logo-layer {
-    display: none;
-}
+/* logo-layer display.html'de global olarak display:none — hiçbir temada kullanılmıyor */
 
 /* TT theme balloon glow */
 [data-theme="turktelekom"] .balloon-body {
