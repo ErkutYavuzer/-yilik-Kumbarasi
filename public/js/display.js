@@ -81,25 +81,33 @@ class WishDisplay {
     }
 
     // === CONFETTI ===
-    fireConfetti(amount = 50) {
-        const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#A8E6CF', '#FF8E8E'];
+    fireConfetti(amount = 50, mode = 'top') {
+        const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#A8E6CF', '#FF8E8E', '#FF69B4', '#7B68EE', '#00CED1', '#FF4500', '#FFD700'];
 
         for (let i = 0; i < amount; i++) {
             const conf = document.createElement('div');
-            conf.className = 'display-confetti';
-            conf.style.left = Math.random() * 100 + 'vw';
+            const w = 6 + Math.random() * 16;
+            const h = Math.random() > 0.5 ? w : w * (1.5 + Math.random());
+            conf.className = 'display-confetti' + (mode === 'left' ? ' side-left' : mode === 'right' ? ' side-right' : '');
+            if (mode === 'top') {
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = '-40px';
+            } else if (mode === 'left') {
+                conf.style.left = '-60px';
+                conf.style.top = (20 + Math.random() * 60) + 'vh';
+            } else if (mode === 'right') {
+                conf.style.right = '-60px';
+                conf.style.top = (20 + Math.random() * 60) + 'vh';
+            }
+            conf.style.width = w + 'px';
+            conf.style.height = h + 'px';
+            conf.style.borderRadius = Math.random() > 0.4 ? '3px' : '50%';
             conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            conf.style.animationDelay = Math.random() * 2 + 's';
-            conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            conf.style.animationDelay = Math.random() * 2.5 + 's';
+            conf.style.animationDuration = (Math.random() * 2 + 2.5) + 's';
 
             document.body.appendChild(conf);
-
-            // Temizle
-            setTimeout(() => {
-                if (conf && conf.parentNode) {
-                    conf.remove();
-                }
-            }, 5000);
+            setTimeout(() => { if (conf && conf.parentNode) conf.remove(); }, 7000);
         }
     }
 
@@ -119,24 +127,47 @@ class WishDisplay {
         winners.forEach((w, idx) => {
             const item = document.createElement('div');
             item.className = 'raffle-item';
-            // Kazananın adı + dileği gösterilecek
             const wishHtml = w.wishText ? `<div style="font-size:36px; color:rgba(255,255,255,0.85); margin-top:20px; font-style:italic; line-height:1.4; max-width:1200px;">"${w.wishText}"</div>` : '';
             item.innerHTML = `<div style="font-size:32px; color:rgba(255,255,255,0.9); margin-bottom:15px;">Sıradaki Talihli!</div>
                               <div style="color:#FFD700; font-size: 80px; text-shadow:0 0 30px rgba(255,215,0,0.8);">${w.childName}</div>${wishHtml}`;
             container.appendChild(item);
 
-            // 3 saniyelik görsel şölen
+            // 5 saniyelik MEGA görsel şölen
             setTimeout(() => {
                 this.playSound('spotlight');
                 item.classList.add('reveal');
 
-                // Yoğun konfeti patlaması — 3 saniye boyunca 3 dalga
-                this.fireConfetti(200);
-                setTimeout(() => this.fireConfetti(150), 1000);
-                setTimeout(() => this.fireConfetti(100), 2000);
+                // Flash efekti — beyaz patlama
+                this.fireFlash();
 
-                // Altın parıltı efekti
+                // Raffle box golden pulse
+                const raffleBox = overlay.querySelector('.raffle-box');
+                if (raffleBox) raffleBox.classList.add('celebrating');
+
+                // MEGA konfeti patlaması — 6 dalga, 5 saniye
+                this.fireConfetti(300, 'top');
+                this.fireConfetti(80, 'left');
+                this.fireConfetti(80, 'right');
+                setTimeout(() => { this.fireConfetti(250, 'top'); this.fireConfetti(60, 'left'); }, 800);
+                setTimeout(() => { this.fireConfetti(200, 'top'); this.fireConfetti(60, 'right'); }, 1600);
+                setTimeout(() => this.fireConfetti(200, 'top'), 2400);
+                setTimeout(() => { this.fireConfetti(150, 'top'); this.fireConfetti(50, 'left'); this.fireConfetti(50, 'right'); }, 3200);
+                setTimeout(() => this.fireConfetti(100, 'top'), 4200);
+
+                // Altın parıltı efekti — 2 dalga
                 this.fireGoldenSparkles();
+                setTimeout(() => this.fireGoldenSparkles(), 2000);
+
+                // Havai fişek — 4 patlama
+                this.fireFirework(20 + Math.random() * 20, 20 + Math.random() * 30);
+                setTimeout(() => this.fireFirework(60 + Math.random() * 20, 15 + Math.random() * 25), 600);
+                setTimeout(() => this.fireFirework(10 + Math.random() * 25, 25 + Math.random() * 30), 1400);
+                setTimeout(() => this.fireFirework(55 + Math.random() * 25, 20 + Math.random() * 25), 2200);
+                setTimeout(() => this.fireFirework(35 + Math.random() * 20, 10 + Math.random() * 20), 3000);
+
+                // Emoji yağmuru
+                this.fireEmojiRain();
+                setTimeout(() => this.fireEmojiRain(), 2500);
             }, 1500);
         });
     }
@@ -144,26 +175,80 @@ class WishDisplay {
     // === GOLDEN SPARKLES (Çekiliş kutlama efekti) ===
     fireGoldenSparkles() {
         const colors = ['#FFD700', '#FFA500', '#FFEC8B', '#FFE4B5', '#FFFFFF'];
-        for (let i = 0; i < 80; i++) {
+        for (let i = 0; i < 150; i++) {
             const spark = document.createElement('div');
+            const rx = Math.random();
+            const ry = Math.random();
             spark.style.cssText = `
                 position: absolute;
-                width: ${4 + Math.random() * 8}px;
-                height: ${4 + Math.random() * 8}px;
+                width: ${4 + Math.random() * 10}px;
+                height: ${4 + Math.random() * 10}px;
                 background: ${colors[Math.floor(Math.random() * colors.length)]};
                 border-radius: 50%;
                 z-index: 10001;
                 pointer-events: none;
-                left: ${30 + Math.random() * 40}%;
-                top: ${20 + Math.random() * 40}%;
-                animation: sparkleExplode ${1.5 + Math.random() * 2}s ease-out forwards;
-                animation-delay: ${Math.random() * 2}s;
+                left: ${25 + Math.random() * 50}%;
+                top: ${15 + Math.random() * 50}%;
+                --rx: ${rx};
+                --ry: ${ry};
+                animation: sparkleExplode ${1.5 + Math.random() * 2.5}s ease-out forwards;
+                animation-delay: ${Math.random() * 2.5}s;
                 opacity: 0;
-                box-shadow: 0 0 ${6 + Math.random() * 10}px ${colors[Math.floor(Math.random() * colors.length)]};
+                box-shadow: 0 0 ${8 + Math.random() * 14}px ${colors[Math.floor(Math.random() * colors.length)]};
             `;
             document.body.appendChild(spark);
-            setTimeout(() => { if (spark.parentNode) spark.remove(); }, 5000);
+            setTimeout(() => { if (spark.parentNode) spark.remove(); }, 7000);
         }
+    }
+
+    // === FIREWORK STARBURST ===
+    fireFirework(x, y) {
+        const rayCount = 24 + Math.floor(Math.random() * 12);
+        const burstColors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#FF69B4', '#FFA500', '#7B68EE', '#FFFFFF'];
+        const color = burstColors[Math.floor(Math.random() * burstColors.length)];
+        for (let i = 0; i < rayCount; i++) {
+            const ray = document.createElement('div');
+            ray.className = 'firework-ray';
+            const angle = (360 / rayCount) * i;
+            const len = 80 + Math.random() * 80;
+            ray.style.cssText = `
+                left: ${x}%;
+                top: ${y}%;
+                height: 0;
+                width: ${3 + Math.random() * 3}px;
+                background: linear-gradient(to top, ${color}, transparent);
+                transform: rotate(${angle}deg);
+                animation-duration: ${1.2 + Math.random() * 0.8}s;
+                animation-delay: ${Math.random() * 0.3}s;
+            `;
+            document.body.appendChild(ray);
+            setTimeout(() => { if (ray.parentNode) ray.remove(); }, 4000);
+        }
+    }
+
+    // === EMOJI RAIN ===
+    fireEmojiRain() {
+        const emojis = ['🎉', '🎊', '⭐', '🌟', '✨', '💫', '🎁', '🏆', '💖', '🎈', '🥳', '🎆'];
+        for (let i = 0; i < 35; i++) {
+            const em = document.createElement('div');
+            em.className = 'celebration-emoji';
+            em.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            em.style.left = Math.random() * 95 + 'vw';
+            em.style.top = '-80px';
+            em.style.fontSize = (40 + Math.random() * 50) + 'px';
+            em.style.animationDelay = Math.random() * 3 + 's';
+            em.style.animationDuration = (3 + Math.random() * 2) + 's';
+            document.body.appendChild(em);
+            setTimeout(() => { if (em.parentNode) em.remove(); }, 8000);
+        }
+    }
+
+    // === FLASH EFFECT ===
+    fireFlash() {
+        const flash = document.createElement('div');
+        flash.className = 'reveal-flash';
+        document.body.appendChild(flash);
+        setTimeout(() => { if (flash.parentNode) flash.remove(); }, 1000);
     }
 
     // === SOCKET ===
@@ -502,8 +587,9 @@ class WishDisplay {
 
             const currentScale = this.displaySettings.scaleMultiplier || 1.0;
             const currentSpeedMulti = this.displaySettings.speedMultiplier || 1.0;
-            const paddingSides = -200;
-            const maxX = cw;
+            const paddingSides = -100; // Allow slight peek from left edge
+            const cardWidth = this.displayMode === 'lantern' ? 400 : 520;
+            const maxX = cw - cardWidth; // Account for card width so right edge doesn't clip
 
             cards.forEach(cardData => {
                 // Admin panelinden gelen hızı doğrudan harekete çarparak uygula
