@@ -267,7 +267,7 @@ class WishDisplay {
             this.allServerWishes = [...serverWishes]; // Tüm veriyi havuza al
 
             // Görsel kalabalığı (Density) düşürmek için Limit 15'e çekildi
-            const maxVisible = this.displayMode === 'lantern' ? 8 : 15;
+            const maxVisible = this.displayMode === 'lantern' ? 6 : 15;
             const shuffled = [...serverWishes].sort(() => 0.5 - Math.random());
             const selected = shuffled.slice(0, maxVisible);
 
@@ -519,13 +519,13 @@ class WishDisplay {
         const cw = this.container.offsetWidth;
         const ch = this.container.offsetHeight;
         const padding = 0;
-        const cardWidth = this.displayMode === 'lantern' ? 400 : 520;
+        const cardWidth = this.displayMode === 'lantern' ? 520 : 520;
         const maxX = cw - cardWidth;
 
         // X ekseninde konum — fener modunda sütun bazlı dağılım
         let x;
         if (this.displayMode === 'lantern') {
-            const columns = 8;
+            const columns = 6;
             const colWidth = Math.max(0, maxX) / columns;
             const colIndex = this.wishCards.length % columns;
             x = colIndex * colWidth + Math.random() * colWidth * 0.6 + colWidth * 0.2;
@@ -559,7 +559,7 @@ class WishDisplay {
             vy: -(this.displayMode === 'lantern' ? (1.0 + Math.random() * 1.2) : (1.5 + Math.random() * 2)),
             rotation: rotation,
             rotationSpeed: (Math.random() - 0.5) * (this.displayMode === 'lantern' ? 0.15 : 0.8),
-            radius: this.displayMode === 'lantern' ? 300 : 260
+            radius: this.displayMode === 'lantern' ? 350 : 260
         };
         this.wishCards.push(cardData);
 
@@ -588,7 +588,7 @@ class WishDisplay {
             const currentScale = this.displaySettings.scaleMultiplier || 1.0;
             const currentSpeedMulti = this.displaySettings.speedMultiplier || 1.0;
             const paddingSides = -100; // Allow slight peek from left edge
-            const cardWidth = this.displayMode === 'lantern' ? 400 : 520;
+            const cardWidth = this.displayMode === 'lantern' ? 520 : 520;
             const maxX = cw - cardWidth; // Account for card width so right edge doesn't clip
 
             cards.forEach(cardData => {
