@@ -267,7 +267,7 @@ class WishDisplay {
             this.allServerWishes = [...serverWishes]; // Tüm veriyi havuza al
 
             // Görsel kalabalığı (Density) düşürmek için Limit 15'e çekildi
-            const maxVisible = this.displayMode === 'lantern' ? 6 : 15;
+            const maxVisible = this.displayMode === 'lantern' ? 30 : 15;
             const shuffled = [...serverWishes].sort(() => 0.5 - Math.random());
             const selected = shuffled.slice(0, maxVisible);
 
@@ -755,6 +755,19 @@ class WishDisplay {
             document.documentElement.removeAttribute('data-theme');
         } else {
             document.documentElement.setAttribute('data-theme', theme);
+        }
+
+        // Update header text per theme
+        const titleText = document.querySelector('.title-text');
+        const titleIcon = document.querySelector('.title-icon');
+        if (titleText && titleIcon) {
+            if (theme === 'turktelekom') {
+                titleIcon.textContent = '🏮';
+                titleText.textContent = 'İyilik Feneri';
+            } else {
+                titleIcon.innerHTML = '\u{1F3FA}';
+                titleText.textContent = 'Dilek Kumbarasi';
+            }
         }
     }
 

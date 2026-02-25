@@ -350,3 +350,209 @@ html,
     background: linear-gradient(135deg, #f48fb1, #ce93d8) !important;
     color: white !important;
 }
+
+/* ============================================
+   📡 Türk Telekom — İyilik Feneri
+   ============================================ */
+[data-theme="turktelekom"] .display-container {
+    background:
+        /* Top-center bright glow */
+        radial-gradient(ellipse 2400px 900px at 50% -5%, rgba(0, 100, 220, 0.6) 0%, transparent 70%),
+        /* Large bokeh circles */
+        radial-gradient(circle 250px at 8% 25%, rgba(0, 120, 255, 0.15) 0%, transparent 100%),
+        radial-gradient(circle 350px at 88% 15%, rgba(0, 80, 200, 0.12) 0%, transparent 100%),
+        radial-gradient(circle 200px at 15% 70%, rgba(0, 100, 220, 0.1) 0%, transparent 100%),
+        radial-gradient(circle 300px at 75% 65%, rgba(0, 60, 180, 0.1) 0%, transparent 100%),
+        radial-gradient(circle 180px at 45% 85%, rgba(0, 90, 200, 0.08) 0%, transparent 100%),
+        radial-gradient(circle 280px at 92% 80%, rgba(0, 70, 180, 0.1) 0%, transparent 100%),
+        /* Medium bokeh */
+        radial-gradient(circle 120px at 25% 40%, rgba(50, 140, 255, 0.08) 0%, transparent 100%),
+        radial-gradient(circle 150px at 65% 35%, rgba(30, 120, 240, 0.08) 0%, transparent 100%),
+        radial-gradient(circle 100px at 50% 55%, rgba(60, 150, 255, 0.06) 0%, transparent 100%),
+        /* Base gradient — deep navy with subtle variation */
+        linear-gradient(175deg, #001030 0%, #001a42 15%, #002560 35%, #002d6e 50%, #002560 65%, #001a42 85%, #001030 100%) !important;
+    background-size: auto !important;
+}
+
+[data-theme="turktelekom"] html {
+    background: #001030;
+}
+
+/* Decorative light overlay — stars + light streaks */
+[data-theme="turktelekom"] .display-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        /* Diagonal light rays from top-left */
+        linear-gradient(125deg, rgba(100, 180, 255, 0.04) 0%, transparent 30%),
+        linear-gradient(135deg, rgba(80, 160, 255, 0.03) 5%, transparent 25%),
+        /* Diagonal light rays from top-right */
+        linear-gradient(235deg, rgba(100, 180, 255, 0.04) 0%, transparent 30%),
+        linear-gradient(225deg, rgba(80, 160, 255, 0.03) 5%, transparent 25%),
+        /* Star/particle field */
+        radial-gradient(2px 2px at 3% 5%, rgba(255, 255, 255, 0.8) 0%, transparent 100%),
+        radial-gradient(3px 3px at 8% 12%, rgba(200, 230, 255, 0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 14% 3%, rgba(255, 255, 255, 0.9) 0%, transparent 100%),
+        radial-gradient(2px 2px at 22% 18%, rgba(180, 220, 255, 0.5) 0%, transparent 100%),
+        radial-gradient(3px 3px at 30% 7%, rgba(255, 255, 255, 0.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 38% 22%, rgba(200, 230, 255, 0.6) 0%, transparent 100%),
+        radial-gradient(2px 2px at 46% 4%, rgba(255, 255, 255, 0.8) 0%, transparent 100%),
+        radial-gradient(1px 1px at 52% 15%, rgba(180, 220, 255, 0.5) 0%, transparent 100%),
+        radial-gradient(3px 3px at 60% 9%, rgba(255, 255, 255, 0.7) 0%, transparent 100%),
+        radial-gradient(2px 2px at 68% 20%, rgba(200, 230, 255, 0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 74% 6%, rgba(255, 255, 255, 0.9) 0%, transparent 100%),
+        radial-gradient(2px 2px at 82% 14%, rgba(180, 220, 255, 0.6) 0%, transparent 100%),
+        radial-gradient(3px 3px at 88% 3%, rgba(255, 255, 255, 0.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 94% 18%, rgba(200, 230, 255, 0.5) 0%, transparent 100%),
+        /* Additional scattered particles */
+        radial-gradient(2px 2px at 5% 45%, rgba(255, 255, 255, 0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 18% 55%, rgba(200, 230, 255, 0.25) 0%, transparent 100%),
+        radial-gradient(2px 2px at 35% 48%, rgba(255, 255, 255, 0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 55% 42%, rgba(200, 230, 255, 0.25) 0%, transparent 100%),
+        radial-gradient(2px 2px at 72% 50%, rgba(255, 255, 255, 0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 46%, rgba(200, 230, 255, 0.25) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+    animation: ttTwinkle 5s ease-in-out infinite alternate;
+}
+
+/* Decorative draped garland lights — scalloped swoops across top */
+[data-theme="turktelekom"] .display-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 400px;
+    background-image:
+        /* Swooping garland curves — 6 scallops */
+        radial-gradient(ellipse 700px 180px at 0% 0%, transparent 60%, rgba(200, 230, 255, 0.06) 62%, rgba(200, 230, 255, 0.12) 64%, transparent 66%),
+        radial-gradient(ellipse 700px 180px at 16.6% 0%, transparent 60%, rgba(200, 230, 255, 0.06) 62%, rgba(200, 230, 255, 0.12) 64%, transparent 66%),
+        radial-gradient(ellipse 700px 180px at 33.3% 0%, transparent 60%, rgba(200, 230, 255, 0.06) 62%, rgba(200, 230, 255, 0.12) 64%, transparent 66%),
+        radial-gradient(ellipse 700px 180px at 50% 0%, transparent 60%, rgba(200, 230, 255, 0.06) 62%, rgba(200, 230, 255, 0.12) 64%, transparent 66%),
+        radial-gradient(ellipse 700px 180px at 66.6% 0%, transparent 60%, rgba(200, 230, 255, 0.06) 62%, rgba(200, 230, 255, 0.12) 64%, transparent 66%),
+        radial-gradient(ellipse 700px 180px at 83.3% 0%, transparent 60%, rgba(200, 230, 255, 0.06) 62%, rgba(200, 230, 255, 0.12) 64%, transparent 66%),
+        radial-gradient(ellipse 700px 180px at 100% 0%, transparent 60%, rgba(200, 230, 255, 0.06) 62%, rgba(200, 230, 255, 0.12) 64%, transparent 66%),
+        /* Pendant dots hanging from garlands */
+        radial-gradient(6px 6px at 8.3% 45%, rgba(255, 220, 100, 0.5) 0%, transparent 100%),
+        radial-gradient(6px 6px at 24.9% 45%, rgba(255, 220, 100, 0.5) 0%, transparent 100%),
+        radial-gradient(6px 6px at 41.6% 45%, rgba(255, 220, 100, 0.5) 0%, transparent 100%),
+        radial-gradient(6px 6px at 58.3% 45%, rgba(255, 220, 100, 0.5) 0%, transparent 100%),
+        radial-gradient(6px 6px at 74.9% 45%, rgba(255, 220, 100, 0.5) 0%, transparent 100%),
+        radial-gradient(6px 6px at 91.6% 45%, rgba(255, 220, 100, 0.5) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.7;
+}
+
+@keyframes ttTwinkle {
+    from {
+        opacity: 0.5;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Show display-header for TT theme (hidden by default because PNG themes have baked-in branding) */
+[data-theme="turktelekom"] .display-header {
+    display: flex !important;
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    text-align: center;
+}
+
+[data-theme="turktelekom"] .display-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+[data-theme="turktelekom"] .title-icon {
+    font-size: 120px;
+    filter: drop-shadow(0 0 30px rgba(255, 165, 0, 0.6));
+    animation: ttLanternGlow 3s ease-in-out infinite alternate;
+}
+
+[data-theme="turktelekom"] .title-text {
+    font-size: 96px;
+    font-weight: 900;
+    color: white;
+    text-shadow:
+        0 0 40px rgba(0, 100, 200, 0.8),
+        0 0 80px rgba(0, 80, 160, 0.4),
+        0 4px 8px rgba(0, 0, 0, 0.5);
+    letter-spacing: 8px;
+}
+
+/* Subtitle: hidden by default, shown for TT theme via CSS content */
+.title-subtitle {
+    display: none;
+}
+
+[data-theme="turktelekom"] .title-subtitle {
+    display: block;
+    font-size: 44px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: 14px;
+    margin-top: 8px;
+    text-shadow:
+        0 0 20px rgba(0, 80, 180, 0.6),
+        0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="turktelekom"] .title-subtitle::before {
+    content: 'TÜRK TELEKOM';
+}
+
+@keyframes ttLanternGlow {
+    from {
+        filter: drop-shadow(0 0 20px rgba(255, 165, 0, 0.4));
+    }
+
+    to {
+        filter: drop-shadow(0 0 50px rgba(255, 165, 0, 0.8));
+    }
+}
+
+/* Logo layer mask for TT theme — center-top area for branding */
+[data-theme="turktelekom"] .logo-layer {
+    background:
+        radial-gradient(ellipse 2400px 900px at 50% -5%, rgba(0, 100, 220, 0.6) 0%, transparent 70%),
+        radial-gradient(circle 250px at 8% 25%, rgba(0, 120, 255, 0.15) 0%, transparent 100%),
+        radial-gradient(circle 350px at 88% 15%, rgba(0, 80, 200, 0.12) 0%, transparent 100%),
+        radial-gradient(circle 200px at 15% 70%, rgba(0, 100, 220, 0.1) 0%, transparent 100%),
+        radial-gradient(circle 300px at 75% 65%, rgba(0, 60, 180, 0.1) 0%, transparent 100%),
+        linear-gradient(175deg, #001030 0%, #001a42 15%, #002560 35%, #002d6e 50%, #002560 65%, #001a42 85%, #001030 100%) !important;
+}
+
+/* TT theme balloon glow */
+[data-theme="turktelekom"] .balloon-body {
+    box-shadow:
+        0 20px 60px rgba(0, 80, 180, 0.3),
+        0 8px 25px rgba(0, 0, 0, 0.2),
+        inset 0 -30px 50px rgba(0, 0, 0, 0.15),
+        inset 0 30px 40px rgba(255, 255, 255, 0.15) !important;
+}
+
+/* TT theme UI elements */
+[data-theme="turktelekom"] .counter,
+[data-theme="turktelekom"] .new-wish-toast,
+[data-theme="turktelekom"] .fullscreen-btn,
+[data-theme="turktelekom"] .mute-btn {
+    background: linear-gradient(135deg, #003366, #004488) !important;
+    color: white !important;
+    border: 1px solid rgba(0, 100, 200, 0.3) !important;
+}
+
+[data-theme="turktelekom"] #spotlight-label {
+    background: linear-gradient(135deg, #003366, #0066cc) !important;
+    color: white !important;
+}
