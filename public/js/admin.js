@@ -919,12 +919,16 @@ async function startRaffle() {
 
         const data = await res.json();
 
-        if (data.success && data.winners) {
+        if (data.success && data.winners && data.winners.length > 0) {
             showToast('🎁 Sıradaki talihli ekranda belirdi!');
 
             // Butonları güncelle
             btnStart.style.display = 'none';
-            document.getElementById('btn-raffle-close').style.display = 'flex';
+            btnStart.innerHTML = '<i data-lucide="party-popper" style="width:20px;height:20px;"></i> Sıradaki Talihliyi Çek';
+            btnStart.disabled = false;
+
+            const btnClose = document.getElementById('btn-raffle-close');
+            if (btnClose) btnClose.style.display = 'flex';
 
             // Admin logunu göster (Yığılmalı)
             const listEl = document.getElementById('raffle-results-list');
@@ -937,12 +941,14 @@ async function startRaffle() {
         } else {
             showToast('❌ Hata: ' + (data.error || 'Çekiliş yapılamadı'));
             btnStart.disabled = false;
+            btnStart.style.display = 'flex';
             btnStart.innerHTML = '<i data-lucide="party-popper" style="width:20px;height:20px;"></i> Sıradaki Talihliyi Çek';
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
     } catch (e) {
         showToast('❌ Bağlantı hatası!');
         btnStart.disabled = false;
+        btnStart.style.display = 'flex';
         btnStart.innerHTML = '<i data-lucide="party-popper" style="width:20px;height:20px;"></i> Sıradaki Talihliyi Çek';
         if (typeof lucide !== 'undefined') lucide.createIcons();
     }
