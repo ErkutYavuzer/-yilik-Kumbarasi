@@ -150,7 +150,8 @@ function switchTab(name, btn) {
         upload: '📸 Dilek Ekle',
         wishes: '🏺 Tüm Dilekler',
         raffle: '🎁 Çekiliş Yönetimi',
-        stats: '📈 İstatistikler'
+        stats: '📈 İstatistikler',
+        archive: '📦 Arşiv & Kurtarma'
     };
     document.getElementById('topbar-title').textContent = titles[name] || '';
 
@@ -165,6 +166,10 @@ function switchTab(name, btn) {
 
     if (name === 'wishes') {
         setViewMode(viewMode);
+    }
+
+    if (name === 'archive') {
+        loadArchivedWishes();
     }
 }
 
@@ -457,6 +462,72 @@ async function clearAllWishes() {
     await fetch('/api/wishes', { method: 'DELETE' });
     showToast('Tüm dilekler silindi');
     loadWishes();
+}
+
+// ─── ARCHIVE & RECOVERY ───
+async function loadArchivedWishes() {
+    try {
+        const res = await fetch('/api/archive');
+        const archiveWishes = await res.json();
+        renderArchivedWishes(archiveWishes);
+    } catch (e) {
+        console.error('Arşiv yüklenirken hata:', e);
+    }
+}
+
+function renderArchivedWishes(archiveWishes = []) {
+    const tbody = document.getElementById('archive-tbody');
+    const emptyState = document.getElementById('archive-empty-state');
+    const tableContainer = document.getElementById('archive-table-container');
+
+    if (archiveWishes.length === 0) {
+        if (tableContainer) tableContainer.style.display = 'none';
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+    }
+
+    if (tableContainer) tableContainer.style.display = 'block';
+    if (emptyState) emptyState.style.display = 'none';
+
+    if (tbody) {
+        tbody.innerHTML = archiveWishes.reverse().map(w => `
+        <tr class="wish-row">
+            <td>
+                ${w.photoUrl ? `
+                <a href="${w.photoUrl}" target="_blank" title="Fotoğrafı büyük gör">
+                    <img src="${w.photoUrl}" alt="${w.childName}" loading="lazy" style="width:48px;height:48px;border-radius:6px;object-fit:cover;">
+                </a>
+                ` : `
+                <div style="width:48px; height:48px; background:var(--bg2); border: 2px dashed var(--card-border); border-radius:6px; display:flex; align-items:center; justify-content:center; color:var(--text3);" title="Sadece metin"><i data-lucide="type" style="width:20px;height:20px;"></i></div>
+                `}
+            </td>
+            <td style="font-weight:600;">${w.childName}</td>
+            <td style="color:var(--text2);font-size:13px">${w.archivedAt ? formatTime(w.archivedAt) : formatTime(w.timestamp)}</td>
+            <td>
+                <div class="wish-actions">
+                    <button class="btn btn-primary" onclick="restoreWish('${w.id}')" style="padding:6px 12px; font-size:13px; font-weight:600;" title="Geri Yükle"><i data-lucide="archive-restore" style="width:16px;height:16px;"></i> Geri Yükle</button>
+                </div>
+            </td>
+        </tr>
+        `).join('');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+}
+
+async function restoreWish(id) {
+    try {
+        const res = await fetch(`/api/restore/${id}`, { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            showToast('♻️ Dilek başarıyla geri yüklendi!');
+            loadArchivedWishes(); // Arşiv listesini güncelle
+            loadWishes();         // Aktif listeyi arkaplanda güncelle
+        } else {
+            showToast('Hata: ' + (data.error || 'Geri yükleme başarısız'));
+        }
+    } catch (e) {
+        showToast('Bağlantı hatası!');
+    }
 }
 
 // ─── MODAL & EDIT ───

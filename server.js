@@ -230,6 +230,57 @@ app.post('/api/display-settings', (req, res) => {
     res.json({ success: true, ...displaySettings });
 });
 
+// Arşivlenen tüm dilekleri getir
+app.get('/api/archive', (req, res) => {
+    const archived = loadArchiveWishes();
+    res.json(archived);
+});
+
+// Arşivden dileği geri yükle
+app.post('/api/restore/:id', (req, res) => {
+    const { id } = req.params;
+    let archive = loadArchiveWishes();
+    const wishIndex = archive.findIndex(w => w.id === id);
+
+    if (wishIndex === -1) {
+        return res.status(404).json({ error: 'Arşivde dilek bulunamadı' });
+    }
+
+    const wish = archive[wishIndex];
+
+    // Fotoğrafı Arşiv Klasöründen Uploads Klasörüne Geri Taşı
+    if (wish.photoUrl && wish.photoUrl.includes('/uploads/archive/')) {
+        const filename = path.basename(wish.photoUrl);
+        const oldPath = path.join(archiveDir, filename);
+        const newPath = path.join(uploadsDir, filename);
+
+        if (fs.existsSync(oldPath)) {
+            fs.renameSync(oldPath, newPath);
+            wish.photoUrl = `/uploads/${filename}`;
+        }
+    }
+
+    // Arşivden sil
+    archive.splice(wishIndex, 1);
+    try {
+        fs.writeFileSync(archiveFile, JSON.stringify(archive, null, 2), 'utf8');
+    } catch (err) {
+        console.error('Arşivden silme hatası:', err.message);
+        return res.status(500).json({ error: 'Dilek arşivden silinemedi' });
+    }
+
+    // Aktif listeye ekle
+    delete wish.archivedAt; // Arşivlenme tarihini temizle
+    wishes.push(wish);
+    saveWishes();
+
+    // Ekrana bildir
+    io.emit('new-wish', wish);
+    console.log(`♻️ Dilek geri yüklendi: ${wish.childName}`);
+
+    res.json({ success: true, restoredWish: wish });
+});
+
 // Dilek yukleme endpoint'i
 app.post('/api/upload', upload.single('photo'), async (req, res) => {
     try {
