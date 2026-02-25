@@ -5,7 +5,7 @@
    ============================================ */
 .display-container,
 [data-theme="iyilik"] .display-container {
-    background: url('/images/Untitled%20design%20%281%29.png') no-repeat center top !important;
+    background: url('/images/background.png') no-repeat center top !important;
     background-size: 100% 100% !important;
 }
 

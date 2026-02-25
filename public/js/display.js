@@ -79,25 +79,37 @@ class WishDisplay {
     }
 
     // === CONFETTI ===
-    fireConfetti(amount = 50) {
-        const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#A8E6CF', '#FF8E8E'];
+    fireConfetti(amount = 500) {
+        const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#A8E6CF', '#FF8E8E', '#DDA0DD', '#FFB347', '#88D8F7'];
+        const overlay = document.getElementById('raffle-overlay');
 
         for (let i = 0; i < amount; i++) {
             const conf = document.createElement('div');
             conf.className = 'display-confetti';
-            conf.style.left = Math.random() * 100 + 'vw';
+            conf.style.left = Math.random() * 100 + '%';
             conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            conf.style.animationDelay = Math.random() * 2 + 's';
-            conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            conf.style.animationDelay = (Math.random() * 1.5) + 's';
+            conf.style.animationDuration = (Math.random() * 2 + 3) + 's';
+            conf.style.zIndex = '999999';
 
-            document.body.appendChild(conf);
+            // Rastgele boyut ve şekil
+            const size = 6 + Math.random() * 12;
+            conf.style.width = size + 'px';
+            conf.style.height = size + 'px';
+            if (Math.random() > 0.5) conf.style.borderRadius = '50%';
 
-            // Temizle
+            if (overlay && overlay.classList.contains('show')) {
+                overlay.appendChild(conf);
+            } else {
+                document.body.appendChild(conf);
+            }
+
+            // Temizle (süre bittikten çok sonra)
             setTimeout(() => {
                 if (conf && conf.parentNode) {
                     conf.remove();
                 }
-            }, 5000);
+            }, 8000);
         }
     }
 
@@ -114,38 +126,54 @@ class WishDisplay {
         // Modal'ı göster
         overlay.classList.add('show');
 
-        // Şanslı kalpleri "raffle-item" stiliyle hazırla ama gizli tut (opacity 0 - reveal class'ı yok)
-        winners.forEach((w, idx) => {
-            const item = document.createElement('div');
-            item.className = 'raffle-item';
+        // 1. Gizem Aşaması: Sis ve Bekleyiş
+        const fog = document.createElement('div');
+        fog.className = 'raffle-fog';
+        container.appendChild(fog);
 
-            let extraContent = '';
-            if (w.photoUrl || w.wishText) {
-                extraContent += `<div class="raffle-content-container">`;
-                if (w.photoUrl) {
-                    extraContent += `<img src="${w.photoUrl}" class="raffle-wish-photo" alt="Dilek Fotoğrafı">`;
+        const suspenseText = document.createElement('div');
+        suspenseText.className = 'mysterious-pulse';
+        suspenseText.innerHTML = '🔮 Sıradaki Talihli Aranıyor...';
+        container.appendChild(suspenseText);
+
+        // 4 saniye bekle
+        setTimeout(() => {
+            // Gizem öğelerini kaldır
+            if (container.contains(fog)) container.removeChild(fog);
+            if (container.contains(suspenseText)) container.removeChild(suspenseText);
+
+            winners.forEach((w, idx) => {
+                const item = document.createElement('div');
+                item.className = 'raffle-item';
+
+                let extraContent = '';
+                if (w.photoUrl || w.wishText) {
+                    extraContent += `<div class="raffle-content-container">`;
+                    if (w.photoUrl) {
+                        extraContent += `<img src="${w.photoUrl}" class="raffle-wish-photo" alt="Dilek Fotoğrafı">`;
+                    }
+                    if (w.wishText) {
+                        extraContent += `<div class="raffle-wish-text">"${w.wishText.replace(/\\n/g, '<br>')}"</div>`;
+                    }
+                    extraContent += `</div>`;
                 }
-                if (w.wishText) {
-                    extraContent += `<div class="raffle-wish-text">"${w.wishText.replace(/\\n/g, '<br>')}"</div>`;
-                }
-                extraContent += `</div>`;
-            }
 
-            // Tekil gösterim için daha vurgulu metin
-            item.innerHTML = `<div style="font-size:32px; color:rgba(255,255,255,0.9); margin-bottom:15px;">Sıradaki Talihli!</div>
-                              <div style="color:#FFD700; font-size: 80px; text-shadow:0 0 30px rgba(255,215,0,0.8);">${w.childName}</div>
-                              ${extraContent}`;
-            container.appendChild(item);
+                // Tekil gösterim için daha vurgulu metin
+                item.innerHTML = `<div style="font-size:32px; color:rgba(255,255,255,0.9); margin-bottom:15px; z-index: 20; position: relative;">Şanslı İsim!</div>
+                                  <div style="color:#FFD700; font-size: 80px; text-shadow:0 0 30px rgba(255,215,0,0.8); z-index: 20; position: relative;">${w.childName}</div>
+                                  ${extraContent}`;
+                container.appendChild(item);
 
-            // Biraz heyecan yaratıp göster
-            setTimeout(() => {
-                this.playSound('newWish'); // Davul/zil sesi efekti
-                item.classList.add('reveal');
+                // Hemen göster
+                setTimeout(() => {
+                    this.playSound('newWish'); // Davul/zil sesi efekti
+                    item.classList.add('reveal');
 
-                // Büyük final konfetisi
-                this.fireConfetti(150);
-            }, 1500);
-        });
+                    // Büyük final konfetisi
+                    this.fireConfetti(500);
+                }, 100);
+            });
+        }, 6000);
     }
 
     // === SOCKET ===
