@@ -671,6 +671,11 @@ class WishDisplay {
                         cardData.vx *= -0.3;
                     }
 
+                    // Rotasyon sınırı — ±15 derecede geri döner
+                    if (Math.abs(cardData.rotation) > 15) {
+                        cardData.rotationSpeed *= -1;
+                    }
+
                     // Balon ekranın tavanından tamamen çıktığında tekrar aşağı fırlat
                     if (cardData.y < -600) {
                         cardData.y = ch + 200 + Math.random() * 2000;
