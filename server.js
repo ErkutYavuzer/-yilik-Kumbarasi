@@ -52,6 +52,30 @@ if (!fs.existsSync(sessionsDir)) {
 const dataFile = path.join(dataDir, 'wishes.json');
 const archiveFile = path.join(dataDir, 'archive_wishes.json');
 const rejectedFile = path.join(dataDir, 'rejected_wishes.json');
+const settingsFile = path.join(dataDir, 'settings.json');
+
+// Ayarları dosyadan yükle
+function loadSettings() {
+    try {
+        if (fs.existsSync(settingsFile)) {
+            return JSON.parse(fs.readFileSync(settingsFile, 'utf8'));
+        }
+    } catch (e) {
+        console.error('⚠️ Settings yüklenemedi:', e.message);
+    }
+    return {};
+}
+
+// Ayarları dosyaya kaydet
+function saveSettings(settings) {
+    try {
+        const current = loadSettings();
+        const merged = { ...current, ...settings };
+        fs.writeFileSync(settingsFile, JSON.stringify(merged, null, 2), 'utf8');
+    } catch (e) {
+        console.error('⚠️ Settings kaydedilemedi:', e.message);
+    }
+}
 
 // JSON dosyasından dilekleri yükle
 function loadWishes() {
@@ -583,8 +607,8 @@ app.get('/api/auto-spotlight/status', (req, res) => {
 });
 
 // === TEMA SİSTEMİ ===
-let currentTheme = 'iyilik';
-
+const savedSettings = loadSettings();
+let currentTheme = savedSettings.theme || 'iyilik';
 app.get('/api/theme', (req, res) => {
     res.json({ theme: currentTheme });
 });
@@ -592,13 +616,14 @@ app.get('/api/theme', (req, res) => {
 app.post('/api/theme', (req, res) => {
     const { theme } = req.body;
     currentTheme = theme || 'default';
+    saveSettings({ theme: currentTheme });
     io.emit('theme-change', currentTheme);
     console.log(`🎨 Tema değiştirildi: ${currentTheme}`);
     res.json({ success: true, theme: currentTheme });
 });
 
 // === GÖSTERİM MODU SİSTEMİ ===
-let currentDisplayMode = 'balloon'; // 'balloon' veya 'lantern'
+let currentDisplayMode = savedSettings.displayMode || 'balloon'; // 'balloon' veya 'lantern'
 
 app.get('/api/display-mode', (req, res) => {
     res.json({ displayMode: currentDisplayMode });
@@ -607,6 +632,7 @@ app.get('/api/display-mode', (req, res) => {
 app.post('/api/display-mode', (req, res) => {
     const { displayMode } = req.body;
     currentDisplayMode = displayMode || 'balloon';
+    saveSettings({ displayMode: currentDisplayMode });
     io.emit('display-mode-change', currentDisplayMode);
     console.log(`🎭 Gösterim modu değiştirildi: ${currentDisplayMode}`);
     res.json({ success: true, displayMode: currentDisplayMode });
