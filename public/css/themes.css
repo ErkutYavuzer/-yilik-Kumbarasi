@@ -474,10 +474,40 @@ html,
     gap: 8px;
 }
 
+/* TT tema: emoji gizle, logo göster */
 [data-theme="turktelekom"] .title-icon {
-    font-size: 120px;
-    filter: drop-shadow(0 0 30px rgba(255, 165, 0, 0.6));
-    animation: ttLanternGlow 3s ease-in-out infinite alternate;
+    display: none;
+}
+
+/* title-logo: varsayılan gizli, sadece TT temasında görünür */
+.title-logo {
+    display: none;
+}
+
+[data-theme="turktelekom"] .title-logo {
+    display: block;
+    width: 540px;
+    height: auto;
+    filter:
+        drop-shadow(0 0 30px rgba(0, 120, 255, 0.5))
+        drop-shadow(0 0 60px rgba(0, 80, 200, 0.3))
+        brightness(1.15);
+    animation: ttLogoGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes ttLogoGlow {
+    from {
+        filter:
+            drop-shadow(0 0 20px rgba(0, 120, 255, 0.4))
+            drop-shadow(0 0 40px rgba(0, 80, 200, 0.2))
+            brightness(1.05);
+    }
+    to {
+        filter:
+            drop-shadow(0 0 40px rgba(0, 140, 255, 0.7))
+            drop-shadow(0 0 80px rgba(0, 100, 220, 0.4))
+            brightness(1.2);
+    }
 }
 
 [data-theme="turktelekom"] .title-text {
@@ -512,15 +542,6 @@ html,
     content: 'TÜRK TELEKOM';
 }
 
-@keyframes ttLanternGlow {
-    from {
-        filter: drop-shadow(0 0 20px rgba(255, 165, 0, 0.4));
-    }
-
-    to {
-        filter: drop-shadow(0 0 50px rgba(255, 165, 0, 0.8));
-    }
-}
 
 /* Logo layer mask for TT theme — center-top area for branding */
 [data-theme="turktelekom"] .logo-layer {
