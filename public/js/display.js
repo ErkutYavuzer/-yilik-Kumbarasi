@@ -90,14 +90,14 @@ class WishDisplay {
             const h = Math.random() > 0.5 ? w : w * (1.5 + Math.random());
             conf.className = 'display-confetti' + (mode === 'left' ? ' side-left' : mode === 'right' ? ' side-right' : '');
             if (mode === 'top') {
-                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.left = (Math.random() * 4224) + 'px';
                 conf.style.top = '-40px';
             } else if (mode === 'left') {
                 conf.style.left = '-60px';
-                conf.style.top = (20 + Math.random() * 60) + 'vh';
+                conf.style.top = (300 + Math.random() * 900) + 'px';
             } else if (mode === 'right') {
-                conf.style.right = '-60px';
-                conf.style.top = (20 + Math.random() * 60) + 'vh';
+                conf.style.left = (4224 + 60) + 'px';
+                conf.style.top = (300 + Math.random() * 900) + 'px';
             }
             conf.style.width = w + 'px';
             conf.style.height = h + 'px';
@@ -106,7 +106,7 @@ class WishDisplay {
             conf.style.animationDelay = Math.random() * 2.5 + 's';
             conf.style.animationDuration = (Math.random() * 2 + 2.5) + 's';
 
-            document.body.appendChild(conf);
+            document.querySelector('.display-container').appendChild(conf);
             setTimeout(() => { if (conf && conf.parentNode) conf.remove(); }, 7000);
         }
     }
@@ -196,7 +196,7 @@ class WishDisplay {
                 opacity: 0;
                 box-shadow: 0 0 ${8 + Math.random() * 14}px ${colors[Math.floor(Math.random() * colors.length)]};
             `;
-            document.body.appendChild(spark);
+            document.querySelector('.display-container').appendChild(spark);
             setTimeout(() => { if (spark.parentNode) spark.remove(); }, 7000);
         }
     }
@@ -221,7 +221,7 @@ class WishDisplay {
                 animation-duration: ${1.2 + Math.random() * 0.8}s;
                 animation-delay: ${Math.random() * 0.3}s;
             `;
-            document.body.appendChild(ray);
+            document.querySelector('.display-container').appendChild(ray);
             setTimeout(() => { if (ray.parentNode) ray.remove(); }, 4000);
         }
     }
@@ -233,12 +233,12 @@ class WishDisplay {
             const em = document.createElement('div');
             em.className = 'celebration-emoji';
             em.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-            em.style.left = Math.random() * 95 + 'vw';
+            em.style.left = (Math.random() * 4000) + 'px';
             em.style.top = '-80px';
             em.style.fontSize = (40 + Math.random() * 50) + 'px';
             em.style.animationDelay = Math.random() * 3 + 's';
             em.style.animationDuration = (3 + Math.random() * 2) + 's';
-            document.body.appendChild(em);
+            document.querySelector('.display-container').appendChild(em);
             setTimeout(() => { if (em.parentNode) em.remove(); }, 8000);
         }
     }
@@ -247,7 +247,7 @@ class WishDisplay {
     fireFlash() {
         const flash = document.createElement('div');
         flash.className = 'reveal-flash';
-        document.body.appendChild(flash);
+        document.querySelector('.display-container').appendChild(flash);
         setTimeout(() => { if (flash.parentNode) flash.remove(); }, 1000);
     }
 
