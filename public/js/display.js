@@ -532,16 +532,20 @@ class WishDisplay {
         } else {
             x = padding + Math.random() * Math.max(0, maxX - padding);
         }
-        // Y ekseni: Hem başlangıçta yoğunluğu dağıtmak hem de sonsuz uçuş efekti için 
-        // daha geniş bir aralığa yayıyoruz. İlk yüklenen kartlar daha aşağıdan gelecek.
+
+        // Y ekseni: fener modunda ekranın tam altından doğar, staggered offset ile
+        // balon modunda eski davranış korunur
         const spawnOffset = this.wishCards.length * (this.displayMode === 'lantern' ? 250 : 150);
-        let y = ch + 200 + spawnOffset + Math.random() * 1000;
+        let y = this.displayMode === 'lantern'
+            ? ch + 100 + spawnOffset          // Ekranın tam altından doğar
+            : ch + 200 + spawnOffset + Math.random() * 1000;
 
         const rotation = (Math.random() - 0.5) * (this.displayMode === 'lantern' ? 3 : 8);
 
         // CSS left/top yerine performansı artırmak için GPU hızlandırmalı transform3d kullanıyoruz.
         card.style.left = '0px';
         card.style.top = '0px';
+        card.style.opacity = this.displayMode === 'lantern' ? '0' : '1';
         card.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rotation}deg)`;
 
         card.addEventListener('click', () => {
@@ -559,7 +563,14 @@ class WishDisplay {
             vy: -(this.displayMode === 'lantern' ? (1.0 + Math.random() * 1.2) : (1.5 + Math.random() * 2)),
             rotation: rotation,
             rotationSpeed: (Math.random() - 0.5) * (this.displayMode === 'lantern' ? 0.15 : 0.8),
-            radius: this.displayMode === 'lantern' ? 350 : 260
+            radius: this.displayMode === 'lantern' ? 350 : 260,
+            // Salınım: her fener kendi frekans ve genliğiyle sağ-sol sallar
+            swayPhase: Math.random() * Math.PI * 2,   // Başlangıç faz (0–2π)
+            swayFreq:  0.008 + Math.random() * 0.006, // Salınım frekansı (yavaş-orta)
+            swayAmp:   60 + Math.random() * 80,       // Salınım genliği px (60–140px)
+            swayBaseX: x,                             // Salınımın merkez X'i
+            rising: true,                             // Ekran altından yeni doğuyor mu?
+            opacity: 0                                // Fade-in takibi
         };
         this.wishCards.push(cardData);
 
@@ -593,66 +604,95 @@ class WishDisplay {
 
             cards.forEach(cardData => {
                 // Admin panelinden gelen hızı doğrudan harekete çarparak uygula
-                cardData.x += cardData.vx * currentSpeedMulti;
                 cardData.y += cardData.vy * currentSpeedMulti;
                 cardData.rotation += cardData.rotationSpeed;
 
-                // Logo repulsion removed — balloons now pass freely under header banner
-                // The .logo-layer CSS clip-path handles visual layering
-
-                // === FENER ARASI İTME (LANTERN REPULSION) ===
+                // === FENER SALINIMU (SINÜS) — sadece lantern modunda ===
                 if (this.displayMode === 'lantern') {
-                    const repulseRadius = 450; // Piksel mesafe eşiği
-                    const repulseForce = 0.08;
-                    for (let j = 0; j < cards.length; j++) {
-                        const other = cards[j];
-                        if (other === cardData) continue;
-                        const dx = cardData.x - other.x;
-                        const dy = cardData.y - other.y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist < repulseRadius && dist > 1) {
-                            const force = repulseForce * (1 - dist / repulseRadius);
-                            cardData.vx += (dx / dist) * force;
-                            // Y ekseninde çok az itme — dikey akışı bozmamak için
-                            cardData.vy += (dy / dist) * force * 0.15;
+                    cardData.swayPhase += cardData.swayFreq * currentSpeedMulti;
+                    cardData.x = cardData.swayBaseX + Math.sin(cardData.swayPhase) * cardData.swayAmp;
+
+                    // swayBaseX sınırları — fener kenara çıkmasın
+                    if (cardData.swayBaseX < paddingSides + cardData.swayAmp) {
+                        cardData.swayBaseX = paddingSides + cardData.swayAmp;
+                    }
+                    if (cardData.swayBaseX > maxX - cardData.swayAmp) {
+                        cardData.swayBaseX = maxX - cardData.swayAmp;
+                    }
+
+                    // === FADE-IN: ekran altından yükselirken belirginleş ===
+                    if (cardData.rising) {
+                        // ch'den ch-400'e kadar olan bölgede opacity 0→1
+                        const fadeZone = 400;
+                        const progress = Math.min(1, (ch - cardData.y) / fadeZone);
+                        cardData.opacity = progress;
+                        cardData.element.style.opacity = cardData.opacity;
+                        if (progress >= 1) cardData.rising = false;
+                    }
+
+                    // === FADE-OUT + RESPAWN: tavandan çıkınca aşağıya dön ===
+                    if (cardData.y < -200) {
+                        // Fade-out: -200 ile -600 arasında opacity düş
+                        const fadeOut = Math.max(0, 1 - (Math.abs(cardData.y) - 200) / 400);
+                        cardData.element.style.opacity = fadeOut;
+
+                        if (cardData.y < -600) {
+                            // Yeni dilek yükle
+                            if (this.allServerWishes && this.allServerWishes.length > 0) {
+                                const randomWish = this.allServerWishes[Math.floor(Math.random() * this.allServerWishes.length)];
+                                cardData.element.dataset.wishId = randomWish.id;
+                                const textEl = cardData.element.querySelector('.wish-text');
+                                const nameEl = cardData.element.querySelector('.child-name');
+                                if (textEl && randomWish.wishText) textEl.innerHTML = randomWish.wishText.replace(/\n/g, '<br>');
+                                if (nameEl && randomWish.childName) nameEl.textContent = randomWish.childName;
+                            }
+                            // Ekranın altından yeni spawn — rastgele X merkezi
+                            cardData.swayBaseX = paddingSides + cardData.swayAmp + Math.random() * (maxX - cardData.swayAmp * 2);
+                            cardData.x = cardData.swayBaseX;
+                            cardData.y = ch + 100 + Math.random() * 400;
+                            cardData.swayPhase = Math.random() * Math.PI * 2;
+                            cardData.rising = true;
+                            cardData.opacity = 0;
+                            cardData.element.style.opacity = '0';
+                        }
+                    }
+
+                } else {
+                    // Balon modu — eski davranış
+                    cardData.x += cardData.vx * currentSpeedMulti;
+
+                    // Yan duvarlardan hafifçe sekmesi
+                    if (cardData.x < paddingSides) {
+                        cardData.x = paddingSides;
+                        cardData.vx *= -0.3;
+                    }
+                    if (cardData.x > maxX) {
+                        cardData.x = maxX;
+                        cardData.vx *= -0.3;
+                    }
+
+                    // Balon ekranın tavanından tamamen çıktığında tekrar aşağı fırlat
+                    if (cardData.y < -600) {
+                        cardData.y = ch + 200 + Math.random() * 2000;
+                        cardData.x = Math.random() * maxX;
+
+                        if (this.allServerWishes && this.allServerWishes.length > 0) {
+                            const randomWish = this.allServerWishes[Math.floor(Math.random() * this.allServerWishes.length)];
+                            cardData.element.dataset.wishId = randomWish.id;
+                            const textEl = cardData.element.querySelector('.wish-text');
+                            const nameEl = cardData.element.querySelector('.child-name');
+                            if (textEl && randomWish.wishText) textEl.innerHTML = randomWish.wishText.replace(/\n/g, '<br>');
+                            if (nameEl && randomWish.childName) nameEl.textContent = randomWish.childName;
                         }
                     }
                 }
 
-                // Yan duvarlardan hafifçe sekmesi (drift sınırı)
-                if (cardData.x < paddingSides) {
-                    cardData.x = paddingSides;
-                    cardData.vx *= -0.3; // Sert sekme yerine hızı büyük oranda sönümle
-                }
-                if (cardData.x > maxX) {
-                    cardData.x = maxX;
-                    cardData.vx *= -0.3; // Sert sekme yerine hızı büyük oranda sönümle 
-                }
-
-                if (Math.abs(cardData.rotation) > 15) {
-                    cardData.rotationSpeed *= -1;
-                }
-
-                // Balon ekranın tavanından tamamen çıktığında tekrar aşağı fırlat ve İÇERİĞİNİ GÜNCELLE
-                if (cardData.y < -600) {
-                    cardData.y = ch + 200 + Math.random() * 2000;
-                    cardData.x = Math.random() * maxX;
-
-                    // Havuzda birden fazla dilek varsa farklı, rastgele bir dilek seç ve balona uygula
-                    if (this.allServerWishes && this.allServerWishes.length > 0) {
-                        const randomWish = this.allServerWishes[Math.floor(Math.random() * this.allServerWishes.length)];
-                        cardData.element.dataset.wishId = randomWish.id;
-
-                        const textEl = cardData.element.querySelector('.wish-text');
-                        const nameEl = cardData.element.querySelector('.child-name');
-                        if (textEl && randomWish.wishText) textEl.innerHTML = randomWish.wishText.replace(/\n/g, '<br>');
-                        if (nameEl && randomWish.childName) nameEl.textContent = randomWish.childName;
-                    }
-                }
-
                 // SADECE GÖRÜNTÜ MATRİSİNİ VE EKSENİNİ (GPU) GÜNCELLE
-                // 'left' ve 'top' değiştirmek tarayıcıya korkunç bir layout reflow yükü bindirir (Lag Sebebi)
-                cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${currentScale}) rotate(${cardData.rotation}deg)`;
+                // Fener modunda salınım x'i halleder, rotation sadece hafif eğim
+                const rot = this.displayMode === 'lantern'
+                    ? Math.sin(cardData.swayPhase) * 2  // Salınımla senkron hafif eğim
+                    : cardData.rotation;
+                cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${currentScale}) rotate(${rot}deg)`;
             });
 
             requestAnimationFrame(animate);
