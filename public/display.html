@@ -221,14 +221,13 @@
         .lantern-body::before {
             content: '';
             position: absolute;
-            top: -10%;
-            left: -15%;
-            width: 130%;
-            height: 120%;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 90%;
             background: radial-gradient(ellipse at 50% 55%,
-                rgba(255, 200, 80, 0.18) 0%,
-                rgba(255, 150, 40, 0.08) 40%,
-                transparent 70%);
+                rgba(255, 200, 80, 0.10) 0%,
+                transparent 60%);
             border-radius: 50%;
             animation: lanternGlow 3s ease-in-out infinite;
             pointer-events: none;
@@ -240,15 +239,14 @@
         .lantern-body::after {
             content: '';
             position: absolute;
-            bottom: -5px;
+            bottom: -3px;
             left: 50%;
             transform: translateX(-50%);
-            width: 60%;
-            height: 20px;
+            width: 40%;
+            height: 12px;
             background: radial-gradient(ellipse at 50% 0%,
-                rgba(255, 200, 100, 0.35) 0%,
-                rgba(255, 150, 50, 0.15) 50%,
-                transparent 80%);
+                rgba(255, 200, 100, 0.20) 0%,
+                transparent 70%);
             z-index: 5;
             pointer-events: none;
         }
