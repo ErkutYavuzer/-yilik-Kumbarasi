@@ -608,14 +608,14 @@ app.get('/api/auto-spotlight/status', (req, res) => {
 
 // === TEMA SİSTEMİ ===
 const savedSettings = loadSettings();
-let currentTheme = savedSettings.theme || 'iyilik';
+let currentTheme = savedSettings.theme || 'turktelekom';
 app.get('/api/theme', (req, res) => {
     res.json({ theme: currentTheme });
 });
 
 app.post('/api/theme', (req, res) => {
     const { theme } = req.body;
-    currentTheme = theme || 'default';
+    currentTheme = theme || 'turktelekom';
     saveSettings({ theme: currentTheme });
     io.emit('theme-change', currentTheme);
     console.log(`🎨 Tema değiştirildi: ${currentTheme}`);

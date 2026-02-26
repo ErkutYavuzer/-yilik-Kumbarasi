@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>İyilik Kumbarası - Gösterim</title>
-    <link rel="stylesheet" href="/css/themes.css?v=5.6.0">
+    <link rel="stylesheet" href="/css/themes.css?v=6.0.0">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * {
@@ -23,8 +23,8 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            width: 4224px;
-            height: 1536px;
+            width: 1920px;
+            height: 4320px;
             font-family: 'Nunito', sans-serif;
             /* Scale to fit actual screen */
             transform-origin: top left;
@@ -32,8 +32,8 @@
 
         /* Main container */
         .display-container {
-            width: 4224px;
-            height: 1536px;
+            width: 1920px;
+            height: 4320px;
             position: relative;
             /* Arkaplan themes.css tarafindan yonetiliyor */
         }
@@ -69,9 +69,9 @@
         #wishes-container.spotlight-mode .wish-card.spotlight-active {
             opacity: 1;
             position: absolute !important;
-            top: 70% !important;
+            top: 50% !important;
             left: 50% !important;
-            transform: translate(-50%, -50%) scale(1.3) !important;
+            transform: translate(-50%, -50%) scale(1.2) !important;
             z-index: 600 !important;
             filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.6));
             animation: spotlightPulse 2s ease-in-out infinite;
@@ -92,7 +92,7 @@
         /* Balloon wish card */
         .wish-card {
             position: absolute;
-            width: 520px;
+            width: 320px;
             cursor: pointer;
             will-change: transform;
             /* Optimized GPU rendering */
@@ -103,8 +103,8 @@
 
         .balloon-body {
             position: relative;
-            width: 520px;
-            height: 600px;
+            width: 320px;
+            height: 380px;
             background:
                 radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.35) 0%, transparent 50%),
                 radial-gradient(circle at 65% 75%, rgba(0, 0, 0, 0.15) 0%, transparent 50%),
@@ -152,7 +152,7 @@
         /* Balloon string - wavy */
         .balloon-string {
             width: 3px;
-            height: 120px;
+            height: 80px;
             background: linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.05));
             margin-top: -1px;
             position: relative;
@@ -198,228 +198,213 @@
             transform: scale(1.05);
         }
 
-        /* ═══ DİLEK FENERİ (WISH LANTERN) MODE ═══ */
+        /* ═══ DİLEK FENERİ (SKY LANTERN) MODE ═══ */
+        /* Gerçekçi gökyüzü feneri — yarı saydam kağıt, iç alev, sıcak glow */
 
         .wish-card.lantern-mode {
-            width: 520px;
-            filter: drop-shadow(0 0 40px rgba(255, 150, 0, 0.25));
+            width: 320px;
+            filter: drop-shadow(0 0 60px rgba(255, 160, 40, 0.4))
+                    drop-shadow(0 0 120px rgba(255, 100, 0, 0.15));
         }
 
-        /* Lantern body - dome shaped paper lantern with ribs */
+        /* Fener gövdesi — yuvarlak kağıt balon şekli */
         .lantern-body {
             position: relative;
-            width: 290px;
-            height: 360px;
+            width: 240px;
+            height: 320px;
             margin: 0 auto;
             background:
+                /* Yarı saydam kağıt dokusu — dikey nervürler */
                 repeating-linear-gradient(
                     90deg,
                     transparent 0px,
-                    transparent 36px,
-                    rgba(200, 120, 20, 0.12) 36px,
-                    rgba(200, 120, 20, 0.12) 38px
+                    transparent 28px,
+                    rgba(180, 100, 20, 0.08) 28px,
+                    rgba(180, 100, 20, 0.08) 30px
                 ),
-                radial-gradient(ellipse at 50% 35%,
-                    rgba(255, 245, 200, 0.98) 0%,
-                    rgba(255, 210, 100, 0.95) 20%,
-                    rgba(255, 175, 50, 0.92) 40%,
-                    rgba(230, 130, 20, 0.88) 65%,
-                    rgba(200, 90, 10, 0.85) 100%);
-            border-radius: 50% 50% 18% 18% / 60% 60% 22% 22%;
+                /* İç alev ışığı — merkezden dışa doğru sıcak parıltı */
+                radial-gradient(ellipse at 50% 55%,
+                    rgba(255, 255, 220, 0.95) 0%,
+                    rgba(255, 230, 150, 0.85) 15%,
+                    rgba(255, 200, 80, 0.7) 30%,
+                    rgba(255, 160, 40, 0.55) 50%,
+                    rgba(220, 120, 20, 0.4) 70%,
+                    rgba(180, 80, 10, 0.3) 100%);
+            border-radius: 50% 50% 35% 35% / 55% 55% 30% 30%;
             box-shadow:
-                0 0 50px rgba(255, 165, 0, 0.5),
-                0 0 100px rgba(255, 120, 0, 0.25),
-                0 0 200px rgba(255, 80, 0, 0.1),
-                inset 0 20px 50px rgba(255, 255, 200, 0.35),
-                inset 0 -30px 40px rgba(180, 70, 0, 0.25);
+                /* Dış sıcak parıltı */
+                0 0 40px rgba(255, 165, 0, 0.5),
+                0 0 80px rgba(255, 120, 0, 0.25),
+                0 0 160px rgba(255, 80, 0, 0.1),
+                /* İç ışık */
+                inset 0 20px 60px rgba(255, 255, 200, 0.4),
+                inset 0 -20px 40px rgba(200, 80, 0, 0.2);
             overflow: visible;
             transition: box-shadow 0.4s ease, filter 0.4s ease;
         }
 
-        /* Inner warm glow + paper grain texture */
+        /* İç parıltı + kağıt grain efekti */
         .lantern-body::before {
             content: '';
             position: absolute;
-            top: 10%;
+            top: 15%;
             left: 15%;
             width: 70%;
-            height: 60%;
+            height: 55%;
             background:
-                radial-gradient(ellipse at 50% 45%,
-                    rgba(255, 255, 230, 0.8) 0%,
-                    rgba(255, 230, 120, 0.4) 35%,
-                    rgba(255, 200, 50, 0.15) 60%,
-                    transparent 80%);
+                radial-gradient(ellipse at 50% 50%,
+                    rgba(255, 255, 230, 0.7) 0%,
+                    rgba(255, 220, 100, 0.35) 40%,
+                    rgba(255, 180, 50, 0.1) 70%,
+                    transparent 100%);
             border-radius: 50%;
             animation: lanternGlow 3s ease-in-out infinite;
             pointer-events: none;
             z-index: 1;
         }
 
-        /* Top wooden frame/ring with 3D depth */
+        /* Alt ağız — tel çerçeve (wire frame) */
         .lantern-body::after {
             content: '';
             position: absolute;
-            top: -12px;
+            bottom: -6px;
             left: 50%;
             transform: translateX(-50%);
-            width: 80px;
-            height: 22px;
+            width: 70%;
+            height: 14px;
             background: linear-gradient(180deg,
-                #C4813A 0%, #A0622D 25%, #8B4513 50%, #6B3410 75%, #8B4513 100%);
-            border-radius: 6px 6px 3px 3px;
+                #7A5A30 0%, #5A3A18 50%, #7A5A30 100%);
+            border-radius: 0 0 50% 50% / 0 0 100% 100%;
             box-shadow:
-                0 3px 10px rgba(0, 0, 0, 0.4),
-                inset 0 2px 4px rgba(255, 200, 120, 0.3),
-                inset 0 -2px 3px rgba(0, 0, 0, 0.2);
+                0 3px 8px rgba(0, 0, 0, 0.3),
+                inset 0 2px 3px rgba(255, 200, 120, 0.2);
             z-index: 5;
         }
 
-        /* Flame - centered inside lantern with glow ring */
+        /* Alev — fenerin merkezinde */
         .lantern-flame {
             position: absolute;
-            top: 45%;
+            bottom: 8%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            width: 46px;
-            height: 70px;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 40px;
             background:
-                radial-gradient(ellipse at 50% 60%,
+                radial-gradient(ellipse at 50% 70%,
                     #FFFFF0 0%,
-                    #FFFDE0 15%,
-                    #FFD700 30%,
-                    #FFA500 50%,
-                    #FF6600 70%,
+                    #FFFDE0 20%,
+                    #FFD700 40%,
+                    #FFA500 60%,
+                    #FF6600 80%,
                     transparent 100%);
-            border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
             animation: flameFlicker 2s ease-in-out infinite;
-            filter: blur(1.5px);
+            filter: blur(1px);
             z-index: 3;
         }
 
-        /* Flame secondary glow ring */
+        /* Alev dış glow halkası */
         .lantern-flame::after {
             content: '';
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 115px;
-            height: 115px;
+            width: 80px;
+            height: 80px;
             background: radial-gradient(circle,
-                rgba(255, 220, 100, 0.3) 0%,
-                rgba(255, 165, 0, 0.15) 40%,
+                rgba(255, 220, 100, 0.25) 0%,
+                rgba(255, 165, 0, 0.1) 45%,
                 transparent 70%);
             border-radius: 50%;
             animation: lanternGlow 3s ease-in-out infinite reverse;
             pointer-events: none;
         }
 
-        /* String connecting lantern to parchment */
+        /* İp — fenerin altından sarkan kısa iplik */
         .lantern-string {
             width: 2px;
-            height: 55px;
+            height: 30px;
             background: linear-gradient(to bottom,
-                #6B3A10 0%, #A0724A 30%, #D2B48C 50%, #A0724A 70%, #6B3A10 100%);
+                rgba(120, 80, 30, 0.6) 0%, rgba(120, 80, 30, 0.1) 100%);
             margin: 0 auto;
             position: relative;
-            animation: stringWave 5s ease-in-out infinite;
-            transform-origin: top center;
-            box-shadow: 1px 0 3px rgba(0, 0, 0, 0.15);
         }
 
-        /* Parchment/Scroll - aged parşömen with 3D curls */
+        /* Parşömen/metin alanı */
         .lantern-parchment {
             position: relative;
-            width: 360px;
-            min-height: 90px;
-            max-height: 320px;
+            width: 280px;
+            min-height: 70px;
+            max-height: 200px;
             margin: 0 auto;
-            padding: 50px 36px 45px;
+            padding: 24px 20px 20px;
             background:
                 repeating-linear-gradient(
                     0deg,
                     transparent 0px,
-                    transparent 30px,
-                    rgba(139, 69, 19, 0.04) 30px,
-                    rgba(139, 69, 19, 0.04) 32px
+                    transparent 22px,
+                    rgba(139, 69, 19, 0.04) 22px,
+                    rgba(139, 69, 19, 0.04) 24px
                 ),
                 linear-gradient(90deg,
-                    rgba(139, 69, 19, 0.08) 0%,
+                    rgba(139, 69, 19, 0.06) 0%,
                     transparent 8%,
                     transparent 92%,
-                    rgba(139, 69, 19, 0.08) 100%),
+                    rgba(139, 69, 19, 0.06) 100%),
                 linear-gradient(180deg,
-                    #F5E6C8 0%, #F2E0B8 10%, #ECD9A8 30%,
+                    #F5E6C8 0%, #ECD9A8 30%,
                     #E8D4A0 50%,
-                    #ECD9A8 70%, #F2E0B8 90%, #F5E6C8 100%);
+                    #ECD9A8 70%, #F5E6C8 100%);
             border-radius: 4px;
             box-shadow:
-                0 8px 25px rgba(0, 0, 0, 0.3),
-                inset 0 0 20px rgba(139, 69, 19, 0.06),
-                inset 3px 0 10px rgba(139, 69, 19, 0.04),
-                inset -3px 0 10px rgba(139, 69, 19, 0.04);
-            border: 1px solid rgba(139, 69, 19, 0.12);
+                0 6px 20px rgba(0, 0, 0, 0.25),
+                inset 0 0 15px rgba(139, 69, 19, 0.05);
+            border: 1px solid rgba(139, 69, 19, 0.1);
             overflow: hidden;
         }
 
-        /* Top scroll curl - pronounced 3D roll with depth */
+        /* Üst kıvrım */
         .lantern-parchment::before {
             content: '';
             position: absolute;
-            top: -27px;
-            left: 2%;
-            right: 2%;
-            height: 55px;
+            top: -16px;
+            left: 3%;
+            right: 3%;
+            height: 32px;
             background: linear-gradient(to bottom,
-                    #B8975A 0%,
-                    #C4A56A 10%,
-                    #D4BC82 25%,
-                    #DEC896 40%,
-                    #E8D5A8 55%,
-                    #EFDDBa 70%,
-                    #F2E0B8 85%,
-                    #F5E6C8 100%);
+                    #B8975A 0%, #D4BC82 30%, #E8D5A8 60%, #F5E6C8 100%);
             border-radius: 50% 50% 0 0 / 100% 100% 0 0;
             box-shadow:
-                0 -3px 8px rgba(0, 0, 0, 0.15),
-                0 6px 12px rgba(0, 0, 0, 0.1),
-                inset 0 -12px 18px rgba(139, 69, 19, 0.12),
-                inset 0 4px 6px rgba(255, 255, 240, 0.15);
-            border: 1px solid rgba(139, 69, 19, 0.15);
+                0 -2px 6px rgba(0, 0, 0, 0.1),
+                0 4px 8px rgba(0, 0, 0, 0.08),
+                inset 0 -8px 12px rgba(139, 69, 19, 0.08);
+            border: 1px solid rgba(139, 69, 19, 0.1);
             border-bottom: none;
             z-index: 1;
         }
 
-        /* Bottom scroll curl - pronounced 3D roll with depth */
+        /* Alt kıvrım */
         .lantern-parchment::after {
             content: '';
             position: absolute;
-            bottom: -27px;
-            left: 2%;
-            right: 2%;
-            height: 55px;
+            bottom: -16px;
+            left: 3%;
+            right: 3%;
+            height: 32px;
             background: linear-gradient(to top,
-                    #B8975A 0%,
-                    #C4A56A 10%,
-                    #D4BC82 25%,
-                    #DEC896 40%,
-                    #E8D5A8 55%,
-                    #EFDDBa 70%,
-                    #F2E0B8 85%,
-                    #F5E6C8 100%);
+                    #B8975A 0%, #D4BC82 30%, #E8D5A8 60%, #F5E6C8 100%);
             border-radius: 0 0 50% 50% / 0 0 100% 100%;
             box-shadow:
-                0 3px 8px rgba(0, 0, 0, 0.15),
-                0 -6px 12px rgba(0, 0, 0, 0.1),
-                inset 0 12px 18px rgba(139, 69, 19, 0.12),
-                inset 0 -4px 6px rgba(255, 255, 240, 0.15);
-            border: 1px solid rgba(139, 69, 19, 0.15);
+                0 2px 6px rgba(0, 0, 0, 0.1),
+                0 -4px 8px rgba(0, 0, 0, 0.08),
+                inset 0 8px 12px rgba(139, 69, 19, 0.08);
+            border: 1px solid rgba(139, 69, 19, 0.1);
             border-top: none;
             z-index: 1;
         }
 
-        /* Parchment text overrides */
+        /* Parşömen metin stilleri */
         .wish-card.lantern-mode .wish-text {
             position: relative;
             top: auto;
@@ -428,10 +413,10 @@
             width: auto;
             max-height: none;
             padding: 0;
-            font-size: 22px;
+            font-size: 16px;
             font-weight: 600;
             color: #3D2400;
-            text-shadow: 0 1px 1px rgba(139, 69, 19, 0.08);
+            text-shadow: 0 1px 1px rgba(139, 69, 19, 0.06);
             font-style: italic;
             font-family: 'Georgia', 'Palatino Linotype', 'Book Antiqua', serif;
             line-height: 1.35;
@@ -451,27 +436,27 @@
             -webkit-line-clamp: 2;
             line-clamp: 2;
             -webkit-box-orient: vertical;
-            font-size: 20px;
+            font-size: 15px;
             font-weight: 800;
             color: #5A2D0C;
             text-shadow: none;
-            margin-top: 12px;
-            padding-top: 10px;
-            border-top: 1px solid rgba(139, 69, 19, 0.15);
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(139, 69, 19, 0.12);
             text-align: center;
             font-family: 'Nunito', sans-serif;
             z-index: 2;
         }
 
-        /* Decorative separator before child name */
+        /* İsim öncesi dekoratif ayırıcı */
         .wish-card.lantern-mode .child-name::before {
             content: '✦';
             display: block;
-            font-size: 12px;
-            color: rgba(139, 69, 19, 0.3);
-            margin-bottom: 4px;
-            letter-spacing: 8px;
-            text-indent: 8px;
+            font-size: 10px;
+            color: rgba(139, 69, 19, 0.25);
+            margin-bottom: 3px;
+            letter-spacing: 6px;
+            text-indent: 6px;
         }
 
         @keyframes lanternGlow {
@@ -498,11 +483,11 @@
 
         .wish-card.lantern-mode:hover .lantern-body {
             box-shadow:
-                0 0 70px rgba(255, 180, 30, 0.8),
-                0 0 140px rgba(255, 120, 0, 0.4),
-                0 0 250px rgba(255, 80, 0, 0.15),
-                inset 0 20px 50px rgba(255, 255, 200, 0.45);
-            filter: brightness(1.1);
+                0 0 60px rgba(255, 180, 30, 0.7),
+                0 0 120px rgba(255, 120, 0, 0.35),
+                0 0 200px rgba(255, 80, 0, 0.12),
+                inset 0 20px 60px rgba(255, 255, 200, 0.5);
+            filter: brightness(1.08);
         }
         /* Collision bounce animation removed */
 
@@ -534,7 +519,7 @@
 
         .wish-card .wish-text {
             text-align: center;
-            font-size: 28px;
+            font-size: 20px;
             font-weight: 800;
             color: #ffffff;
             text-shadow:
@@ -543,12 +528,12 @@
             line-height: 1.3;
             word-break: break-word;
             overflow-wrap: break-word;
-            width: 380px;
-            max-height: 320px;
+            width: 240px;
+            max-height: 200px;
             overflow: hidden;
             display: -webkit-box;
-            -webkit-line-clamp: 8;
-            line-clamp: 8;
+            -webkit-line-clamp: 6;
+            line-clamp: 6;
             -webkit-box-orient: vertical;
             position: absolute;
             top: 38%;
@@ -560,19 +545,19 @@
 
         .wish-card .child-name {
             text-align: center;
-            padding: 0 20px;
-            font-size: 24px;
+            padding: 0 15px;
+            font-size: 18px;
             font-weight: 800;
             color: white;
             text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
             position: absolute;
-            bottom: 60px;
+            bottom: 45px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 12;
             line-height: 1.2;
             width: 75%;
-            max-width: 380px;
+            max-width: 250px;
 
             /* Taşmaları alt satıra geçirme ve max 2 satırda (clamp) kesme */
             display: -webkit-box;
@@ -594,7 +579,7 @@
         }
 
         .empty-icon {
-            font-size: 200px;
+            font-size: 140px;
             animation: emptyPulse 3s ease-in-out infinite;
         }
 
@@ -615,7 +600,7 @@
         }
 
         .empty-text {
-            font-size: 72px;
+            font-size: 48px;
             font-weight: 900;
             color: rgba(255, 255, 255, 0.7);
             margin-top: 16px;
@@ -623,7 +608,7 @@
         }
 
         .empty-sub {
-            font-size: 36px;
+            font-size: 24px;
             font-weight: 600;
             color: rgba(255, 255, 255, 0.5);
             margin-top: 8px;
@@ -633,23 +618,23 @@
         /* Counter */
         .counter {
             position: absolute;
-            bottom: 50px;
-            right: 50px;
+            bottom: 40px;
+            right: 40px;
             z-index: 200;
             background: white;
-            border-radius: 30px;
-            padding: 24px 48px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            padding: 16px 32px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
             display: flex;
             align-items: center;
-            gap: 16px;
-            font-size: 40px;
+            gap: 10px;
+            font-size: 28px;
             font-weight: 800;
             color: #333;
         }
 
         .counter .counter-icon {
-            font-size: 48px
+            font-size: 32px
         }
 
         /* Spotlight overlay - arka plan hafif karanlik */
@@ -657,8 +642,8 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 4224px;
-            height: 1536px;
+            width: 1920px;
+            height: 4320px;
             background: rgba(0, 0, 0, 0.3);
             z-index: 500;
             opacity: 0;
@@ -674,17 +659,17 @@
         /* Spotlight isim etiketi */
         #spotlight-label {
             position: absolute;
-            bottom: 120px;
+            bottom: 80px;
             left: 50%;
             transform: translateX(-50%) translateY(50px);
             z-index: 700;
             background: linear-gradient(135deg, #FFD700, #FFA500);
             color: #1a1a35;
-            padding: 28px 70px;
-            border-radius: 40px;
-            font-size: 52px;
+            padding: 20px 50px;
+            border-radius: 30px;
+            font-size: 36px;
             font-weight: 900;
-            box-shadow: 0 8px 30px rgba(255, 165, 0, 0.4);
+            box-shadow: 0 6px 25px rgba(255, 165, 0, 0.4);
             opacity: 0;
             pointer-events: none;
             transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -698,15 +683,15 @@
         /* New wish notification */
         .new-wish-toast {
             position: absolute;
-            top: 40px;
+            top: 30px;
             left: 50%;
             transform: translateX(-50%) translateY(-200px);
             background: white;
-            border-radius: 30px;
-            padding: 24px 48px;
-            box-shadow: 0 16px 60px rgba(0, 0, 0, 0.15);
+            border-radius: 20px;
+            padding: 16px 32px;
+            box-shadow: 0 12px 50px rgba(0, 0, 0, 0.15);
             z-index: 300;
-            font-size: 40px;
+            font-size: 28px;
             font-weight: 800;
             color: #333;
             display: flex;
@@ -722,17 +707,17 @@
         /* Fullscreen button */
         .fullscreen-btn {
             position: absolute;
-            bottom: 50px;
-            left: 50px;
+            bottom: 40px;
+            left: 40px;
             z-index: 200;
-            width: 90px;
-            height: 90px;
+            width: 60px;
+            height: 60px;
             background: white;
             border: none;
-            border-radius: 24px;
+            border-radius: 16px;
             cursor: pointer;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
-            font-size: 40px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            font-size: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -747,17 +732,17 @@
         /* Mute button */
         .mute-btn {
             position: absolute;
-            bottom: 50px;
-            left: 160px;
+            bottom: 40px;
+            left: 120px;
             z-index: 200;
-            width: 90px;
-            height: 90px;
+            width: 60px;
+            height: 60px;
             background: white;
             border: none;
-            border-radius: 24px;
+            border-radius: 16px;
             cursor: pointer;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
-            font-size: 40px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            font-size: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -794,31 +779,31 @@
             }
             80% { opacity: 1; }
             100% {
-                transform: translateY(1700px) rotate(1080deg) scale(0.5);
+                transform: translateY(4500px) rotate(1080deg) scale(0.5);
                 opacity: 0;
             }
         }
 
         @keyframes confettiFromLeft {
             0% {
-                transform: translate(-100px, 768px) rotate(0) scale(1);
+                transform: translate(-100px, 2160px) rotate(0) scale(1);
                 opacity: 1;
             }
             80% { opacity: 1; }
             100% {
-                transform: translate(2500px, 460px) rotate(720deg) scale(0.3);
+                transform: translate(1200px, 1300px) rotate(720deg) scale(0.3);
                 opacity: 0;
             }
         }
 
         @keyframes confettiFromRight {
             0% {
-                transform: translate(100px, 768px) rotate(0) scale(1);
+                transform: translate(100px, 2160px) rotate(0) scale(1);
                 opacity: 1;
             }
             80% { opacity: 1; }
             100% {
-                transform: translate(-2500px, 460px) rotate(-720deg) scale(0.3);
+                transform: translate(-1200px, 1300px) rotate(-720deg) scale(0.3);
                 opacity: 0;
             }
         }
@@ -835,8 +820,8 @@
             100% {
                 opacity: 0;
                 transform: scale(0.5) translate(
-                    calc((var(--rx, 0.5) - 0.5) * 1200px),
-                    calc((var(--ry, 0.5) - 0.5) * 900px)
+                    calc((var(--rx, 0.5) - 0.5) * 600px),
+                    calc((var(--ry, 0.5) - 0.5) * 1400px)
                 );
             }
         }
@@ -856,9 +841,9 @@
                 opacity: 0;
             }
             10% { opacity: 1; transform: translateY(0) rotate(10deg) scale(1); }
-            50% { transform: translateY(600px) rotate(-15deg) scale(1.1); opacity: 1; }
+            50% { transform: translateY(1700px) rotate(-15deg) scale(1.1); opacity: 1; }
             100% {
-                transform: translateY(1600px) rotate(30deg) scale(0.6);
+                transform: translateY(4500px) rotate(30deg) scale(0.6);
                 opacity: 0;
             }
         }
@@ -926,8 +911,8 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 4224px;
-            height: 1536px;
+            width: 1920px;
+            height: 4320px;
             background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(15px);
             z-index: 9999;
@@ -947,8 +932,8 @@
         .raffle-box {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
             border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 40px;
-            padding: 60px 100px;
+            border-radius: 30px;
+            padding: 40px 60px;
             text-align: center;
             box-shadow: 0 30px 100px rgba(0, 0, 0, 0.5), inset 0 0 50px rgba(255, 255, 255, 0.1);
             transform: scale(0.8) translateY(100px);
@@ -961,7 +946,7 @@
         }
 
         .raffle-title {
-            font-size: 80px;
+            font-size: 56px;
             font-weight: 900;
             color: #FFD700;
             text-transform: uppercase;
@@ -993,9 +978,9 @@
         .raffle-item {
             background: rgba(255, 255, 255, 0.15);
             border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-            padding: 30px 50px;
-            font-size: 50px;
+            border-radius: 16px;
+            padding: 20px 36px;
+            font-size: 36px;
             font-weight: 800;
             color: white;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
@@ -1080,9 +1065,9 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        // Auto-scale 4224x1536 canvas to cover actual screen without gaps
-        const DESIGN_WIDTH = 4224;
-        const DESIGN_HEIGHT = 1536;
+        // Auto-scale 1920x4320 canvas to cover actual screen without gaps
+        const DESIGN_WIDTH = 1920;
+        const DESIGN_HEIGHT = 4320;
 
         function scaleToFit() {
             const scaleX = window.innerWidth / DESIGN_WIDTH;
@@ -1099,7 +1084,7 @@
         scaleToFit();
         window.addEventListener('resize', scaleToFit);
     </script>
-    <script src="js/display.js?v=5.3.0"></script>
+    <script src="js/display.js?v=6.0.0"></script>
 </body>
 
 </html>

@@ -90,14 +90,14 @@ class WishDisplay {
             const h = Math.random() > 0.5 ? w : w * (1.5 + Math.random());
             conf.className = 'display-confetti' + (mode === 'left' ? ' side-left' : mode === 'right' ? ' side-right' : '');
             if (mode === 'top') {
-                conf.style.left = (Math.random() * 4224) + 'px';
+                conf.style.left = (Math.random() * 1920) + 'px';
                 conf.style.top = '-40px';
             } else if (mode === 'left') {
                 conf.style.left = '-60px';
-                conf.style.top = (300 + Math.random() * 900) + 'px';
+                conf.style.top = (800 + Math.random() * 2500) + 'px';
             } else if (mode === 'right') {
-                conf.style.left = (4224 + 60) + 'px';
-                conf.style.top = (300 + Math.random() * 900) + 'px';
+                conf.style.left = (1920 + 60) + 'px';
+                conf.style.top = (800 + Math.random() * 2500) + 'px';
             }
             conf.style.width = w + 'px';
             conf.style.height = h + 'px';
@@ -127,9 +127,9 @@ class WishDisplay {
         winners.forEach((w, idx) => {
             const item = document.createElement('div');
             item.className = 'raffle-item';
-            const wishHtml = w.wishText ? `<div style="font-size:36px; color:rgba(255,255,255,0.85); margin-top:20px; font-style:italic; line-height:1.4; max-width:1200px;">"${w.wishText}"</div>` : '';
-            item.innerHTML = `<div style="font-size:32px; color:rgba(255,255,255,0.9); margin-bottom:15px;">Sıradaki Talihli!</div>
-                              <div style="color:#FFD700; font-size: 80px; text-shadow:0 0 30px rgba(255,215,0,0.8);">${w.childName}</div>${wishHtml}`;
+            const wishHtml = w.wishText ? `<div style="font-size:26px; color:rgba(255,255,255,0.85); margin-top:15px; font-style:italic; line-height:1.4; max-width:800px;">"${w.wishText}"</div>` : '';
+            item.innerHTML = `<div style="font-size:24px; color:rgba(255,255,255,0.9); margin-bottom:10px;">Sıradaki Talihli!</div>
+                              <div style="color:#FFD700; font-size: 56px; text-shadow:0 0 25px rgba(255,215,0,0.8);">${w.childName}</div>${wishHtml}`;
             container.appendChild(item);
 
             // 5 saniyelik MEGA görsel şölen
@@ -233,7 +233,7 @@ class WishDisplay {
             const em = document.createElement('div');
             em.className = 'celebration-emoji';
             em.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-            em.style.left = (Math.random() * 4000) + 'px';
+            em.style.left = (Math.random() * 1800) + 'px';
             em.style.top = '-80px';
             em.style.fontSize = (40 + Math.random() * 50) + 'px';
             em.style.animationDelay = Math.random() * 3 + 's';
@@ -267,7 +267,7 @@ class WishDisplay {
             this.allServerWishes = [...serverWishes]; // Tüm veriyi havuza al
 
             // Görsel kalabalığı (Density) düşürmek için Limit 15'e çekildi
-            const maxVisible = this.displayMode === 'lantern' ? 30 : 15;
+            const maxVisible = this.displayMode === 'lantern' ? 20 : 12;
             const shuffled = [...serverWishes].sort(() => 0.5 - Math.random());
             const selected = shuffled.slice(0, maxVisible);
 
@@ -376,7 +376,7 @@ class WishDisplay {
             this.container.querySelectorAll('.wish-card').forEach(c => c.remove());
             this.wishCards = [];
             this.wishes = [];
-            const maxVisible = this.displayMode === 'lantern' ? 8 : 15;
+            const maxVisible = this.displayMode === 'lantern' ? 20 : 12;
             if (this.allServerWishes && this.allServerWishes.length > 0) {
                 const shuffled = [...this.allServerWishes].sort(() => 0.5 - Math.random());
                 const selected = shuffled.slice(0, maxVisible);
@@ -503,8 +503,8 @@ class WishDisplay {
             `;
         }
 
-        // Görsel kalabalığı azaltmak için ekran maksimum limit koruması (15 Balon)
-        const maxVisible = this.displayMode === 'lantern' ? 8 : 15;
+        // Görsel kalabalığı azaltmak için ekran maksimum limit koruması
+        const maxVisible = this.displayMode === 'lantern' ? 20 : 12;
         if (this.wishCards.length >= maxVisible) {
             // En eski giren balonu ekran dizisinden çıkart ve DOM'dan sil
             const oldestCard = this.wishCards.shift();
@@ -519,13 +519,13 @@ class WishDisplay {
         const cw = this.container.offsetWidth;
         const ch = this.container.offsetHeight;
         const padding = 0;
-        const cardWidth = this.displayMode === 'lantern' ? 520 : 520;
+        const cardWidth = this.displayMode === 'lantern' ? 320 : 320;
         const maxX = cw - cardWidth;
 
         // X ekseninde konum — fener modunda sütun bazlı dağılım
         let x;
         if (this.displayMode === 'lantern') {
-            const columns = 6;
+            const columns = 4;
             const colWidth = Math.max(0, maxX) / columns;
             const colIndex = this.wishCards.length % columns;
             x = colIndex * colWidth + Math.random() * colWidth * 0.6 + colWidth * 0.2;
@@ -563,11 +563,11 @@ class WishDisplay {
             vy: -(this.displayMode === 'lantern' ? (1.0 + Math.random() * 1.2) : (1.5 + Math.random() * 2)),
             rotation: rotation,
             rotationSpeed: (Math.random() - 0.5) * (this.displayMode === 'lantern' ? 0.15 : 0.8),
-            radius: this.displayMode === 'lantern' ? 350 : 260,
+            radius: this.displayMode === 'lantern' ? 250 : 180,
             // Salınım: her fener kendi frekans ve genliğiyle sağ-sol sallar
             swayPhase: Math.random() * Math.PI * 2,   // Başlangıç faz (0–2π)
             swayFreq:  0.008 + Math.random() * 0.006, // Salınım frekansı (yavaş-orta)
-            swayAmp:   60 + Math.random() * 80,       // Salınım genliği px (60–140px)
+            swayAmp:   30 + Math.random() * 50,       // Salınım genliği px (30–80px)
             swayBaseX: x,                             // Salınımın merkez X'i
             rising: true,                             // Ekran altından yeni doğuyor mu?
             opacity: 0                                // Fade-in takibi
@@ -599,7 +599,7 @@ class WishDisplay {
             const currentScale = this.displaySettings.scaleMultiplier || 1.0;
             const currentSpeedMulti = this.displaySettings.speedMultiplier || 1.0;
             const paddingSides = -100; // Allow slight peek from left edge
-            const cardWidth = this.displayMode === 'lantern' ? 520 : 520;
+            const cardWidth = this.displayMode === 'lantern' ? 320 : 320;
             const maxX = cw - cardWidth; // Account for card width so right edge doesn't clip
 
             cards.forEach(cardData => {
