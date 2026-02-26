@@ -647,7 +647,7 @@ class WishDisplay {
                     if (cardData.rising) {
                         // ch'den ch-400'e kadar olan bölgede opacity 0→maxOpacity
                         const fadeZone = 400;
-                        const progress = Math.min(1, (ch - cardData.y) / fadeZone);
+                        const progress = Math.max(0, Math.min(1, (ch - cardData.y) / fadeZone));
                         const maxOpacity = 0.5 + cardData.zDepth * 0.5; // Uzak=0.75, yakın=1.0
                         cardData.opacity = progress * maxOpacity;
                         cardData.element.style.opacity = cardData.opacity;
