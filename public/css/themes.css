@@ -219,7 +219,7 @@ html {
 .display-header {
     display: flex !important;
     position: absolute;
-    top: 40px;
+    top: 100px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 200;
@@ -240,10 +240,9 @@ html {
 
 .title-logo {
     display: block;
-    width: 280px;
-    height: 80px;
-    object-fit: cover;
-    object-position: center 55%;
+    width: 300px;
+    height: auto;
+    object-fit: contain;
     border-radius: 6px;
     filter:
         drop-shadow(0 0 30px rgba(0, 120, 255, 0.5))

@@ -304,80 +304,15 @@
             position: relative;
         }
 
-        /* Parşömen/metin alanı */
-        .lantern-parchment {
-            position: relative;
+        /* Fener altı metin alanı — düz beyaz yazı */
+        .lantern-text {
             width: 280px;
-            min-height: 70px;
-            max-height: 200px;
-            margin: 0 auto;
-            padding: 24px 20px 20px;
-            background:
-                repeating-linear-gradient(
-                    0deg,
-                    transparent 0px,
-                    transparent 22px,
-                    rgba(139, 69, 19, 0.04) 22px,
-                    rgba(139, 69, 19, 0.04) 24px
-                ),
-                linear-gradient(90deg,
-                    rgba(139, 69, 19, 0.06) 0%,
-                    transparent 8%,
-                    transparent 92%,
-                    rgba(139, 69, 19, 0.06) 100%),
-                linear-gradient(180deg,
-                    #F5E6C8 0%, #ECD9A8 30%,
-                    #E8D4A0 50%,
-                    #ECD9A8 70%, #F5E6C8 100%);
-            border-radius: 4px;
-            box-shadow:
-                0 6px 20px rgba(0, 0, 0, 0.25),
-                inset 0 0 15px rgba(139, 69, 19, 0.05);
-            border: 1px solid rgba(139, 69, 19, 0.1);
-            overflow: hidden;
+            margin: 4px auto 0;
+            text-align: center;
+            pointer-events: none;
         }
 
-        /* Üst kıvrım */
-        .lantern-parchment::before {
-            content: '';
-            position: absolute;
-            top: -16px;
-            left: 3%;
-            right: 3%;
-            height: 32px;
-            background: linear-gradient(to bottom,
-                    #B8975A 0%, #D4BC82 30%, #E8D5A8 60%, #F5E6C8 100%);
-            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-            box-shadow:
-                0 -2px 6px rgba(0, 0, 0, 0.1),
-                0 4px 8px rgba(0, 0, 0, 0.08),
-                inset 0 -8px 12px rgba(139, 69, 19, 0.08);
-            border: 1px solid rgba(139, 69, 19, 0.1);
-            border-bottom: none;
-            z-index: 1;
-        }
-
-        /* Alt kıvrım */
-        .lantern-parchment::after {
-            content: '';
-            position: absolute;
-            bottom: -16px;
-            left: 3%;
-            right: 3%;
-            height: 32px;
-            background: linear-gradient(to top,
-                    #B8975A 0%, #D4BC82 30%, #E8D5A8 60%, #F5E6C8 100%);
-            border-radius: 0 0 50% 50% / 0 0 100% 100%;
-            box-shadow:
-                0 2px 6px rgba(0, 0, 0, 0.1),
-                0 -4px 8px rgba(0, 0, 0, 0.08),
-                inset 0 8px 12px rgba(139, 69, 19, 0.08);
-            border: 1px solid rgba(139, 69, 19, 0.1);
-            border-top: none;
-            z-index: 1;
-        }
-
-        /* Parşömen metin stilleri */
+        /* Fener metin stilleri — beyaz düz yazı */
         .wish-card.lantern-mode .wish-text {
             position: relative;
             top: auto;
@@ -386,16 +321,20 @@
             width: auto;
             max-height: none;
             padding: 0;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
-            color: #3D2400;
-            text-shadow: 0 1px 1px rgba(139, 69, 19, 0.06);
-            font-style: italic;
-            font-family: 'Georgia', 'Palatino Linotype', 'Book Antiqua', serif;
-            line-height: 1.35;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
+            font-style: normal;
+            font-family: 'Nunito', sans-serif;
+            line-height: 1.3;
             text-align: center;
             overflow: hidden;
             z-index: 2;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
         }
 
         .wish-card.lantern-mode .child-name {
@@ -406,30 +345,21 @@
             width: auto;
             max-width: 100%;
             display: -webkit-box;
-            -webkit-line-clamp: 2;
-            line-clamp: 2;
+            -webkit-line-clamp: 1;
+            line-clamp: 1;
             -webkit-box-orient: vertical;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 800;
-            color: #5A2D0C;
-            text-shadow: none;
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px solid rgba(139, 69, 19, 0.12);
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+            margin-top: 4px;
             text-align: center;
             font-family: 'Nunito', sans-serif;
             z-index: 2;
         }
 
-        /* İsim öncesi dekoratif ayırıcı */
         .wish-card.lantern-mode .child-name::before {
-            content: '✦';
-            display: block;
-            font-size: 10px;
-            color: rgba(139, 69, 19, 0.25);
-            margin-bottom: 3px;
-            letter-spacing: 6px;
-            text-indent: 6px;
+            display: none;
         }
 
         @keyframes lanternGlow {
@@ -452,6 +382,7 @@
         /* Fener giriş animasyonu JS tarafından yönetiliyor (fade-in + sinüs salınımı) */
         .wish-card.lantern-mode.entering {
             /* CSS animasyonu yok — JS opacity ve transform ile hallediliyor */
+            animation: none !important;
         }
 
         .wish-card.lantern-mode:hover .lantern-body {
@@ -469,12 +400,7 @@
             animation: newWishGlow 5s ease-out forwards;
         }
 
-        .wish-card.lantern-mode.new-wish-highlight .lantern-parchment {
-            box-shadow:
-                0 6px 20px rgba(0, 0, 0, 0.25),
-                0 0 30px rgba(255, 200, 80, 0.4),
-                inset 0 0 15px rgba(139, 69, 19, 0.05);
-        }
+        /* Eski parşömen highlight kaldırıldı — metin artık düz beyaz */
 
         @keyframes newWishGlow {
             0% {
@@ -493,6 +419,80 @@
                 opacity: 0.5;
                 transform: scale(1);
             }
+        }
+
+        /* ═══ AY — sağ üst köşede parlayan ay ═══ */
+        .moon {
+            position: absolute;
+            top: 200px;
+            right: 180px;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%,
+                #FFFFF0 0%, #FFF8D0 25%, #FFE8A0 50%, #E0C070 80%);
+            box-shadow:
+                0 0 40px rgba(255, 230, 150, 0.4),
+                0 0 100px rgba(255, 200, 100, 0.25),
+                0 0 200px rgba(255, 180, 80, 0.12);
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0.85;
+        }
+
+        /* ═══ KOR PARÇACIKLARI — yükselen sıcak noktalar ═══ */
+        .ember {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 3;
+            opacity: 0;
+            animation: emberRise linear infinite;
+        }
+
+        @keyframes emberRise {
+            0% { opacity: 0; transform: translateY(0) scale(1); }
+            8% { opacity: 0.8; }
+            60% { opacity: 0.5; }
+            100% { opacity: 0; transform: translateY(-3000px) translateX(var(--drift, 30px)) scale(0.2); }
+        }
+
+        /* ═══ ÇAPRAZ YILDIZ PARILTISI — ✦ şekli ═══ */
+        .sparkle-star {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.9);
+            pointer-events: none;
+            z-index: 2;
+            animation: sparkleGlint 4s ease-in-out infinite;
+        }
+
+        .sparkle-star::before,
+        .sparkle-star::after {
+            content: '';
+            position: absolute;
+        }
+
+        .sparkle-star::before {
+            width: 2px;
+            height: 24px;
+            top: -10px;
+            left: 1px;
+            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.8), transparent);
+        }
+
+        .sparkle-star::after {
+            width: 24px;
+            height: 2px;
+            left: -10px;
+            top: 1px;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.8), transparent);
+        }
+
+        @keyframes sparkleGlint {
+            0%, 100% { opacity: 0.2; transform: scale(0.7); }
+            50% { opacity: 1; transform: scale(1.3); }
         }
         /* Collision bounce animation removed */
 
@@ -1016,6 +1016,24 @@
         <!-- Decorations -->
         <div class="decorations" id="decorations"></div>
 
+        <!-- Ay -->
+        <div class="moon"></div>
+
+        <!-- Çapraz yıldız parıltıları -->
+        <div class="sparkle-star" style="left:300px; top:350px; animation-delay:0s;"></div>
+        <div class="sparkle-star" style="left:1500px; top:700px; animation-delay:1.5s;"></div>
+        <div class="sparkle-star" style="left:750px; top:1500px; animation-delay:0.8s;"></div>
+        <div class="sparkle-star" style="left:1650px; top:2100px; animation-delay:2.2s;"></div>
+        <div class="sparkle-star" style="left:180px; top:2700px; animation-delay:3.1s;"></div>
+        <div class="sparkle-star" style="left:1100px; top:3300px; animation-delay:1.2s;"></div>
+        <div class="sparkle-star" style="left:500px; top:3800px; animation-delay:2.8s;"></div>
+        <div class="sparkle-star" style="left:1400px; top:1100px; animation-delay:0.4s;"></div>
+        <div class="sparkle-star" style="left:900px; top:600px; animation-delay:1.9s;"></div>
+        <div class="sparkle-star" style="left:350px; top:4100px; animation-delay:3.5s;"></div>
+
+        <!-- Kor parçacıkları container -->
+        <div id="embers-container"></div>
+
         <!-- Header -->
         <div class="display-header">
             <div class="display-title">
@@ -1087,6 +1105,28 @@
 
         scaleToFit();
         window.addEventListener('resize', scaleToFit);
+
+        // Kor parçacıkları oluştur
+        (function() {
+            var ec = document.getElementById('embers-container');
+            if (!ec) return;
+            var colors = ['#FFD700', '#FFA500', '#FF6600', '#FF4500', '#FF8C00', '#FFB347'];
+            for (var i = 0; i < 18; i++) {
+                var e = document.createElement('div');
+                e.className = 'ember';
+                var size = 2 + Math.random() * 4;
+                e.style.left = (5 + Math.random() * 90) + '%';
+                e.style.bottom = '-2%';
+                e.style.width = size + 'px';
+                e.style.height = size + 'px';
+                e.style.background = colors[Math.floor(Math.random() * colors.length)];
+                e.style.boxShadow = '0 0 ' + (size * 2) + 'px ' + e.style.background;
+                e.style.animationDuration = (10 + Math.random() * 15) + 's';
+                e.style.animationDelay = (Math.random() * 20) + 's';
+                e.style.setProperty('--drift', (Math.random() * 120 - 60) + 'px');
+                ec.appendChild(e);
+            }
+        })();
     </script>
     <script src="js/display.js?v=8.0.0"></script>
 </body>

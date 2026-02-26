@@ -1,19 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 320" width="240" height="320">
   <defs>
     <!-- Paper body gradient — warm amber glow from internal flame -->
-    <radialGradient id="paperGlow" cx="50%" cy="58%" r="55%" fx="50%" fy="62%">
+    <radialGradient id="paperGlow" cx="50%" cy="55%" r="50%" fx="50%" fy="58%">
       <stop offset="0%" stop-color="#FFFFF0" stop-opacity="0.95"/>
-      <stop offset="12%" stop-color="#FFF8DC" stop-opacity="0.92"/>
-      <stop offset="25%" stop-color="#FFE4A0" stop-opacity="0.88"/>
-      <stop offset="40%" stop-color="#FFCC66" stop-opacity="0.82"/>
-      <stop offset="55%" stop-color="#FFB040" stop-opacity="0.75"/>
-      <stop offset="70%" stop-color="#F09030" stop-opacity="0.68"/>
-      <stop offset="85%" stop-color="#D07020" stop-opacity="0.6"/>
-      <stop offset="100%" stop-color="#A05018" stop-opacity="0.55"/>
+      <stop offset="15%" stop-color="#FFF8DC" stop-opacity="0.92"/>
+      <stop offset="30%" stop-color="#FFE4A0" stop-opacity="0.88"/>
+      <stop offset="45%" stop-color="#FFCC66" stop-opacity="0.82"/>
+      <stop offset="60%" stop-color="#FFB040" stop-opacity="0.75"/>
+      <stop offset="75%" stop-color="#F09030" stop-opacity="0.65"/>
+      <stop offset="90%" stop-color="#D07020" stop-opacity="0.58"/>
+      <stop offset="100%" stop-color="#A05018" stop-opacity="0.5"/>
     </radialGradient>
     <!-- Top highlight — light catching the paper crown -->
-    <radialGradient id="topHighlight" cx="45%" cy="18%" r="35%">
-      <stop offset="0%" stop-color="#FFE8B0" stop-opacity="0.5"/>
+    <radialGradient id="topHighlight" cx="42%" cy="22%" r="32%">
+      <stop offset="0%" stop-color="#FFE8B0" stop-opacity="0.45"/>
       <stop offset="100%" stop-color="#FFE8B0" stop-opacity="0"/>
     </radialGradient>
     <!-- Bottom rim shadow -->
@@ -23,105 +23,104 @@
       <stop offset="100%" stop-color="#8B6914"/>
     </linearGradient>
     <!-- Paper texture: vertical nervures -->
-    <pattern id="nervures" x="0" y="0" width="30" height="320" patternUnits="userSpaceOnUse">
-      <line x1="15" y1="0" x2="15" y2="320" stroke="rgba(160,80,20,0.07)" stroke-width="1.5"/>
+    <pattern id="nervures" x="0" y="0" width="40" height="320" patternUnits="userSpaceOnUse">
+      <line x1="20" y1="0" x2="20" y2="320" stroke="rgba(160,80,20,0.06)" stroke-width="1.2"/>
     </pattern>
     <!-- Subtle horizontal crinkle lines -->
-    <pattern id="crinkle" x="0" y="0" width="240" height="40" patternUnits="userSpaceOnUse">
-      <line x1="0" y1="20" x2="240" y2="20" stroke="rgba(140,70,15,0.04)" stroke-width="0.8"/>
+    <pattern id="crinkle" x="0" y="0" width="240" height="50" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="25" x2="240" y2="25" stroke="rgba(140,70,15,0.035)" stroke-width="0.7"/>
     </pattern>
   </defs>
 
-  <!-- Main paper balloon shape — kongming lantern profile -->
-  <!-- Wider at bottom, tapers to crown at top -->
+  <!-- Main paper balloon shape — rounder, puffier kongming lantern -->
   <path d="
-    M 120 8
-    C 80 8, 40 50, 28 110
-    C 18 160, 20 210, 35 250
-    C 45 275, 70 288, 90 292
-    L 150 292
-    C 170 288, 195 275, 205 250
-    C 220 210, 222 160, 212 110
-    C 200 50, 160 8, 120 8
+    M 120 12
+    C 68 12, 18 72, 12 150
+    C 8 210, 22 252, 52 274
+    C 66 284, 80 291, 94 294
+    L 146 294
+    C 160 291, 174 284, 188 274
+    C 218 252, 232 210, 228 150
+    C 222 72, 172 12, 120 12
     Z
   " fill="url(#paperGlow)"/>
 
   <!-- Paper texture overlay — nervures -->
   <path d="
-    M 120 8
-    C 80 8, 40 50, 28 110
-    C 18 160, 20 210, 35 250
-    C 45 275, 70 288, 90 292
-    L 150 292
-    C 170 288, 195 275, 205 250
-    C 220 210, 222 160, 212 110
-    C 200 50, 160 8, 120 8
+    M 120 12
+    C 68 12, 18 72, 12 150
+    C 8 210, 22 252, 52 274
+    C 66 284, 80 291, 94 294
+    L 146 294
+    C 160 291, 174 284, 188 274
+    C 218 252, 232 210, 228 150
+    C 222 72, 172 12, 120 12
     Z
   " fill="url(#nervures)"/>
 
   <!-- Horizontal crinkle texture -->
   <path d="
-    M 120 8
-    C 80 8, 40 50, 28 110
-    C 18 160, 20 210, 35 250
-    C 45 275, 70 288, 90 292
-    L 150 292
-    C 170 288, 195 275, 205 250
-    C 220 210, 222 160, 212 110
-    C 200 50, 160 8, 120 8
+    M 120 12
+    C 68 12, 18 72, 12 150
+    C 8 210, 22 252, 52 274
+    C 66 284, 80 291, 94 294
+    L 146 294
+    C 160 291, 174 284, 188 274
+    C 218 252, 232 210, 228 150
+    C 222 72, 172 12, 120 12
     Z
   " fill="url(#crinkle)"/>
 
   <!-- Top crown highlight -->
   <path d="
-    M 120 8
-    C 80 8, 40 50, 28 110
-    C 18 160, 20 210, 35 250
-    C 45 275, 70 288, 90 292
-    L 150 292
-    C 170 288, 195 275, 205 250
-    C 220 210, 222 160, 212 110
-    C 200 50, 160 8, 120 8
+    M 120 12
+    C 68 12, 18 72, 12 150
+    C 8 210, 22 252, 52 274
+    C 66 284, 80 291, 94 294
+    L 146 294
+    C 160 291, 174 284, 188 274
+    C 218 252, 232 210, 228 150
+    C 222 72, 172 12, 120 12
     Z
   " fill="url(#topHighlight)"/>
 
   <!-- Left edge shadow — 3D curvature -->
   <path d="
-    M 120 8
-    C 80 8, 40 50, 28 110
-    C 18 160, 20 210, 35 250
-    C 45 275, 55 282, 65 286
-    L 50 280
-    C 38 270, 28 248, 22 210
-    C 16 165, 25 80, 60 35
-    C 75 18, 100 10, 120 8
+    M 120 12
+    C 68 12, 18 72, 12 150
+    C 8 210, 22 252, 52 274
+    C 58 280, 62 283, 70 287
+    L 54 281
+    C 30 265, 16 238, 12 195
+    C 8 148, 28 78, 72 32
+    C 88 16, 108 12, 120 12
     Z
-  " fill="rgba(120,50,0,0.12)"/>
+  " fill="rgba(120,50,0,0.1)"/>
 
   <!-- Right edge shadow — 3D curvature -->
   <path d="
-    M 120 8
-    C 160 8, 200 50, 212 110
-    C 222 160, 220 210, 205 250
-    C 195 275, 185 282, 175 286
-    L 190 280
-    C 202 270, 212 248, 218 210
-    C 224 165, 215 80, 180 35
-    C 165 18, 140 10, 120 8
+    M 120 12
+    C 172 12, 222 72, 228 150
+    C 232 210, 218 252, 188 274
+    C 182 280, 178 283, 170 287
+    L 186 281
+    C 210 265, 224 238, 228 195
+    C 232 148, 212 78, 168 32
+    C 152 16, 132 12, 120 12
     Z
-  " fill="rgba(120,50,0,0.08)"/>
+  " fill="rgba(120,50,0,0.07)"/>
 
   <!-- Bottom opening — dark mouth of the lantern -->
-  <ellipse cx="120" cy="295" rx="62" ry="12" fill="rgba(10,5,0,0.85)"/>
+  <ellipse cx="120" cy="296" rx="54" ry="11" fill="rgba(10,5,0,0.85)"/>
 
   <!-- Wire/bamboo frame ring at bottom -->
-  <ellipse cx="120" cy="294" rx="64" ry="10" fill="none" stroke="url(#rimGrad)" stroke-width="3.5"/>
-  <ellipse cx="120" cy="294" rx="64" ry="10" fill="none" stroke="rgba(255,200,100,0.15)" stroke-width="1" stroke-dasharray="2,4"/>
+  <ellipse cx="120" cy="295" rx="56" ry="9" fill="none" stroke="url(#rimGrad)" stroke-width="3"/>
+  <ellipse cx="120" cy="295" rx="56" ry="9" fill="none" stroke="rgba(255,200,100,0.12)" stroke-width="0.8" stroke-dasharray="2,4"/>
 
   <!-- Cross-wire inside opening -->
-  <line x1="80" y1="294" x2="160" y2="294" stroke="rgba(100,70,30,0.5)" stroke-width="1"/>
-  <line x1="120" y1="286" x2="120" y2="302" stroke="rgba(100,70,30,0.4)" stroke-width="0.8"/>
+  <line x1="84" y1="295" x2="156" y2="295" stroke="rgba(100,70,30,0.45)" stroke-width="1"/>
+  <line x1="120" y1="288" x2="120" y2="302" stroke="rgba(100,70,30,0.35)" stroke-width="0.8"/>
 
   <!-- Inner glow visible through opening -->
-  <ellipse cx="120" cy="290" rx="35" ry="6" fill="rgba(255,220,100,0.3)"/>
+  <ellipse cx="120" cy="292" rx="30" ry="5" fill="rgba(255,220,100,0.25)"/>
 </svg>

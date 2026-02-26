@@ -144,30 +144,23 @@ class WishDisplay {
                 const raffleBox = overlay.querySelector('.raffle-box');
                 if (raffleBox) raffleBox.classList.add('celebrating');
 
-                // MEGA konfeti patlaması — 6 dalga, 5 saniye
-                this.fireConfetti(300, 'top');
-                this.fireConfetti(80, 'left');
-                this.fireConfetti(80, 'right');
-                setTimeout(() => { this.fireConfetti(250, 'top'); this.fireConfetti(60, 'left'); }, 800);
-                setTimeout(() => { this.fireConfetti(200, 'top'); this.fireConfetti(60, 'right'); }, 1600);
-                setTimeout(() => this.fireConfetti(200, 'top'), 2400);
-                setTimeout(() => { this.fireConfetti(150, 'top'); this.fireConfetti(50, 'left'); this.fireConfetti(50, 'right'); }, 3200);
-                setTimeout(() => this.fireConfetti(100, 'top'), 4200);
+                // Konfeti — 3 dalga (yarıya indirildi)
+                this.fireConfetti(150, 'top');
+                this.fireConfetti(40, 'left');
+                this.fireConfetti(40, 'right');
+                setTimeout(() => { this.fireConfetti(125, 'top'); this.fireConfetti(30, 'left'); }, 800);
+                setTimeout(() => { this.fireConfetti(100, 'top'); this.fireConfetti(30, 'right'); }, 1600);
+                setTimeout(() => this.fireConfetti(75, 'top'), 2400);
 
-                // Altın parıltı efekti — 2 dalga
+                // Altın parıltı efekti — 1 dalga (yarıya indirildi)
                 this.fireGoldenSparkles();
-                setTimeout(() => this.fireGoldenSparkles(), 2000);
 
-                // Havai fişek — 4 patlama
+                // Havai fişek — 2 patlama (yarıya indirildi)
                 this.fireFirework(20 + Math.random() * 20, 20 + Math.random() * 30);
-                setTimeout(() => this.fireFirework(60 + Math.random() * 20, 15 + Math.random() * 25), 600);
-                setTimeout(() => this.fireFirework(10 + Math.random() * 25, 25 + Math.random() * 30), 1400);
-                setTimeout(() => this.fireFirework(55 + Math.random() * 25, 20 + Math.random() * 25), 2200);
-                setTimeout(() => this.fireFirework(35 + Math.random() * 20, 10 + Math.random() * 20), 3000);
+                setTimeout(() => this.fireFirework(60 + Math.random() * 20, 15 + Math.random() * 25), 800);
 
-                // Emoji yağmuru
+                // Emoji yağmuru (yarıya indirildi)
                 this.fireEmojiRain();
-                setTimeout(() => this.fireEmojiRain(), 2500);
             }, 1500);
         });
     }
@@ -175,7 +168,7 @@ class WishDisplay {
     // === GOLDEN SPARKLES (Çekiliş kutlama efekti) ===
     fireGoldenSparkles() {
         const colors = ['#FFD700', '#FFA500', '#FFEC8B', '#FFE4B5', '#FFFFFF'];
-        for (let i = 0; i < 150; i++) {
+        for (let i = 0; i < 75; i++) {
             const spark = document.createElement('div');
             const rx = Math.random();
             const ry = Math.random();
@@ -229,7 +222,7 @@ class WishDisplay {
     // === EMOJI RAIN ===
     fireEmojiRain() {
         const emojis = ['🎉', '🎊', '⭐', '🌟', '✨', '💫', '🎁', '🏆', '💖', '🎈', '🥳', '🎆'];
-        for (let i = 0; i < 35; i++) {
+        for (let i = 0; i < 18; i++) {
             const em = document.createElement('div');
             em.className = 'celebration-emoji';
             em.textContent = emojis[Math.floor(Math.random() * emojis.length)];
@@ -312,7 +305,7 @@ class WishDisplay {
             const cardData = this.wishCards.find(c => c.element.dataset.wishId === wish.id);
             if (cardData && cardData.element) {
                 // Balonu yeni verilerle güncelle
-                const body = cardData.element.querySelector('.balloon-body') || cardData.element.querySelector('.lantern-parchment');
+                const body = cardData.element.querySelector('.balloon-body') || cardData.element.querySelector('.lantern-text');
                 if (body) {
                     const textHtml = wish.wishText ? '<div class="wish-text">' + wish.wishText.replace(/\\n/g, '<br>') + '</div>' : '';
                     body.innerHTML = textHtml + '<div class="child-name">' + wish.childName + '</div>';
@@ -483,7 +476,7 @@ class WishDisplay {
                     <div class="lantern-flame"></div>
                 </div>
                 <div class="lantern-string"></div>
-                <div class="lantern-parchment">
+                <div class="lantern-text">
                     ${wish.wishText ? `<div class="wish-text">${wish.wishText.replace(/\n/g, '<br>')}</div>` : ''}
                     <div class="child-name">${wish.childName}</div>
                 </div>
