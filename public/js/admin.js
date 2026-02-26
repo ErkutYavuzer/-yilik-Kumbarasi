@@ -895,7 +895,8 @@ async function loadDisplaySettings() {
 async function saveDisplaySettings() {
     const settings = {
         speedMultiplier: parseFloat(document.getElementById('display-speed').value),
-        scaleMultiplier: parseFloat(document.getElementById('display-scale').value)
+        scaleMultiplier: parseFloat(document.getElementById('display-scale').value),
+        maxVisible: parseInt(document.getElementById('display-maxvisible').value)
     };
     try {
         const res = await fetch('/api/display-settings', {
@@ -913,11 +914,33 @@ function setDisplaySettingsUI(data) {
     if (data.speedMultiplier !== undefined) {
         const el = document.getElementById('display-speed');
         if (el) el.value = data.speedMultiplier;
+        updateSpeedLabel(data.speedMultiplier);
     }
     if (data.scaleMultiplier !== undefined) {
         const el = document.getElementById('display-scale');
         if (el) el.value = data.scaleMultiplier;
+        updateScaleLabel(data.scaleMultiplier);
     }
+    if (data.maxVisible !== undefined) {
+        const el = document.getElementById('display-maxvisible');
+        if (el) el.value = data.maxVisible;
+        updateMaxVisibleLabel(data.maxVisible);
+    }
+}
+
+function updateSpeedLabel(val) {
+    const el = document.getElementById('speed-value');
+    if (el) el.textContent = parseFloat(val).toFixed(1) + 'x';
+}
+
+function updateScaleLabel(val) {
+    const el = document.getElementById('scale-value');
+    if (el) el.textContent = parseFloat(val).toFixed(2) + 'x';
+}
+
+function updateMaxVisibleLabel(val) {
+    const el = document.getElementById('maxvisible-value');
+    if (el) el.textContent = parseInt(val);
 }
 
 // ─── RAFFLE (ÇEKİLİŞ) ───

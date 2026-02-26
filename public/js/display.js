@@ -111,7 +111,7 @@ class WishDisplay {
         }
     }
 
-    // === RAFFLE ANIMATION ===
+    // === RAFFLE ANIMATION (3-2-1 Countdown → Name Reveal) ===
     showRaffleAnimation(winners) {
         const overlay = document.getElementById('raffle-overlay');
         const container = document.getElementById('raffle-winners-container');
@@ -124,45 +124,52 @@ class WishDisplay {
         // Modal'ı göster
         overlay.classList.add('show');
 
-        winners.forEach((w, idx) => {
-            const item = document.createElement('div');
-            item.className = 'raffle-item';
-            const wishHtml = w.wishText ? `<div style="font-size:26px; color:rgba(255,255,255,0.85); margin-top:15px; font-style:italic; line-height:1.4; max-width:800px;">"${w.wishText}"</div>` : '';
-            item.innerHTML = `<div style="font-size:24px; color:rgba(255,255,255,0.9); margin-bottom:10px;">Sıradaki Talihli!</div>
-                              <div style="color:#FFD700; font-size: 56px; text-shadow:0 0 25px rgba(255,215,0,0.8);">${w.childName}</div>${wishHtml}`;
-            container.appendChild(item);
+        // Geri sayım elemanı oluştur
+        const countdownEl = document.createElement('div');
+        countdownEl.className = 'raffle-countdown';
+        countdownEl.textContent = '3';
+        container.appendChild(countdownEl);
 
-            // 5 saniyelik MEGA görsel şölen
-            setTimeout(() => {
-                this.playSound('spotlight');
-                item.classList.add('reveal');
+        // 3-2-1 Geri Sayım
+        let count = 3;
+        const countInterval = setInterval(() => {
+            count--;
+            if (count > 0) {
+                countdownEl.textContent = count;
+                countdownEl.classList.remove('countdown-pop');
+                void countdownEl.offsetWidth; // Force reflow
+                countdownEl.classList.add('countdown-pop');
+            } else {
+                clearInterval(countInterval);
+                // Geri sayım bitti — ismi göster
+                countdownEl.remove();
 
-                // Flash efekti — beyaz patlama
-                this.fireFlash();
+                winners.forEach((w) => {
+                    const item = document.createElement('div');
+                    item.className = 'raffle-item';
+                    const wishHtml = w.wishText ? `<div style="font-size:26px; color:rgba(255,255,255,0.85); margin-top:15px; font-style:italic; line-height:1.4; max-width:800px;">"${w.wishText}"</div>` : '';
+                    item.innerHTML = `<div style="font-size:28px; color:rgba(255,255,255,0.9); margin-bottom:15px;">\u2728 Sıradaki Talihli! \u2728</div>
+                                      <div style="color:#FFD700; font-size:64px; font-weight:900; text-shadow:0 0 30px rgba(255,215,0,0.6);">${w.childName}</div>${wishHtml}`;
+                    container.appendChild(item);
 
-                // Raffle box golden pulse
-                const raffleBox = overlay.querySelector('.raffle-box');
-                if (raffleBox) raffleBox.classList.add('celebrating');
+                    // İsim reveal animasyonu
+                    setTimeout(() => {
+                        this.playSound('spotlight');
+                        item.classList.add('reveal');
 
-                // Konfeti — 3 dalga (yarıya indirildi)
-                this.fireConfetti(150, 'top');
-                this.fireConfetti(40, 'left');
-                this.fireConfetti(40, 'right');
-                setTimeout(() => { this.fireConfetti(125, 'top'); this.fireConfetti(30, 'left'); }, 800);
-                setTimeout(() => { this.fireConfetti(100, 'top'); this.fireConfetti(30, 'right'); }, 1600);
-                setTimeout(() => this.fireConfetti(75, 'top'), 2400);
+                        // Raffle box golden pulse
+                        const raffleBox = overlay.querySelector('.raffle-box');
+                        if (raffleBox) raffleBox.classList.add('celebrating');
 
-                // Altın parıltı efekti — 1 dalga (yarıya indirildi)
-                this.fireGoldenSparkles();
+                        // Minimal kutlama — sadece küçük bir konfeti patlaması
+                        this.fireConfetti(40, 'top');
+                    }, 200);
+                });
+            }
+        }, 1000);
 
-                // Havai fişek — 2 patlama (yarıya indirildi)
-                this.fireFirework(20 + Math.random() * 20, 20 + Math.random() * 30);
-                setTimeout(() => this.fireFirework(60 + Math.random() * 20, 15 + Math.random() * 25), 800);
-
-                // Emoji yağmuru (yarıya indirildi)
-                this.fireEmojiRain();
-            }, 1500);
-        });
+        // İlk pop animasyonu
+        countdownEl.classList.add('countdown-pop');
     }
 
     // === GOLDEN SPARKLES (Çekiliş kutlama efekti) ===
@@ -259,8 +266,8 @@ class WishDisplay {
             this.totalWishesCount = serverWishes.length;
             this.allServerWishes = [...serverWishes]; // Tüm veriyi havuza al
 
-            // Görsel kalabalığı (Density) düşürmek için Limit 15'e çekildi
-            const maxVisible = this.displayMode === 'lantern' ? 20 : 12;
+            // Görsel kalabalığı düşürmek için maxVisible ayarı kullan
+            const maxVisible = (this.displaySettings && this.displaySettings.maxVisible) || (this.displayMode === 'lantern' ? 20 : 12);
             const shuffled = [...serverWishes].sort(() => 0.5 - Math.random());
             const selected = shuffled.slice(0, maxVisible);
 
@@ -369,7 +376,7 @@ class WishDisplay {
             this.container.querySelectorAll('.wish-card').forEach(c => c.remove());
             this.wishCards = [];
             this.wishes = [];
-            const maxVisible = this.displayMode === 'lantern' ? 20 : 12;
+            const maxVisible = (this.displaySettings && this.displaySettings.maxVisible) || (this.displayMode === 'lantern' ? 20 : 12);
             if (this.allServerWishes && this.allServerWishes.length > 0) {
                 const shuffled = [...this.allServerWishes].sort(() => 0.5 - Math.random());
                 const selected = shuffled.slice(0, maxVisible);
@@ -498,7 +505,7 @@ class WishDisplay {
         }
 
         // Görsel kalabalığı azaltmak için ekran maksimum limit koruması
-        const maxVisible = this.displayMode === 'lantern' ? 20 : 12;
+        const maxVisible = (this.displaySettings && this.displaySettings.maxVisible) || (this.displayMode === 'lantern' ? 20 : 12);
         if (this.wishCards.length >= maxVisible) {
             // En eski giren balonu ekran dizisinden çıkart (fade-out ile)
             const oldestCard = this.wishCards.shift();

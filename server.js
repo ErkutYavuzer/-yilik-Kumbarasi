@@ -184,7 +184,8 @@ let moderationSettings = {
 // Ekran (Gösterim) Ayarları
 let displaySettings = {
     speedMultiplier: 1.0,
-    scaleMultiplier: 1.0
+    scaleMultiplier: 1.0,
+    maxVisible: 20
 };
 
 // Ana sayfa
@@ -244,12 +245,14 @@ app.get('/api/display-settings', (req, res) => {
 
 // Ekran Ayarlarını Güncelle API'si
 app.post('/api/display-settings', (req, res) => {
-    const { speedMultiplier, scaleMultiplier } = req.body;
+    const { speedMultiplier, scaleMultiplier, maxVisible } = req.body;
 
     if (typeof speedMultiplier === 'number') displaySettings.speedMultiplier = speedMultiplier;
     if (typeof scaleMultiplier === 'number') displaySettings.scaleMultiplier = scaleMultiplier;
+    if (typeof maxVisible === 'number') displaySettings.maxVisible = Math.max(5, Math.min(50, maxVisible));
 
-    console.log(`\n📺 Ekran Ayarları Güncellendi: Hız: ${displaySettings.speedMultiplier}x, Büyüklük: ${displaySettings.scaleMultiplier}x`);
+    console.log(`
+📺 Ekran Ayarları Güncellendi: Hız: ${displaySettings.speedMultiplier}x, Büyüklük: ${displaySettings.scaleMultiplier}x, Max: ${displaySettings.maxVisible}`);
     io.emit('display-settings', displaySettings);
     res.json({ success: true, ...displaySettings });
 });

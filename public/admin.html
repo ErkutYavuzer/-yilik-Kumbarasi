@@ -341,32 +341,28 @@
                             <div class="mod-title"><i data-lucide="monitor-cog"
                                     style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Ekran
                                 Ayarları</div>
-                            <div class="mod-sub">Gösterim ekranındaki balon animasyonlarının hızı ve büyüklüğü</div>
+                            <div class="mod-sub">Gösterim ekranındaki fener animasyonlarının hızı, büyüklüğü ve sayısı</div>
                         </div>
                     </div>
                     <div class="divider"></div>
                     <div class="settings-grid">
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="gauge"
-                                    style="width:14px;height:14px;vertical-align:middle;"></i> Animasyon Hızı</div>
-                            <select class="setting-select" id="display-speed" onchange="saveDisplaySettings()">
-                                <option value="0.5">Yavaş (0.5x)</option>
-                                <option value="0.75">Orta Yavaş (0.75x)</option>
-                                <option value="1.0" selected>Normal (1.0x)</option>
-                                <option value="1.5">Hızlı (1.5x)</option>
-                                <option value="2.0">Çok Hızlı (2.0x)</option>
-                            </select>
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Animasyon Hızı <span id="speed-value" style="color:var(--accent);font-weight:700;margin-left:6px;">1.0x</span></div>
+                            <input type="range" class="setting-range" id="display-speed" min="0.1" max="3.0" step="0.1" value="1.0" oninput="updateSpeedLabel(this.value)" onchange="saveDisplaySettings()">
+                            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;"><span>0.1x</span><span>3.0x</span></div>
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="scaling"
-                                    style="width:14px;height:14px;vertical-align:middle;"></i> Balon Büyüklüğü</div>
-                            <select class="setting-select" id="display-scale" onchange="saveDisplaySettings()">
-                                <option value="0.5">Çok Küçük (0.5x)</option>
-                                <option value="0.75">Küçük (0.75x)</option>
-                                <option value="1.0" selected>Normal (1.0x)</option>
-                                <option value="1.25">Büyük (1.25x)</option>
-                                <option value="1.5">Çok Büyük (1.5x)</option>
-                            </select>
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Fener Büyüklüğü <span id="scale-value" style="color:var(--accent);font-weight:700;margin-left:6px;">1.0x</span></div>
+                            <input type="range" class="setting-range" id="display-scale" min="0.3" max="2.0" step="0.05" value="1.0" oninput="updateScaleLabel(this.value)" onchange="saveDisplaySettings()">
+                            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;"><span>0.3x</span><span>2.0x</span></div>
+                        </div>
+                        <div class="setting-card">
+                            <div class="setting-label"><i data-lucide="layers"
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Maksimum Dilek Sayısı <span id="maxvisible-value" style="color:var(--accent);font-weight:700;margin-left:6px;">20</span></div>
+                            <input type="range" class="setting-range" id="display-maxvisible" min="5" max="50" step="1" value="20" oninput="updateMaxVisibleLabel(this.value)" onchange="saveDisplaySettings()">
+                            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;"><span>5</span><span>50</span></div>
                         </div>
                     </div>
                 </div>
