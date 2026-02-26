@@ -796,25 +796,10 @@ class WishDisplay {
     }
 
     applyTheme(theme) {
-        if (theme === 'default') {
-            document.documentElement.removeAttribute('data-theme');
-        } else {
-            document.documentElement.setAttribute('data-theme', theme);
-        }
-
-        // Update header text per theme
+        // Sadece TT teması — her zaman İyilik Feneri
         const titleText = document.querySelector('.title-text');
         if (titleText) {
-            if (theme === 'turktelekom') {
-                titleText.textContent = 'İyilik Feneri';
-            } else {
-                titleText.textContent = 'Dilek Kumbarasi';
-            }
-        }
-        // title-icon (emoji) gösterimi CSS tarafından yönetiliyor (TT'de gizli, logoya bırakıldı)
-        const titleIcon = document.querySelector('.title-icon');
-        if (titleIcon) {
-            titleIcon.innerHTML = theme === 'turktelekom' ? '' : '\u{1F3FA}';
+            titleText.textContent = 'İyilik Feneri';
         }
     }
 

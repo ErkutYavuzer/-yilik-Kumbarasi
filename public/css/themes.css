@@ -1,360 +1,17 @@
-/* === İYİLİK KUMBARASI — TEMA SİSTEMİ === */
+/* === İYİLİK KUMBARASI — TEMA SİSTEMİ ===
+   Sadece Türk Telekom teması — varsayılan olarak uygulanır.
+   data-theme attribute'üne gerek yok, sayfa açılır açılmaz TT arka planı gelir.
+*/
 
 /* ============================================
-   🏠 VARSAYILAN: İyilik Kumbarası (PNG arka plan)
+   📡 Türk Telekom — İyilik Feneri (VARSAYILAN)
    ============================================ */
-.display-container,
-[data-theme="iyilik"] .display-container {
-    background: url('/images/Untitled%20design%20%281%29.png') no-repeat center top !important;
-    background-size: 100% 100% !important;
+
+html {
+    background: #001030;
 }
 
-html,
-[data-theme="iyilik"] html {
-    background: #1B8FC4;
-}
-
-/* ============================================
-   🌌 Kozmik Gece (eski varsayılan)
-   ============================================ */
-[data-theme="default"] .display-container {
-    background:
-        radial-gradient(ellipse at 20% 80%, rgba(120, 60, 180, 0.5) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 20%, rgba(60, 100, 200, 0.5) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(30, 30, 80, 0.8) 0%, transparent 70%),
-        linear-gradient(180deg, #050510 0%, #0d0d25 40%, #130d30 100%) !important;
-    background-size: auto !important;
-}
-
-[data-theme="default"] html {
-    background: #050510;
-}
-
-[data-theme="default"] .display-container::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-        radial-gradient(2px 2px at 10% 15%, white 0%, transparent 100%),
-        radial-gradient(2px 2px at 25% 35%, rgba(255, 255, 255, 0.8) 0%, transparent 100%),
-        radial-gradient(1px 1px at 40% 10%, white 0%, transparent 100%),
-        radial-gradient(1px 1px at 60% 25%, rgba(255, 255, 255, 0.9) 0%, transparent 100%),
-        radial-gradient(2px 2px at 75% 5%, white 0%, transparent 100%),
-        radial-gradient(1px 1px at 85% 40%, rgba(255, 255, 255, 0.7) 0%, transparent 100%),
-        radial-gradient(1px 1px at 90% 12%, white 0%, transparent 100%),
-        radial-gradient(2px 2px at 15% 60%, rgba(255, 255, 255, 0.6) 0%, transparent 100%),
-        radial-gradient(1px 1px at 55% 55%, rgba(255, 255, 255, 0.8) 0%, transparent 100%),
-        radial-gradient(1px 1px at 70% 70%, rgba(255, 255, 255, 0.5) 0%, transparent 100%);
-    pointer-events: none;
-    z-index: 0;
-}
-
-/* ============================================
-   🎂 Doğum Günü
-   ============================================ */
-[data-theme="birthday"] .display-container {
-    background:
-        radial-gradient(ellipse at 30% 20%, rgba(255, 107, 203, 0.4) 0%, transparent 50%),
-        radial-gradient(ellipse at 70% 80%, rgba(255, 184, 108, 0.3) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(100, 0, 150, 0.5) 0%, transparent 60%),
-        linear-gradient(135deg, #1a0a2e 0%, #2d1b69 50%, #16213e 100%) !important;
-    background-size: auto !important;
-}
-
-[data-theme="birthday"] html {
-    background: #1a0a2e;
-}
-
-[data-theme="birthday"] .display-container::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-        radial-gradient(3px 3px at 10% 20%, #ff6bcb 0%, transparent 100%),
-        radial-gradient(2px 2px at 30% 10%, #ffb86c 0%, transparent 100%),
-        radial-gradient(3px 3px at 50% 5%, #ff6bcb 0%, transparent 100%),
-        radial-gradient(2px 2px at 70% 15%, #fff 0%, transparent 100%),
-        radial-gradient(3px 3px at 85% 8%, #ffb86c 0%, transparent 100%),
-        radial-gradient(2px 2px at 20% 40%, rgba(255, 107, 203, 0.7) 0%, transparent 100%),
-        radial-gradient(2px 2px at 60% 45%, rgba(255, 184, 108, 0.7) 0%, transparent 100%),
-        radial-gradient(3px 3px at 90% 35%, #ff6bcb 0%, transparent 100%);
-    pointer-events: none;
-    z-index: 0;
-    animation: birthdayTwinkle 3s ease-in-out infinite alternate;
-}
-
-@keyframes birthdayTwinkle {
-    from {
-        opacity: 0.6;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-[data-theme="birthday"] .balloon-body {
-    box-shadow:
-        0 20px 60px rgba(255, 107, 203, 0.3),
-        0 8px 25px rgba(0, 0, 0, 0.1),
-        inset 0 -30px 50px rgba(0, 0, 0, 0.15),
-        inset 0 30px 40px rgba(255, 255, 255, 0.2) !important;
-}
-
-/* ============================================
-   🇹🇷 23 Nisan
-   ============================================ */
-[data-theme="nisan23"] .display-container {
-    background:
-        radial-gradient(ellipse at 50% 0%, rgba(220, 0, 0, 0.6) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 100%, rgba(220, 0, 0, 0.3) 0%, transparent 40%),
-        linear-gradient(180deg, #0a0a14 0%, #14141f 50%, #0a0a14 100%) !important;
-    background-size: auto !important;
-}
-
-[data-theme="nisan23"] html {
-    background: #0a0a14;
-}
-
-[data-theme="nisan23"] .display-container::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-        radial-gradient(50px 50px at 15% 15%, rgba(220, 0, 0, 0.3) 0%, transparent 100%),
-        radial-gradient(2px 2px at 20% 30%, white 0%, transparent 100%),
-        radial-gradient(2px 2px at 40% 10%, white 0%, transparent 100%),
-        radial-gradient(2px 2px at 60% 20%, rgba(255, 255, 255, 0.9) 0%, transparent 100%),
-        radial-gradient(2px 2px at 80% 8%, white 0%, transparent 100%),
-        radial-gradient(2px 2px at 90% 30%, rgba(255, 255, 255, 0.8) 0%, transparent 100%),
-        radial-gradient(150px 150px at 85% 20%, rgba(220, 0, 0, 0.15) 0%, transparent 100%);
-    pointer-events: none;
-    z-index: 0;
-}
-
-[data-theme="nisan23"] .counter,
-[data-theme="nisan23"] .new-wish-toast,
-[data-theme="nisan23"] .fullscreen-btn,
-[data-theme="nisan23"] .mute-btn {
-    background: linear-gradient(135deg, #cc0000, #990000) !important;
-    color: white !important;
-}
-
-/* ============================================
-   🌙 Bayram (Ramazan)
-   ============================================ */
-[data-theme="bayram"] .display-container {
-    background:
-        radial-gradient(ellipse at 75% 10%, rgba(100, 255, 218, 0.25) 0%, transparent 40%),
-        radial-gradient(ellipse at 20% 90%, rgba(100, 200, 255, 0.2) 0%, transparent 40%),
-        linear-gradient(180deg, #020d1a 0%, #041424 50%, #020d1a 100%) !important;
-    background-size: auto !important;
-}
-
-[data-theme="bayram"] html {
-    background: #020d1a;
-}
-
-[data-theme="bayram"] .display-container::before {
-    content: '🌙';
-    position: absolute;
-    top: 40px;
-    right: 80px;
-    font-size: 100px;
-    opacity: 0.7;
-    filter: drop-shadow(0 0 40px rgba(100, 255, 218, 0.8));
-    pointer-events: none;
-    z-index: 1;
-    animation: moonGlow 4s ease-in-out infinite alternate;
-}
-
-@keyframes moonGlow {
-    from {
-        filter: drop-shadow(0 0 30px rgba(100, 255, 218, 0.5));
-        opacity: 0.6;
-    }
-
-    to {
-        filter: drop-shadow(0 0 60px rgba(100, 255, 218, 1));
-        opacity: 0.9;
-    }
-}
-
-[data-theme="bayram"] .display-container::after {
-    content: '⭐';
-    position: absolute;
-    top: 50px;
-    right: 40px;
-    font-size: 50px;
-    opacity: 0.7;
-    pointer-events: none;
-    z-index: 1;
-    animation: starSpin 8s linear infinite;
-}
-
-@keyframes starSpin {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-[data-theme="bayram"] #spotlight-label {
-    background: linear-gradient(135deg, #64ffda, #00b4d8) !important;
-    color: #020d1a !important;
-}
-
-/* ============================================
-   ❄️ Kış
-   ============================================ */
-[data-theme="winter"] .display-container {
-    background:
-        radial-gradient(ellipse at 50% 0%, rgba(128, 222, 234, 0.3) 0%, transparent 50%),
-        radial-gradient(ellipse at 20% 50%, rgba(100, 150, 255, 0.2) 0%, transparent 40%),
-        linear-gradient(180deg, #050c2e 0%, #0c1a50 50%, #050c2e 100%) !important;
-    background-size: auto !important;
-}
-
-[data-theme="winter"] html {
-    background: #050c2e;
-}
-
-[data-theme="winter"] .display-container::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-        radial-gradient(3px 3px at 5% 2%, rgba(255, 255, 255, 0.9) 0%, transparent 100%),
-        radial-gradient(2px 2px at 15% 8%, rgba(200, 240, 255, 0.8) 0%, transparent 100%),
-        radial-gradient(4px 4px at 25% 3%, white 0%, transparent 100%),
-        radial-gradient(2px 2px at 35% 12%, rgba(255, 255, 255, 0.9) 0%, transparent 100%),
-        radial-gradient(3px 3px at 45% 5%, rgba(200, 230, 255, 0.8) 0%, transparent 100%),
-        radial-gradient(2px 2px at 55% 9%, white 0%, transparent 100%),
-        radial-gradient(3px 3px at 65% 4%, rgba(255, 255, 255, 0.7) 0%, transparent 100%),
-        radial-gradient(4px 4px at 75% 7%, rgba(180, 220, 255, 0.9) 0%, transparent 100%),
-        radial-gradient(2px 2px at 85% 2%, white 0%, transparent 100%),
-        radial-gradient(3px 3px at 95% 10%, rgba(255, 255, 255, 0.8) 0%, transparent 100%);
-    pointer-events: none;
-    z-index: 0;
-    animation: snowfall 8s linear infinite;
-}
-
-@keyframes snowfall {
-    0% {
-        background-position: 0 0;
-    }
-
-    100% {
-        background-position: 200px 1000px;
-    }
-}
-
-[data-theme="winter"] .balloon-body {
-    border: 3px solid rgba(200, 240, 255, 0.4) !important;
-}
-
-/* ============================================
-   🎄 Yılbaşı
-   ============================================ */
-[data-theme="newyear"] .display-container {
-    background:
-        radial-gradient(ellipse at 50% 50%, rgba(50, 80, 30, 0.6) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 20%, rgba(255, 23, 68, 0.3) 0%, transparent 40%),
-        radial-gradient(ellipse at 20% 80%, rgba(105, 240, 174, 0.2) 0%, transparent 40%),
-        linear-gradient(180deg, #050a02 0%, #0d1a05 50%, #050a02 100%) !important;
-    background-size: auto !important;
-}
-
-[data-theme="newyear"] html {
-    background: #050a02;
-}
-
-[data-theme="newyear"] .display-container::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-        radial-gradient(3px 3px at 10% 5%, #ff1744 0%, transparent 100%),
-        radial-gradient(3px 3px at 25% 8%, #69f0ae 0%, transparent 100%),
-        radial-gradient(4px 4px at 40% 3%, #ffd700 0%, transparent 100%),
-        radial-gradient(3px 3px at 55% 7%, #ff1744 0%, transparent 100%),
-        radial-gradient(3px 3px at 70% 4%, #69f0ae 0%, transparent 100%),
-        radial-gradient(4px 4px at 85% 9%, #ffd700 0%, transparent 100%),
-        radial-gradient(3px 3px at 92% 5%, #ff1744 0%, transparent 100%);
-    pointer-events: none;
-    z-index: 0;
-    animation: christmasLights 2s ease-in-out infinite alternate;
-}
-
-@keyframes christmasLights {
-    from {
-        opacity: 0.6;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-[data-theme="newyear"] #spotlight-label {
-    background: linear-gradient(135deg, #ff1744, #69f0ae) !important;
-    color: white !important;
-}
-
-/* ============================================
-   🌸 Bahar
-   ============================================ */
-[data-theme="spring"] .display-container {
-    background:
-        radial-gradient(ellipse at 30% 30%, rgba(244, 143, 177, 0.4) 0%, transparent 50%),
-        radial-gradient(ellipse at 70% 70%, rgba(206, 147, 216, 0.3) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(80, 30, 100, 0.5) 0%, transparent 60%),
-        linear-gradient(135deg, #1a0a1e 0%, #2d1540 50%, #1a0a1e 100%) !important;
-    background-size: auto !important;
-}
-
-[data-theme="spring"] html {
-    background: #1a0a1e;
-}
-
-[data-theme="spring"] .display-container::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-        radial-gradient(3px 3px at 10% 15%, #f48fb1 0%, transparent 100%),
-        radial-gradient(2px 2px at 25% 5%, #ce93d8 0%, transparent 100%),
-        radial-gradient(3px 3px at 45% 8%, rgba(255, 182, 193, 0.9) 0%, transparent 100%),
-        radial-gradient(2px 2px at 65% 12%, #f48fb1 0%, transparent 100%),
-        radial-gradient(3px 3px at 80% 6%, #ce93d8 0%, transparent 100%),
-        radial-gradient(2px 2px at 90% 18%, rgba(255, 182, 193, 0.8) 0%, transparent 100%);
-    pointer-events: none;
-    z-index: 0;
-    animation: petalsFloat 6s ease-in-out infinite alternate;
-}
-
-@keyframes petalsFloat {
-    from {
-        transform: translateY(0);
-    }
-
-    to {
-        transform: translateY(-20px);
-    }
-}
-
-[data-theme="spring"] #spotlight-label {
-    background: linear-gradient(135deg, #f48fb1, #ce93d8) !important;
-    color: white !important;
-}
-
-/* ============================================
-   📡 Türk Telekom — İyilik Feneri
-   ============================================ */
-[data-theme="turktelekom"] .display-container {
+.display-container {
     background:
         /* Top-center bright glow */
         radial-gradient(ellipse 2400px 900px at 50% -5%, rgba(0, 100, 220, 0.6) 0%, transparent 70%),
@@ -374,12 +31,8 @@ html,
     background-size: auto !important;
 }
 
-[data-theme="turktelekom"] html {
-    background: #001030;
-}
-
 /* Decorative light overlay — stars + light streaks */
-[data-theme="turktelekom"] .display-container::before {
+.display-container::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -418,7 +71,7 @@ html,
 }
 
 /* Decorative draped garland lights — scalloped swoops across top */
-[data-theme="turktelekom"] .display-container::after {
+.display-container::after {
     content: '';
     position: absolute;
     top: 0;
@@ -426,38 +79,27 @@ html,
     right: 0;
     height: 250px;
     background-image:
-        /* Swooping garland curves — 6 scallops */
+        /* Swooping garland curves */
         radial-gradient(ellipse 700px 180px at 0% 0%, transparent 60%, rgba(200, 230, 255, 0.06) 62%, rgba(200, 230, 255, 0.12) 64%, transparent 66%),
-        radial-gradient(ellipse 700px 180px at 16.6% 0%, transparent 60%, rgba(200, 230, 255, 0.06) 62%, rgba(200, 230, 255, 0.12) 64%, transparent 66%),
         radial-gradient(ellipse 700px 180px at 33.3% 0%, transparent 60%, rgba(200, 230, 255, 0.06) 62%, rgba(200, 230, 255, 0.12) 64%, transparent 66%),
-        radial-gradient(ellipse 700px 180px at 50% 0%, transparent 60%, rgba(200, 230, 255, 0.06) 62%, rgba(200, 230, 255, 0.12) 64%, transparent 66%),
         radial-gradient(ellipse 700px 180px at 66.6% 0%, transparent 60%, rgba(200, 230, 255, 0.06) 62%, rgba(200, 230, 255, 0.12) 64%, transparent 66%),
-        radial-gradient(ellipse 700px 180px at 83.3% 0%, transparent 60%, rgba(200, 230, 255, 0.06) 62%, rgba(200, 230, 255, 0.12) 64%, transparent 66%),
         radial-gradient(ellipse 700px 180px at 100% 0%, transparent 60%, rgba(200, 230, 255, 0.06) 62%, rgba(200, 230, 255, 0.12) 64%, transparent 66%),
         /* Pendant dots hanging from garlands */
-        radial-gradient(6px 6px at 8.3% 45%, rgba(255, 220, 100, 0.5) 0%, transparent 100%),
-        radial-gradient(6px 6px at 24.9% 45%, rgba(255, 220, 100, 0.5) 0%, transparent 100%),
-        radial-gradient(6px 6px at 41.6% 45%, rgba(255, 220, 100, 0.5) 0%, transparent 100%),
-        radial-gradient(6px 6px at 58.3% 45%, rgba(255, 220, 100, 0.5) 0%, transparent 100%),
-        radial-gradient(6px 6px at 74.9% 45%, rgba(255, 220, 100, 0.5) 0%, transparent 100%),
-        radial-gradient(6px 6px at 91.6% 45%, rgba(255, 220, 100, 0.5) 0%, transparent 100%);
+        radial-gradient(6px 6px at 16.6% 45%, rgba(255, 220, 100, 0.5) 0%, transparent 100%),
+        radial-gradient(6px 6px at 50% 45%, rgba(255, 220, 100, 0.5) 0%, transparent 100%),
+        radial-gradient(6px 6px at 83.3% 45%, rgba(255, 220, 100, 0.5) 0%, transparent 100%);
     pointer-events: none;
     z-index: 1;
     opacity: 0.7;
 }
 
 @keyframes ttTwinkle {
-    from {
-        opacity: 0.5;
-    }
-
-    to {
-        opacity: 1;
-    }
+    from { opacity: 0.5; }
+    to { opacity: 1; }
 }
 
-/* Show display-header for TT theme (hidden by default because PNG themes have baked-in branding) */
-[data-theme="turktelekom"] .display-header {
+/* Header — her zaman göster */
+.display-header {
     display: flex !important;
     position: absolute;
     top: 40px;
@@ -467,24 +109,19 @@ html,
     text-align: center;
 }
 
-[data-theme="turktelekom"] .display-title {
+.display-title {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 8px;
 }
 
-/* TT tema: emoji gizle, logo göster */
-[data-theme="turktelekom"] .title-icon {
+/* Emoji gizle, logo göster */
+.title-icon {
     display: none;
 }
 
-/* title-logo: varsayılan gizli, sadece TT temasında görünür */
 .title-logo {
-    display: none;
-}
-
-[data-theme="turktelekom"] .title-logo {
     display: block;
     width: 280px;
     height: 80px;
@@ -510,7 +147,7 @@ html,
     }
 }
 
-[data-theme="turktelekom"] .title-text {
+.title-text {
     font-size: 64px;
     font-weight: 900;
     color: white;
@@ -521,12 +158,8 @@ html,
     letter-spacing: 8px;
 }
 
-/* Subtitle: hidden by default, shown for TT theme via CSS content */
+/* Subtitle */
 .title-subtitle {
-    display: none;
-}
-
-[data-theme="turktelekom"] .title-subtitle {
     display: block;
     font-size: 30px;
     font-weight: 700;
@@ -538,15 +171,17 @@ html,
         0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-[data-theme="turktelekom"] .title-subtitle::before {
+.title-subtitle::before {
     content: 'TÜRK TELEKOM';
 }
 
+/* logo-layer devre dışı */
+.logo-layer {
+    display: none;
+}
 
-/* logo-layer display.html'de global olarak display:none — hiçbir temada kullanılmıyor */
-
-/* TT theme balloon glow */
-[data-theme="turktelekom"] .balloon-body {
+/* Balloon glow */
+.balloon-body {
     box-shadow:
         0 20px 60px rgba(0, 80, 180, 0.3),
         0 8px 25px rgba(0, 0, 0, 0.2),
@@ -554,17 +189,17 @@ html,
         inset 0 30px 40px rgba(255, 255, 255, 0.15) !important;
 }
 
-/* TT theme UI elements */
-[data-theme="turktelekom"] .counter,
-[data-theme="turktelekom"] .new-wish-toast,
-[data-theme="turktelekom"] .fullscreen-btn,
-[data-theme="turktelekom"] .mute-btn {
+/* UI elements */
+.counter,
+.new-wish-toast,
+.fullscreen-btn,
+.mute-btn {
     background: linear-gradient(135deg, #003366, #004488) !important;
     color: white !important;
     border: 1px solid rgba(0, 100, 200, 0.3) !important;
 }
 
-[data-theme="turktelekom"] #spotlight-label {
+#spotlight-label {
     background: linear-gradient(135deg, #003366, #0066cc) !important;
     color: white !important;
 }
