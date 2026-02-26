@@ -389,7 +389,8 @@ class WishDisplay {
     applyDisplaySettings() {
         const scale = this.displaySettings.scaleMultiplier || 1.0;
         const speed = this.displaySettings.speedMultiplier || 1.0;
-        console.log(`📺 Ayarlar uygulanıyor: Hız=${speed}x, Ölçek=${scale}x`);
+        const maxVisible = (this.displaySettings && this.displaySettings.maxVisible) || 20;
+        console.log(`📺 Ayarlar uygulanıyor: Hız=${speed}x, Ölçek=${scale}x, Max=${maxVisible}`);
 
         // CSS değişkenini ayarla (transform'da kullanılıyor)
         document.documentElement.style.setProperty('--card-scale', scale);
@@ -399,6 +400,28 @@ class WishDisplay {
             const depthScale = this.displayMode === 'lantern' ? scale * (cardData.zDepth || 1) : scale;
             cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${depthScale}) rotate(${cardData.rotation}deg)`;
         });
+
+        // maxVisible değiştiğinde: fazla kartları sil veya eksik kartları ekle
+        if (this.wishCards.length > maxVisible) {
+            // Fazla kartları sil
+            while (this.wishCards.length > maxVisible) {
+                const removed = this.wishCards.shift();
+                if (removed && removed.element) {
+                    const wishId = removed.element.dataset.wishId;
+                    this.wishes = this.wishes.filter(w => w.id !== wishId);
+                    removed.element.style.transition = 'opacity 0.5s ease';
+                    removed.element.style.opacity = '0';
+                    setTimeout(() => { if (removed.element.parentNode) removed.element.remove(); }, 500);
+                }
+            }
+        } else if (this.wishCards.length < maxVisible && this.allServerWishes && this.allServerWishes.length > 0) {
+            // Eksik kartları havuzdan ekle
+            const currentIds = new Set(this.wishes.map(w => w.id));
+            const available = this.allServerWishes.filter(w => !currentIds.has(w.id));
+            const shuffled = [...available].sort(() => 0.5 - Math.random());
+            const toAdd = shuffled.slice(0, maxVisible - this.wishCards.length);
+            toAdd.forEach(wish => this.addWish(wish, false));
+        }
     }
 
     // === EVENTS ===

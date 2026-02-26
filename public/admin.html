@@ -349,20 +349,20 @@
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="gauge"
                                     style="width:14px;height:14px;vertical-align:middle;"></i> Animasyon Hızı <span id="speed-value" style="color:var(--accent);font-weight:700;margin-left:6px;">1.0x</span></div>
-                            <input type="range" class="setting-range" id="display-speed" min="0.1" max="3.0" step="0.1" value="1.0" oninput="updateSpeedLabel(this.value)" onchange="saveDisplaySettings()">
-                            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;"><span>0.1x</span><span>3.0x</span></div>
+                            <input type="range" class="setting-range" id="display-speed" min="0.1" max="5.0" step="0.1" value="1.0" oninput="updateSpeedLabel(this.value)" onchange="saveDisplaySettings()">
+                            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;"><span>0.1x</span><span>5.0x</span></div>
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="scaling"
                                     style="width:14px;height:14px;vertical-align:middle;"></i> Fener Büyüklüğü <span id="scale-value" style="color:var(--accent);font-weight:700;margin-left:6px;">1.0x</span></div>
-                            <input type="range" class="setting-range" id="display-scale" min="0.3" max="2.0" step="0.05" value="1.0" oninput="updateScaleLabel(this.value)" onchange="saveDisplaySettings()">
-                            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;"><span>0.3x</span><span>2.0x</span></div>
+                            <input type="range" class="setting-range" id="display-scale" min="0.1" max="5.0" step="0.05" value="1.0" oninput="updateScaleLabel(this.value)" onchange="saveDisplaySettings()">
+                            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;"><span>0.1x</span><span>5.0x</span></div>
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="layers"
                                     style="width:14px;height:14px;vertical-align:middle;"></i> Maksimum Dilek Sayısı <span id="maxvisible-value" style="color:var(--accent);font-weight:700;margin-left:6px;">20</span></div>
-                            <input type="range" class="setting-range" id="display-maxvisible" min="5" max="50" step="1" value="20" oninput="updateMaxVisibleLabel(this.value)" onchange="saveDisplaySettings()">
-                            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;"><span>5</span><span>50</span></div>
+                            <input type="range" class="setting-range" id="display-maxvisible" min="1" max="100" step="1" value="20" oninput="updateMaxVisibleLabel(this.value)" onchange="saveDisplaySettings()">
+                            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;"><span>1</span><span>100</span></div>
                         </div>
                     </div>
                 </div>

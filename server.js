@@ -249,7 +249,7 @@ app.post('/api/display-settings', (req, res) => {
 
     if (typeof speedMultiplier === 'number') displaySettings.speedMultiplier = speedMultiplier;
     if (typeof scaleMultiplier === 'number') displaySettings.scaleMultiplier = scaleMultiplier;
-    if (typeof maxVisible === 'number') displaySettings.maxVisible = Math.max(5, Math.min(50, maxVisible));
+    if (typeof maxVisible === 'number') displaySettings.maxVisible = Math.max(1, Math.min(100, maxVisible));
 
     console.log(`
 📺 Ekran Ayarları Güncellendi: Hız: ${displaySettings.speedMultiplier}x, Büyüklük: ${displaySettings.scaleMultiplier}x, Max: ${displaySettings.maxVisible}`);

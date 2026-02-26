@@ -211,7 +211,7 @@
             width: 240px;
             height: 320px;
             margin: 0 auto;
-            background: url('/images/lantern.svg') center/contain no-repeat;
+            background: url('/images/lantern.png') center/contain no-repeat;
             overflow: visible;
             transition: filter 0.4s ease;
         }
@@ -221,15 +221,14 @@
         .lantern-body::before {
             content: '';
             position: absolute;
-            top: -25%;
-            left: -35%;
-            width: 170%;
-            height: 150%;
+            top: -10%;
+            left: -15%;
+            width: 130%;
+            height: 120%;
             background: radial-gradient(ellipse at 50% 55%,
-                rgba(255, 200, 80, 0.4) 0%,
-                rgba(255, 150, 40, 0.2) 35%,
-                rgba(255, 100, 0, 0.08) 60%,
-                transparent 80%);
+                rgba(255, 200, 80, 0.18) 0%,
+                rgba(255, 150, 40, 0.08) 40%,
+                transparent 70%);
             border-radius: 50%;
             animation: lanternGlow 3s ease-in-out infinite;
             pointer-events: none;
@@ -256,42 +255,12 @@
 
         /* Alev — fenerin merkezinde */
         .lantern-flame {
-            position: absolute;
-            bottom: 5%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 16px;
-            height: 28px;
-            background:
-                radial-gradient(ellipse at 50% 70%,
-                    #FFFFF0 0%,
-                    #FFFDE0 20%,
-                    #FFD700 40%,
-                    #FFA500 60%,
-                    #FF6600 80%,
-                    transparent 100%);
-            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            animation: flameFlicker 2s ease-in-out infinite;
-            filter: blur(1px);
-            z-index: 3;
+            display: none;
         }
 
         /* Alev dış glow halkası */
         .lantern-flame::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80px;
-            height: 80px;
-            background: radial-gradient(circle,
-                rgba(255, 220, 100, 0.25) 0%,
-                rgba(255, 165, 0, 0.1) 45%,
-                transparent 70%);
-            border-radius: 50%;
-            animation: lanternGlow 3s ease-in-out infinite reverse;
-            pointer-events: none;
+            display: none;
         }
 
         /* İp — fenerin altından sarkan kısa iplik */
