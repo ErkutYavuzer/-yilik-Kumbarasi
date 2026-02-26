@@ -396,7 +396,8 @@ class WishDisplay {
 
         // Mevcut tüm kartlara ölçeği anında uygula
         this.wishCards.forEach(cardData => {
-            cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${scale}) rotate(${cardData.rotation}deg)`;
+            const depthScale = this.displayMode === 'lantern' ? scale * (cardData.zDepth || 1) : scale;
+            cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${depthScale}) rotate(${cardData.rotation}deg)`;
         });
     }
 
@@ -506,12 +507,16 @@ class WishDisplay {
         // Görsel kalabalığı azaltmak için ekran maksimum limit koruması
         const maxVisible = this.displayMode === 'lantern' ? 20 : 12;
         if (this.wishCards.length >= maxVisible) {
-            // En eski giren balonu ekran dizisinden çıkart ve DOM'dan sil
+            // En eski giren balonu ekran dizisinden çıkart (fade-out ile)
             const oldestCard = this.wishCards.shift();
             if (oldestCard && oldestCard.element) {
                 const wishIdToRemove = oldestCard.element.dataset.wishId;
                 this.wishes = this.wishes.filter(w => w.id !== wishIdToRemove);
-                oldestCard.element.remove();
+                oldestCard.element.style.transition = 'opacity 0.5s ease';
+                oldestCard.element.style.opacity = '0';
+                setTimeout(() => {
+                    if (oldestCard.element.parentNode) oldestCard.element.remove();
+                }, 500);
             }
         }
 
@@ -536,16 +541,22 @@ class WishDisplay {
         // Y ekseni: fener modunda ekranın tam altından doğar, staggered offset ile
         // balon modunda eski davranış korunur
         const spawnOffset = this.wishCards.length * (this.displayMode === 'lantern' ? 250 : 150);
-        let y = this.displayMode === 'lantern'
-            ? ch + 100 + spawnOffset          // Ekranın tam altından doğar
-            : ch + 200 + spawnOffset + Math.random() * 1000;
+        let y;
+        if (animate && this.displayMode === 'lantern') {
+            // Yeni dilek: ekranın alt kısmında görünür alanda doğ
+            y = ch - 200 - Math.random() * 200;
+        } else {
+            y = this.displayMode === 'lantern'
+                ? ch + 100 + spawnOffset          // Ekranın tam altından doğar
+                : ch + 200 + spawnOffset + Math.random() * 1000;
+        }
 
         const rotation = (Math.random() - 0.5) * (this.displayMode === 'lantern' ? 3 : 8);
 
         // CSS left/top yerine performansı artırmak için GPU hızlandırmalı transform3d kullanıyoruz.
         card.style.left = '0px';
         card.style.top = '0px';
-        card.style.opacity = this.displayMode === 'lantern' ? '0' : '1';
+        card.style.opacity = (animate && this.displayMode === 'lantern') ? '1' : (this.displayMode === 'lantern' ? '0' : '1');
         card.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rotation}deg)`;
 
         card.addEventListener('click', () => {
@@ -555,22 +566,26 @@ class WishDisplay {
         this.container.appendChild(card);
         this.wishes.push(wish);
 
+        const zDepth = this.displayMode === 'lantern' ? (0.5 + Math.random() * 0.5) : 1.0;
+        const isNewWishEntry = animate && this.displayMode === 'lantern';
         const cardData = {
             element: card,
             x: x,
             y: y,
             vx: (Math.random() - 0.5) * (this.displayMode === 'lantern' ? 0.5 : 1.5),
-            vy: -(this.displayMode === 'lantern' ? (1.0 + Math.random() * 1.2) : (1.5 + Math.random() * 2)),
+            vy: -(this.displayMode === 'lantern' ? (0.4 + Math.random() * 0.6) * zDepth : (1.5 + Math.random() * 2)),
             rotation: rotation,
-            rotationSpeed: (Math.random() - 0.5) * (this.displayMode === 'lantern' ? 0.15 : 0.8),
+            rotationSpeed: (Math.random() - 0.5) * (this.displayMode === 'lantern' ? 0.1 : 0.8),
             radius: this.displayMode === 'lantern' ? 250 : 180,
+            zDepth: zDepth,
             // Salınım: her fener kendi frekans ve genliğiyle sağ-sol sallar
             swayPhase: Math.random() * Math.PI * 2,   // Başlangıç faz (0–2π)
-            swayFreq:  0.008 + Math.random() * 0.006, // Salınım frekansı (yavaş-orta)
-            swayAmp:   30 + Math.random() * 50,       // Salınım genliği px (30–80px)
+            swayFreq:  0.006 + Math.random() * 0.005, // Salınım frekansı (daha yavaş)
+            swayAmp:   40 + Math.random() * 60,       // Salınım genliği px (40–100px)
             swayBaseX: x,                             // Salınımın merkez X'i
-            rising: true,                             // Ekran altından yeni doğuyor mu?
-            opacity: 0                                // Fade-in takibi
+            rising: !isNewWishEntry,                  // Yeni dilek zaten görünür
+            opacity: isNewWishEntry ? (0.5 + zDepth * 0.5) : 0,
+            isNewWish: isNewWishEntry                 // Yeni dilek giriş efekti
         };
         this.wishCards.push(cardData);
 
@@ -578,6 +593,15 @@ class WishDisplay {
             setTimeout(() => {
                 card.classList.remove('entering');
             }, 1000);
+
+            // Fener modunda yeni dilek giriş efekti — 5 saniyelik altın parıltı
+            if (this.displayMode === 'lantern') {
+                card.classList.add('new-wish-highlight');
+                setTimeout(() => {
+                    card.classList.remove('new-wish-highlight');
+                    cardData.isNewWish = false;
+                }, 5000);
+            }
         }
     }
 
@@ -621,10 +645,11 @@ class WishDisplay {
 
                     // === FADE-IN: ekran altından yükselirken belirginleş ===
                     if (cardData.rising) {
-                        // ch'den ch-400'e kadar olan bölgede opacity 0→1
+                        // ch'den ch-400'e kadar olan bölgede opacity 0→maxOpacity
                         const fadeZone = 400;
                         const progress = Math.min(1, (ch - cardData.y) / fadeZone);
-                        cardData.opacity = progress;
+                        const maxOpacity = 0.5 + cardData.zDepth * 0.5; // Uzak=0.75, yakın=1.0
+                        cardData.opacity = progress * maxOpacity;
                         cardData.element.style.opacity = cardData.opacity;
                         if (progress >= 1) cardData.rising = false;
                     }
@@ -645,6 +670,12 @@ class WishDisplay {
                                 if (textEl && randomWish.wishText) textEl.innerHTML = randomWish.wishText.replace(/\n/g, '<br>');
                                 if (nameEl && randomWish.childName) nameEl.textContent = randomWish.childName;
                             }
+                            // Recycling guard: yeni dilek efektini kaldır
+                            cardData.isNewWish = false;
+                            cardData.element.classList.remove('new-wish-highlight');
+                            // Yeni zDepth ata (derinlik çeşitliliği)
+                            cardData.zDepth = 0.5 + Math.random() * 0.5;
+                            cardData.vy = -(0.4 + Math.random() * 0.6) * cardData.zDepth;
                             // Ekranın altından yeni spawn — rastgele X merkezi
                             cardData.swayBaseX = paddingSides + cardData.swayAmp + Math.random() * (maxX - cardData.swayAmp * 2);
                             cardData.x = cardData.swayBaseX;
@@ -697,7 +728,8 @@ class WishDisplay {
                 const rot = this.displayMode === 'lantern'
                     ? Math.sin(cardData.swayPhase) * 2  // Salınımla senkron hafif eğim
                     : cardData.rotation;
-                cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${currentScale}) rotate(${rot}deg)`;
+                const depthScale = this.displayMode === 'lantern' ? currentScale * cardData.zDepth : currentScale;
+                cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${depthScale}) rotate(${rot}deg)`;
             });
 
             requestAnimationFrame(animate);

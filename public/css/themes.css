@@ -8,94 +8,211 @@
    ============================================ */
 
 html {
-    background: #001030;
+    background: #030810;
 }
 
 .display-container {
     background:
-        /* Top-center bright glow */
-        radial-gradient(ellipse 2400px 900px at 50% -5%, rgba(0, 100, 220, 0.6) 0%, transparent 70%),
-        /* Large bokeh circles */
-        radial-gradient(circle 250px at 8% 25%, rgba(0, 120, 255, 0.15) 0%, transparent 100%),
-        radial-gradient(circle 350px at 88% 15%, rgba(0, 80, 200, 0.12) 0%, transparent 100%),
-        radial-gradient(circle 200px at 15% 70%, rgba(0, 100, 220, 0.1) 0%, transparent 100%),
-        radial-gradient(circle 300px at 75% 65%, rgba(0, 60, 180, 0.1) 0%, transparent 100%),
-        radial-gradient(circle 180px at 45% 85%, rgba(0, 90, 200, 0.08) 0%, transparent 100%),
-        radial-gradient(circle 280px at 92% 80%, rgba(0, 70, 180, 0.1) 0%, transparent 100%),
-        /* Medium bokeh */
-        radial-gradient(circle 120px at 25% 40%, rgba(50, 140, 255, 0.08) 0%, transparent 100%),
-        radial-gradient(circle 150px at 65% 35%, rgba(30, 120, 240, 0.08) 0%, transparent 100%),
-        radial-gradient(circle 100px at 50% 55%, rgba(60, 150, 255, 0.06) 0%, transparent 100%),
-        /* Base gradient — deep navy with subtle variation */
-        linear-gradient(175deg, #001030 0%, #001a42 15%, #002560 35%, #002d6e 50%, #002560 65%, #001a42 85%, #001030 100%) !important;
+        /* Top-center subtle glow for header area */
+        radial-gradient(ellipse 1800px 600px at 50% -2%, rgba(10, 40, 100, 0.25) 0%, transparent 70%),
+        /* Subtle depth clouds */
+        radial-gradient(circle 500px at 15% 25%, rgba(8, 20, 55, 0.1) 0%, transparent 100%),
+        radial-gradient(circle 600px at 85% 55%, rgba(5, 15, 45, 0.08) 0%, transparent 100%),
+        radial-gradient(circle 400px at 50% 80%, rgba(10, 25, 60, 0.06) 0%, transparent 100%),
+        /* Base gradient — near-black night sky */
+        linear-gradient(175deg, #030810 0%, #050d1a 15%, #081428 35%, #0a1830 50%, #081428 65%, #050d1a 85%, #030810 100%) !important;
     background-size: auto !important;
 }
 
-/* Decorative light overlay — stars + light streaks */
+/* Star field — box-shadow technique for GPU-efficient rendering
+   Single 1x1px element with many shadow clones = one composite layer */
 .display-container::before {
     content: '';
     position: absolute;
-    inset: 0;
-    background-image:
-        /* Diagonal light rays from top-left */
-        linear-gradient(125deg, rgba(100, 180, 255, 0.04) 0%, transparent 30%),
-        linear-gradient(135deg, rgba(80, 160, 255, 0.03) 5%, transparent 25%),
-        /* Diagonal light rays from top-right */
-        linear-gradient(235deg, rgba(100, 180, 255, 0.04) 0%, transparent 30%),
-        linear-gradient(225deg, rgba(80, 160, 255, 0.03) 5%, transparent 25%),
-        /* Star/particle field */
-        radial-gradient(2px 2px at 3% 5%, rgba(255, 255, 255, 0.8) 0%, transparent 100%),
-        radial-gradient(3px 3px at 8% 12%, rgba(200, 230, 255, 0.6) 0%, transparent 100%),
-        radial-gradient(1px 1px at 14% 3%, rgba(255, 255, 255, 0.9) 0%, transparent 100%),
-        radial-gradient(2px 2px at 22% 18%, rgba(180, 220, 255, 0.5) 0%, transparent 100%),
-        radial-gradient(3px 3px at 30% 7%, rgba(255, 255, 255, 0.7) 0%, transparent 100%),
-        radial-gradient(1px 1px at 38% 22%, rgba(200, 230, 255, 0.6) 0%, transparent 100%),
-        radial-gradient(2px 2px at 46% 4%, rgba(255, 255, 255, 0.8) 0%, transparent 100%),
-        radial-gradient(1px 1px at 52% 15%, rgba(180, 220, 255, 0.5) 0%, transparent 100%),
-        radial-gradient(3px 3px at 60% 9%, rgba(255, 255, 255, 0.7) 0%, transparent 100%),
-        radial-gradient(2px 2px at 68% 20%, rgba(200, 230, 255, 0.4) 0%, transparent 100%),
-        radial-gradient(1px 1px at 74% 6%, rgba(255, 255, 255, 0.9) 0%, transparent 100%),
-        radial-gradient(2px 2px at 82% 14%, rgba(180, 220, 255, 0.6) 0%, transparent 100%),
-        radial-gradient(3px 3px at 88% 3%, rgba(255, 255, 255, 0.7) 0%, transparent 100%),
-        radial-gradient(1px 1px at 94% 18%, rgba(200, 230, 255, 0.5) 0%, transparent 100%),
-        /* Additional scattered particles */
-        radial-gradient(2px 2px at 5% 45%, rgba(255, 255, 255, 0.3) 0%, transparent 100%),
-        radial-gradient(1px 1px at 18% 55%, rgba(200, 230, 255, 0.25) 0%, transparent 100%),
-        radial-gradient(2px 2px at 35% 48%, rgba(255, 255, 255, 0.3) 0%, transparent 100%),
-        radial-gradient(1px 1px at 55% 42%, rgba(200, 230, 255, 0.25) 0%, transparent 100%),
-        radial-gradient(2px 2px at 72% 50%, rgba(255, 255, 255, 0.3) 0%, transparent 100%),
-        radial-gradient(1px 1px at 90% 46%, rgba(200, 230, 255, 0.25) 0%, transparent 100%);
+    width: 1px;
+    height: 1px;
+    top: 0;
+    left: 0;
+    background: transparent;
+    box-shadow:
+        /* ═══ FAR STARS — 1px dots, dim white/blue ═══ */
+        35px 95px 0 0 rgba(255,255,255,0.25),
+        180px 220px 0 0 rgba(200,220,255,0.2),
+        320px 50px 0 0 rgba(255,255,255,0.3),
+        450px 380px 0 0 rgba(220,235,255,0.22),
+        600px 150px 0 0 rgba(255,255,255,0.28),
+        750px 480px 0 0 rgba(200,225,255,0.2),
+        880px 80px 0 0 rgba(255,255,255,0.25),
+        1020px 340px 0 0 rgba(210,230,255,0.22),
+        1150px 190px 0 0 rgba(255,255,255,0.3),
+        1300px 550px 0 0 rgba(200,220,255,0.25),
+        1450px 90px 0 0 rgba(255,255,255,0.2),
+        1600px 310px 0 0 rgba(220,235,255,0.28),
+        1780px 180px 0 0 rgba(255,255,255,0.22),
+        1850px 450px 0 0 rgba(200,225,255,0.25),
+        90px 700px 0 0 rgba(255,255,255,0.3),
+        280px 900px 0 0 rgba(210,230,255,0.2),
+        500px 750px 0 0 rgba(255,255,255,0.25),
+        720px 1050px 0 0 rgba(200,220,255,0.28),
+        950px 820px 0 0 rgba(255,255,255,0.22),
+        1100px 1000px 0 0 rgba(220,235,255,0.25),
+        1350px 860px 0 0 rgba(255,255,255,0.3),
+        1550px 1150px 0 0 rgba(200,225,255,0.2),
+        1750px 950px 0 0 rgba(255,255,255,0.28),
+        120px 1350px 0 0 rgba(210,230,255,0.22),
+        380px 1500px 0 0 rgba(255,255,255,0.25),
+        620px 1280px 0 0 rgba(200,220,255,0.3),
+        850px 1450px 0 0 rgba(255,255,255,0.2),
+        1080px 1350px 0 0 rgba(220,235,255,0.28),
+        1280px 1550px 0 0 rgba(255,255,255,0.22),
+        1500px 1400px 0 0 rgba(200,225,255,0.25),
+        1720px 1300px 0 0 rgba(255,255,255,0.3),
+        60px 1800px 0 0 rgba(210,230,255,0.2),
+        300px 1950px 0 0 rgba(255,255,255,0.25),
+        540px 1750px 0 0 rgba(200,220,255,0.28),
+        780px 1900px 0 0 rgba(255,255,255,0.22),
+        1000px 1780px 0 0 rgba(220,235,255,0.25),
+        1250px 2000px 0 0 rgba(255,255,255,0.3),
+        1480px 1850px 0 0 rgba(200,225,255,0.2),
+        1700px 1750px 0 0 rgba(255,255,255,0.28),
+        1880px 2050px 0 0 rgba(210,230,255,0.22),
+        150px 2300px 0 0 rgba(255,255,255,0.25),
+        400px 2450px 0 0 rgba(200,220,255,0.3),
+        650px 2250px 0 0 rgba(255,255,255,0.2),
+        900px 2400px 0 0 rgba(220,235,255,0.28),
+        1150px 2280px 0 0 rgba(255,255,255,0.22),
+        1400px 2500px 0 0 rgba(200,225,255,0.25),
+        1650px 2350px 0 0 rgba(255,255,255,0.3),
+        1850px 2480px 0 0 rgba(210,230,255,0.2),
+        80px 2700px 0 0 rgba(255,255,255,0.25),
+        350px 2850px 0 0 rgba(200,220,255,0.28),
+        580px 2650px 0 0 rgba(255,255,255,0.22),
+        820px 2800px 0 0 rgba(220,235,255,0.25),
+        1050px 2700px 0 0 rgba(255,255,255,0.3),
+        1300px 2900px 0 0 rgba(200,225,255,0.2),
+        1520px 2780px 0 0 rgba(255,255,255,0.28),
+        1780px 2680px 0 0 rgba(210,230,255,0.22),
+        200px 3150px 0 0 rgba(255,255,255,0.25),
+        450px 3300px 0 0 rgba(200,220,255,0.3),
+        700px 3100px 0 0 rgba(255,255,255,0.2),
+        950px 3250px 0 0 rgba(220,235,255,0.28),
+        1200px 3150px 0 0 rgba(255,255,255,0.22),
+        1450px 3350px 0 0 rgba(200,225,255,0.25),
+        1680px 3200px 0 0 rgba(255,255,255,0.3),
+        1900px 3100px 0 0 rgba(210,230,255,0.2),
+        100px 3550px 0 0 rgba(255,255,255,0.25),
+        340px 3700px 0 0 rgba(200,220,255,0.28),
+        600px 3500px 0 0 rgba(255,255,255,0.22),
+        830px 3650px 0 0 rgba(220,235,255,0.25),
+        1100px 3580px 0 0 rgba(255,255,255,0.3),
+        1350px 3750px 0 0 rgba(200,225,255,0.2),
+        1580px 3630px 0 0 rgba(255,255,255,0.28),
+        1820px 3500px 0 0 rgba(210,230,255,0.22),
+        250px 4000px 0 0 rgba(255,255,255,0.25),
+        500px 4150px 0 0 rgba(200,220,255,0.3),
+        780px 4050px 0 0 rgba(255,255,255,0.2),
+        1020px 4200px 0 0 rgba(220,235,255,0.28),
+        1280px 4080px 0 0 rgba(255,255,255,0.22),
+        1500px 4250px 0 0 rgba(200,225,255,0.25),
+        1750px 4120px 0 0 rgba(255,255,255,0.3),
+        /* ═══ MID STARS — 2px dots, medium brightness ═══ */
+        150px 300px 0 0.5px rgba(255,255,255,0.45),
+        480px 600px 0 0.5px rgba(220,240,255,0.4),
+        800px 200px 0 0.5px rgba(255,255,255,0.5),
+        1100px 450px 0 0.5px rgba(200,230,255,0.45),
+        1400px 700px 0 0.5px rgba(255,255,255,0.4),
+        1700px 350px 0 0.5px rgba(220,240,255,0.5),
+        250px 1100px 0 0.5px rgba(255,255,255,0.45),
+        550px 1350px 0 0.5px rgba(200,230,255,0.4),
+        900px 1000px 0 0.5px rgba(255,255,255,0.5),
+        1200px 1250px 0 0.5px rgba(220,240,255,0.45),
+        1500px 1100px 0 0.5px rgba(255,255,255,0.4),
+        1800px 1300px 0 0.5px rgba(200,230,255,0.5),
+        100px 1700px 0 0.5px rgba(255,255,255,0.45),
+        420px 1900px 0 0.5px rgba(220,240,255,0.4),
+        750px 1650px 0 0.5px rgba(255,255,255,0.5),
+        1050px 1850px 0 0.5px rgba(200,230,255,0.45),
+        300px 2400px 0 0.5px rgba(255,255,255,0.4),
+        650px 2600px 0 0.5px rgba(220,240,255,0.5),
+        980px 2350px 0 0.5px rgba(255,255,255,0.45),
+        1250px 2550px 0 0.5px rgba(200,230,255,0.4),
+        1550px 2400px 0 0.5px rgba(255,255,255,0.5),
+        1850px 2600px 0 0.5px rgba(220,240,255,0.45),
+        180px 3100px 0 0.5px rgba(255,255,255,0.4),
+        520px 3300px 0 0.5px rgba(200,230,255,0.5),
+        850px 3050px 0 0.5px rgba(255,255,255,0.45),
+        1150px 3250px 0 0.5px rgba(220,240,255,0.4),
+        400px 3800px 0 0.5px rgba(255,255,255,0.5),
+        700px 3950px 0 0.5px rgba(200,230,255,0.45),
+        1000px 3750px 0 0.5px rgba(255,255,255,0.4),
+        1600px 3800px 0 0.5px rgba(220,240,255,0.5),
+        /* ═══ NEAR STARS — 3px dots, bright with soft glow ═══ */
+        300px 180px 1px 1px rgba(255,255,255,0.7),
+        780px 520px 1px 1px rgba(240,248,255,0.65),
+        1250px 280px 1px 1px rgba(255,255,255,0.8),
+        1700px 600px 1px 1px rgba(230,245,255,0.7),
+        200px 1200px 1px 1px rgba(255,255,255,0.75),
+        650px 1600px 1px 1px rgba(240,248,255,0.65),
+        1100px 1400px 1px 1px rgba(255,255,255,0.8),
+        1550px 1150px 1px 1px rgba(230,245,255,0.7),
+        400px 2100px 1px 1px rgba(255,255,255,0.75),
+        900px 2500px 1px 1px rgba(240,248,255,0.65),
+        1350px 2800px 1px 1px rgba(255,255,255,0.8),
+        1800px 3200px 1px 1px rgba(230,245,255,0.7),
+        550px 3500px 1px 1px rgba(255,255,255,0.75),
+        1050px 3900px 1px 1px rgba(240,248,255,0.65);
     pointer-events: none;
     z-index: 0;
-    animation: ttTwinkle 5s ease-in-out infinite alternate;
+    animation: starDrift 100s ease-in-out infinite alternate, ttTwinkle 8s ease-in-out infinite alternate;
 }
 
-/* Decorative draped garland lights — scalloped swoops across top */
+/* Distant lantern dots — warm amber glow simulating far-away lanterns in sky */
 .display-container::after {
     content: '';
     position: absolute;
+    width: 1px;
+    height: 1px;
     top: 0;
     left: 0;
-    right: 0;
-    height: 250px;
-    background-image:
-        /* Swooping garland curves */
-        radial-gradient(ellipse 700px 180px at 0% 0%, transparent 60%, rgba(200, 230, 255, 0.06) 62%, rgba(200, 230, 255, 0.12) 64%, transparent 66%),
-        radial-gradient(ellipse 700px 180px at 33.3% 0%, transparent 60%, rgba(200, 230, 255, 0.06) 62%, rgba(200, 230, 255, 0.12) 64%, transparent 66%),
-        radial-gradient(ellipse 700px 180px at 66.6% 0%, transparent 60%, rgba(200, 230, 255, 0.06) 62%, rgba(200, 230, 255, 0.12) 64%, transparent 66%),
-        radial-gradient(ellipse 700px 180px at 100% 0%, transparent 60%, rgba(200, 230, 255, 0.06) 62%, rgba(200, 230, 255, 0.12) 64%, transparent 66%),
-        /* Pendant dots hanging from garlands */
-        radial-gradient(6px 6px at 16.6% 45%, rgba(255, 220, 100, 0.5) 0%, transparent 100%),
-        radial-gradient(6px 6px at 50% 45%, rgba(255, 220, 100, 0.5) 0%, transparent 100%),
-        radial-gradient(6px 6px at 83.3% 45%, rgba(255, 220, 100, 0.5) 0%, transparent 100%);
+    background: transparent;
+    box-shadow:
+        250px 650px 3px 2px rgba(255,180,60,0.15),
+        1650px 400px 3px 2px rgba(255,160,40,0.12),
+        800px 1400px 3px 2px rgba(255,170,50,0.18),
+        1400px 1050px 3px 2px rgba(255,150,30,0.14),
+        100px 2000px 3px 2px rgba(255,180,60,0.16),
+        1800px 1750px 3px 2px rgba(255,160,40,0.12),
+        500px 2600px 3px 2px rgba(255,170,50,0.15),
+        1200px 2300px 3px 2px rgba(255,150,30,0.18),
+        350px 3300px 3px 2px rgba(255,180,60,0.14),
+        1550px 3000px 3px 2px rgba(255,160,40,0.16),
+        900px 3700px 3px 2px rgba(255,170,50,0.12),
+        1700px 4050px 3px 2px rgba(255,150,30,0.15);
     pointer-events: none;
     z-index: 1;
-    opacity: 0.7;
+    opacity: 0.8;
+    animation: lanternDotsDrift 90s ease-in-out infinite alternate;
 }
 
+/* Star parallax drift — slow upward float */
+@keyframes starDrift {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-200px); }
+}
+
+/* Distant lantern drift — slightly different speed for parallax feel */
+@keyframes lanternDotsDrift {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-120px); }
+}
+
+/* Star twinkle — nuanced opacity variation */
 @keyframes ttTwinkle {
-    from { opacity: 0.5; }
-    to { opacity: 1; }
+    0% { opacity: 0.5; }
+    25% { opacity: 0.85; }
+    50% { opacity: 0.6; }
+    75% { opacity: 1; }
+    100% { opacity: 0.7; }
 }
 
 /* Header — her zaman göster */
@@ -194,12 +311,12 @@ html {
 .new-wish-toast,
 .fullscreen-btn,
 .mute-btn {
-    background: linear-gradient(135deg, #003366, #004488) !important;
+    background: linear-gradient(135deg, #0a1628, #0f2040) !important;
     color: white !important;
     border: 1px solid rgba(0, 100, 200, 0.3) !important;
 }
 
 #spotlight-label {
-    background: linear-gradient(135deg, #003366, #0066cc) !important;
+    background: linear-gradient(135deg, #0a1628, #0f2040) !important;
     color: white !important;
 }

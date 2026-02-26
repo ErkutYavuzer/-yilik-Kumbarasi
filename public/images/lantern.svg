@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 320" width="240" height="320">
+  <defs>
+    <!-- Paper body gradient — warm amber glow from internal flame -->
+    <radialGradient id="paperGlow" cx="50%" cy="58%" r="55%" fx="50%" fy="62%">
+      <stop offset="0%" stop-color="#FFFFF0" stop-opacity="0.95"/>
+      <stop offset="12%" stop-color="#FFF8DC" stop-opacity="0.92"/>
+      <stop offset="25%" stop-color="#FFE4A0" stop-opacity="0.88"/>
+      <stop offset="40%" stop-color="#FFCC66" stop-opacity="0.82"/>
+      <stop offset="55%" stop-color="#FFB040" stop-opacity="0.75"/>
+      <stop offset="70%" stop-color="#F09030" stop-opacity="0.68"/>
+      <stop offset="85%" stop-color="#D07020" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#A05018" stop-opacity="0.55"/>
+    </radialGradient>
+    <!-- Top highlight — light catching the paper crown -->
+    <radialGradient id="topHighlight" cx="45%" cy="18%" r="35%">
+      <stop offset="0%" stop-color="#FFE8B0" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#FFE8B0" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Bottom rim shadow -->
+    <linearGradient id="rimGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8B6914"/>
+      <stop offset="50%" stop-color="#5C4010"/>
+      <stop offset="100%" stop-color="#8B6914"/>
+    </linearGradient>
+    <!-- Paper texture: vertical nervures -->
+    <pattern id="nervures" x="0" y="0" width="30" height="320" patternUnits="userSpaceOnUse">
+      <line x1="15" y1="0" x2="15" y2="320" stroke="rgba(160,80,20,0.07)" stroke-width="1.5"/>
+    </pattern>
+    <!-- Subtle horizontal crinkle lines -->
+    <pattern id="crinkle" x="0" y="0" width="240" height="40" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="20" x2="240" y2="20" stroke="rgba(140,70,15,0.04)" stroke-width="0.8"/>
+    </pattern>
+  </defs>
+
+  <!-- Main paper balloon shape — kongming lantern profile -->
+  <!-- Wider at bottom, tapers to crown at top -->
+  <path d="
+    M 120 8
+    C 80 8, 40 50, 28 110
+    C 18 160, 20 210, 35 250
+    C 45 275, 70 288, 90 292
+    L 150 292
+    C 170 288, 195 275, 205 250
+    C 220 210, 222 160, 212 110
+    C 200 50, 160 8, 120 8
+    Z
+  " fill="url(#paperGlow)"/>
+
+  <!-- Paper texture overlay — nervures -->
+  <path d="
+    M 120 8
+    C 80 8, 40 50, 28 110
+    C 18 160, 20 210, 35 250
+    C 45 275, 70 288, 90 292
+    L 150 292
+    C 170 288, 195 275, 205 250
+    C 220 210, 222 160, 212 110
+    C 200 50, 160 8, 120 8
+    Z
+  " fill="url(#nervures)"/>
+
+  <!-- Horizontal crinkle texture -->
+  <path d="
+    M 120 8
+    C 80 8, 40 50, 28 110
+    C 18 160, 20 210, 35 250
+    C 45 275, 70 288, 90 292
+    L 150 292
+    C 170 288, 195 275, 205 250
+    C 220 210, 222 160, 212 110
+    C 200 50, 160 8, 120 8
+    Z
+  " fill="url(#crinkle)"/>
+
+  <!-- Top crown highlight -->
+  <path d="
+    M 120 8
+    C 80 8, 40 50, 28 110
+    C 18 160, 20 210, 35 250
+    C 45 275, 70 288, 90 292
+    L 150 292
+    C 170 288, 195 275, 205 250
+    C 220 210, 222 160, 212 110
+    C 200 50, 160 8, 120 8
+    Z
+  " fill="url(#topHighlight)"/>
+
+  <!-- Left edge shadow — 3D curvature -->
+  <path d="
+    M 120 8
+    C 80 8, 40 50, 28 110
+    C 18 160, 20 210, 35 250
+    C 45 275, 55 282, 65 286
+    L 50 280
+    C 38 270, 28 248, 22 210
+    C 16 165, 25 80, 60 35
+    C 75 18, 100 10, 120 8
+    Z
+  " fill="rgba(120,50,0,0.12)"/>
+
+  <!-- Right edge shadow — 3D curvature -->
+  <path d="
+    M 120 8
+    C 160 8, 200 50, 212 110
+    C 222 160, 220 210, 205 250
+    C 195 275, 185 282, 175 286
+    L 190 280
+    C 202 270, 212 248, 218 210
+    C 224 165, 215 80, 180 35
+    C 165 18, 140 10, 120 8
+    Z
+  " fill="rgba(120,50,0,0.08)"/>
+
+  <!-- Bottom opening — dark mouth of the lantern -->
+  <ellipse cx="120" cy="295" rx="62" ry="12" fill="rgba(10,5,0,0.85)"/>
+
+  <!-- Wire/bamboo frame ring at bottom -->
+  <ellipse cx="120" cy="294" rx="64" ry="10" fill="none" stroke="url(#rimGrad)" stroke-width="3.5"/>
+  <ellipse cx="120" cy="294" rx="64" ry="10" fill="none" stroke="rgba(255,200,100,0.15)" stroke-width="1" stroke-dasharray="2,4"/>
+
+  <!-- Cross-wire inside opening -->
+  <line x1="80" y1="294" x2="160" y2="294" stroke="rgba(100,70,30,0.5)" stroke-width="1"/>
+  <line x1="120" y1="286" x2="120" y2="302" stroke="rgba(100,70,30,0.4)" stroke-width="0.8"/>
+
+  <!-- Inner glow visible through opening -->
+  <ellipse cx="120" cy="290" rx="35" ry="6" fill="rgba(255,220,100,0.3)"/>
+</svg>
