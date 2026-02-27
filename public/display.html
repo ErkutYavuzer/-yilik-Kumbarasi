@@ -1107,8 +1107,8 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         // Auto-scale 1920x4320 canvas to cover actual screen without gaps
-        const DESIGN_WIDTH = 1920;
-        const DESIGN_HEIGHT = 4320;
+        let DESIGN_WIDTH = 1920;
+        let DESIGN_HEIGHT = 4320;
 
         function scaleToFit() {
             const scaleX = window.innerWidth / DESIGN_WIDTH;
@@ -1124,6 +1124,25 @@
 
         scaleToFit();
         window.addEventListener('resize', scaleToFit);
+
+        // Ekran moduna göre canvas boyutlarını değiştir
+        function applyScreenMode(mode) {
+            if (mode === 'normal') {
+                DESIGN_WIDTH = 1920;
+                DESIGN_HEIGHT = 1080;
+            } else {
+                DESIGN_WIDTH = 1920;
+                DESIGN_HEIGHT = 4320;
+            }
+            document.body.style.width = DESIGN_WIDTH + 'px';
+            document.body.style.height = DESIGN_HEIGHT + 'px';
+            const container = document.querySelector('.display-container');
+            if (container) {
+                container.style.width = DESIGN_WIDTH + 'px';
+                container.style.height = DESIGN_HEIGHT + 'px';
+            }
+            scaleToFit();
+        }
 
         // Kor parçacıkları oluştur
         (function() {

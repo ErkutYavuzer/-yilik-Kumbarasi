@@ -18,7 +18,7 @@ class WishDisplay {
         this.socket = null;
         this.isMuted = false;
         this.audioCtx = null;
-        this.displaySettings = { speedMultiplier: 1.0, scaleMultiplier: 1.0, maxVisible: 20 }; // Global ekran ayarları
+        this.displaySettings = { speedMultiplier: 1.0, scaleMultiplier: 1.0, maxVisible: 20, screenMode: 'led' }; // Global ekran ayarları
         this.displayMode = 'balloon'; // 'balloon' veya 'lantern'
 
         this.init();
@@ -26,6 +26,7 @@ class WishDisplay {
 
     async init() {
         await this.loadDisplayMode();
+        await this.loadDisplaySettings();
         this.connectSocket();
         this.bindEvents();
         this.startFloatingAnimation();
@@ -391,6 +392,13 @@ class WishDisplay {
         const speed = this.displaySettings.speedMultiplier || 1.0;
         const maxVisible = (this.displaySettings && this.displaySettings.maxVisible) || 20;
         console.log(`📺 Ayarlar uygulanıyor: Hız=${speed}x, Ölçek=${scale}x, Max=${maxVisible}`);
+
+        // Screen mode değişimini uygula
+        const screenMode = this.displaySettings.screenMode || 'led';
+        if (this._lastScreenMode !== screenMode && typeof window.applyScreenMode === 'function') {
+            this._lastScreenMode = screenMode;
+            window.applyScreenMode(screenMode);
+        }
 
         // CSS değişkenini ayarla (transform'da kullanılıyor)
         document.documentElement.style.setProperty('--card-scale', scale);
@@ -865,6 +873,15 @@ class WishDisplay {
             const res = await fetch('/api/display-mode');
             const data = await res.json();
             this.displayMode = data.displayMode || 'balloon';
+        } catch (e) { }
+    }
+
+    async loadDisplaySettings() {
+        try {
+            const res = await fetch('/api/display-settings');
+            const data = await res.json();
+            this.displaySettings = { ...this.displaySettings, ...data };
+            this.applyDisplaySettings();
         } catch (e) { }
     }
 }

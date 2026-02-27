@@ -186,7 +186,8 @@ const savedDisplaySettings = loadSettings().displaySettings || {};
 let displaySettings = {
     speedMultiplier: savedDisplaySettings.speedMultiplier || 1.0,
     scaleMultiplier: savedDisplaySettings.scaleMultiplier || 1.0,
-    maxVisible: savedDisplaySettings.maxVisible || 20
+    maxVisible: savedDisplaySettings.maxVisible || 20,
+    screenMode: savedDisplaySettings.screenMode || 'led'
 };
 
 // Ana sayfa
@@ -246,11 +247,12 @@ app.get('/api/display-settings', (req, res) => {
 
 // Ekran Ayarlarını Güncelle API'si
 app.post('/api/display-settings', (req, res) => {
-    const { speedMultiplier, scaleMultiplier, maxVisible } = req.body;
+    const { speedMultiplier, scaleMultiplier, maxVisible, screenMode } = req.body;
 
     if (typeof speedMultiplier === 'number') displaySettings.speedMultiplier = speedMultiplier;
     if (typeof scaleMultiplier === 'number') displaySettings.scaleMultiplier = scaleMultiplier;
     if (typeof maxVisible === 'number') displaySettings.maxVisible = Math.max(1, Math.min(100, maxVisible));
+    if (['led', 'normal'].includes(screenMode)) displaySettings.screenMode = screenMode;
 
     console.log(`
 📺 Ekran Ayarları Güncellendi: Hız: ${displaySettings.speedMultiplier}x, Büyüklük: ${displaySettings.scaleMultiplier}x, Max: ${displaySettings.maxVisible}`);

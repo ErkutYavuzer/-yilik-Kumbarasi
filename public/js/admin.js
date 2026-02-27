@@ -896,7 +896,8 @@ async function saveDisplaySettings() {
     const settings = {
         speedMultiplier: parseFloat(document.getElementById('display-speed').value),
         scaleMultiplier: parseFloat(document.getElementById('display-scale').value),
-        maxVisible: parseInt(document.getElementById('display-maxvisible').value)
+        maxVisible: parseInt(document.getElementById('display-maxvisible').value),
+        screenMode: document.querySelector('.screen-mode-btn.active')?.dataset.mode || 'led'
     };
     try {
         const res = await fetch('/api/display-settings', {
@@ -926,6 +927,15 @@ function setDisplaySettingsUI(data) {
         if (el) el.value = data.maxVisible;
         updateMaxVisibleLabel(data.maxVisible);
     }
+    if (data.screenMode) {
+        document.querySelectorAll('.screen-mode-btn').forEach(btn => {
+            const isActive = btn.dataset.mode === data.screenMode;
+            btn.classList.toggle('active', isActive);
+            btn.style.border = isActive ? '2px solid var(--accent)' : '2px solid var(--card-border)';
+            btn.style.background = isActive ? 'var(--accent)' : 'var(--bg2)';
+            btn.style.color = isActive ? 'white' : 'var(--text2)';
+        });
+    }
 }
 
 function updateSpeedLabel(val) {
@@ -941,6 +951,17 @@ function updateScaleLabel(val) {
 function updateMaxVisibleLabel(val) {
     const el = document.getElementById('maxvisible-value');
     if (el) el.textContent = parseInt(val);
+}
+
+function setScreenMode(mode) {
+    document.querySelectorAll('.screen-mode-btn').forEach(btn => {
+        const isActive = btn.dataset.mode === mode;
+        btn.classList.toggle('active', isActive);
+        btn.style.border = isActive ? '2px solid var(--accent)' : '2px solid var(--card-border)';
+        btn.style.background = isActive ? 'var(--accent)' : 'var(--bg2)';
+        btn.style.color = isActive ? 'white' : 'var(--text2)';
+    });
+    saveDisplaySettings();
 }
 
 // ─── RAFFLE (ÇEKİLİŞ) ───
