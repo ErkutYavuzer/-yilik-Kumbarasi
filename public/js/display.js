@@ -162,8 +162,21 @@ class WishDisplay {
                         const raffleBox = overlay.querySelector('.raffle-box');
                         if (raffleBox) raffleBox.classList.add('celebrating');
 
-                        // Minimal kutlama — sadece küçük bir konfeti patlaması
-                        this.fireConfetti(40, 'top');
+                        // Büyük kutlama — konfeti patlaması + havai fişek + sparkles
+                        this.fireConfetti(80, 'top');
+                        this.fireConfetti(50, 'left');
+                        this.fireConfetti(50, 'right');
+                        this.fireGoldenSparkles();
+                        this.fireEmojiRain();
+                        this.fireFirework(30, 30);
+                        this.fireFirework(70, 25);
+                        this.fireFirework(50, 40);
+                        // 2. dalga — 1.5 saniye sonra
+                        setTimeout(() => {
+                            this.fireConfetti(60, 'top');
+                            this.fireFirework(20, 35);
+                            this.fireFirework(80, 30);
+                        }, 1500);
                     }, 200);
                 });
             }
@@ -593,7 +606,9 @@ class WishDisplay {
         card.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rotation}deg)`;
 
         card.addEventListener('click', () => {
-            this.showSpotlight(wish);
+            const currentWishId = card.dataset.wishId;
+            const currentWish = this.allServerWishes.find(w => w.id === currentWishId) || wish;
+            this.showSpotlight(currentWish);
         });
 
         this.container.appendChild(card);
@@ -666,6 +681,8 @@ class WishDisplay {
             const maxX = cw - cardWidth; // Account for card width so right edge doesn't clip
 
             cards.forEach(cardData => {
+                // Spotlight modunda aktif kartı dondur — animasyonu atla
+                if (cardData.element.classList.contains('spotlight-active')) return;
                 // Admin panelinden gelen hızı doğrudan harekete çarparak uygula
                 cardData.y += cardData.vy * currentSpeedMulti;
 
