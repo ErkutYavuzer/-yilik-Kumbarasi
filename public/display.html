@@ -1570,6 +1570,10 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
+      // Auto-scale 1920x4320 canvas to cover actual screen without gaps
+      let DESIGN_WIDTH = 1920;
+      let DESIGN_HEIGHT = 4320;
+
       // matchMedia — innerWidth'ten daha güvenilir, resize event'e bağımlı değil
       const mobileQuery = window.mobileQuery = window.matchMedia("(max-width: 767px)");
 
