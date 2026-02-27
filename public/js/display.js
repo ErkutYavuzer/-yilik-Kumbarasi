@@ -433,13 +433,10 @@ class WishDisplay {
         document.documentElement.style.setProperty('--card-scale', scale);
 
         // Mevcut tüm kartlara ölçeği anında uygula
-        // Mobilde kartlara inline transform uygulama — CSS flow bozulur
-        if (!(window.isMobileCheck && window.isMobileCheck())) {
-            this.wishCards.forEach(cardData => {
-                const depthScale = this.displayMode === 'lantern' ? scale * (cardData.zDepth || 1) : scale;
-                cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${depthScale}) rotate(${cardData.rotation}deg)`;
-            });
-        }
+        this.wishCards.forEach(cardData => {
+            const depthScale = this.displayMode === 'lantern' ? scale * (cardData.zDepth || 1) : scale;
+            cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${depthScale}) rotate(${cardData.rotation}deg)`;
+        });
 
         // maxVisible değiştiğinde: fazla kartları sil veya eksik kartları ekle
         if (this.wishCards.length > maxVisible) {
@@ -567,34 +564,6 @@ class WishDisplay {
             `;
         }
 
-        // Mobile mode: skip absolute positioning, just append to container
-        if (window.isMobileCheck && window.isMobileCheck()) {
-            card.style.left = '';
-            card.style.top = '';
-            card.style.transform = '';
-            card.style.opacity = '1';
-            card.addEventListener('click', () => {
-                const currentWishId = card.dataset.wishId;
-                const currentWish = this.allServerWishes.find(w => w.id === currentWishId) || wish;
-                this.showSpotlight(currentWish);
-            });
-            this.container.appendChild(card);
-            this.wishes.push(wish);
-            // maxVisible kontrolü — mobilde daha az kart
-            const mobileMax = 20;
-            if (this.wishCards.length >= mobileMax) {
-                const oldest = this.wishCards.shift();
-                if (oldest && oldest.element) {
-                    this.wishes = this.wishes.filter(w => w.id !== oldest.element.dataset.wishId);
-                    oldest.element.remove();
-                }
-            }
-            this.wishCards.push({ element: card, x: 0, y: 0 });
-            if (animate) {
-                setTimeout(() => card.classList.remove('entering'), 500);
-            }
-            return; // Skip all desktop positioning logic
-        }
 
         // Görsel kalabalığı azaltmak için ekran maksimum limit koruması
 
@@ -722,10 +691,6 @@ class WishDisplay {
         });
 
         const animate = () => {
-            if (window.isMobileCheck && window.isMobileCheck()) {
-                requestAnimationFrame(animate);
-                return;
-            }
             const cards = this.wishCards;
 
             const currentScale = this.displaySettings.scaleMultiplier || 1.0;
