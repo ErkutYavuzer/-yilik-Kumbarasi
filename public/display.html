@@ -1590,8 +1590,13 @@
       // matchMedia — innerWidth'ten daha güvenilir, resize event'e bağımlı değil
       const mobileQuery = window.mobileQuery = window.matchMedia("(max-width: 767px)");
 
+      function isMobileCheck() {
+        return mobileQuery.matches || window.innerWidth < 768;
+      }
+      window.isMobileCheck = isMobileCheck;
+
       function checkMobile() {
-        if (mobileQuery.matches) {
+        if (isMobileCheck()) {
           document.body.classList.add("mobile-mode");
           // Inline style YOK — CSS !important + @media fallback halleder
           // Sadece transform'u temizle (scaleToFit önceki çağrıda set etmiş olabilir)
@@ -1615,7 +1620,7 @@
       }
 
       function scaleToFit() {
-        if (mobileQuery.matches) return;
+        if (isMobileCheck()) return;
 
         const scaleX = window.innerWidth / DESIGN_WIDTH;
         const scaleY = window.innerHeight / DESIGN_HEIGHT;
@@ -1629,13 +1634,13 @@
       scaleToFit();
       // matchMedia change — mobil/desktop geçişlerinde tetiklenir
       mobileQuery.addEventListener("change", () => { checkMobile(); scaleToFit(); });
-      // resize — sadece desktop'ta scale günceller
-      window.addEventListener("resize", () => { if (!mobileQuery.matches) scaleToFit(); });
+      // resize — mobil/desktop geçişi + desktop scale günceller
+      window.addEventListener("resize", () => { checkMobile(); scaleToFit(); });
 
       // Ekran moduna göre canvas boyutlarını değiştir
       function applyScreenMode(mode) {
         // Mobilde canvas boyutlarını değiştirme — mobil layout bozulur
-        if (mobileQuery.matches) return;
+        if (isMobileCheck()) return;
         if (mode === "normal") {
           DESIGN_WIDTH = 1920;
           DESIGN_HEIGHT = 1080;
@@ -1683,6 +1688,6 @@
         }
       })();
     </script>
-    <script src="js/display.js?v=12.0.0"></script>
+    <script src="js/display.js?v=14.0.0"></script>
   </body>
 </html>
