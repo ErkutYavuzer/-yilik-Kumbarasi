@@ -182,10 +182,11 @@ let moderationSettings = {
 };
 
 // Ekran (Gösterim) Ayarları
+const savedDisplaySettings = loadSettings().displaySettings || {};
 let displaySettings = {
-    speedMultiplier: 1.0,
-    scaleMultiplier: 1.0,
-    maxVisible: 20
+    speedMultiplier: savedDisplaySettings.speedMultiplier || 1.0,
+    scaleMultiplier: savedDisplaySettings.scaleMultiplier || 1.0,
+    maxVisible: savedDisplaySettings.maxVisible || 20
 };
 
 // Ana sayfa
@@ -254,6 +255,7 @@ app.post('/api/display-settings', (req, res) => {
     console.log(`
 📺 Ekran Ayarları Güncellendi: Hız: ${displaySettings.speedMultiplier}x, Büyüklük: ${displaySettings.scaleMultiplier}x, Max: ${displaySettings.maxVisible}`);
     io.emit('display-settings', displaySettings);
+    saveSettings({ displaySettings });
     res.json({ success: true, ...displaySettings });
 });
 

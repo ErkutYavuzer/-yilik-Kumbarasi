@@ -18,7 +18,7 @@ class WishDisplay {
         this.socket = null;
         this.isMuted = false;
         this.audioCtx = null;
-        this.displaySettings = { speedMultiplier: 1.0, scaleMultiplier: 1.0 }; // Global ekran ayarları
+        this.displaySettings = { speedMultiplier: 1.0, scaleMultiplier: 1.0, maxVisible: 20 }; // Global ekran ayarları
         this.displayMode = 'balloon'; // 'balloon' veya 'lantern'
 
         this.init();
@@ -561,16 +561,18 @@ class WishDisplay {
             x = padding + Math.random() * Math.max(0, maxX - padding);
         }
 
-        // Y ekseni: fener modunda ekranın tam altından doğar, staggered offset ile
+        // Y ekseni: fener modunda ekranın tam altından doğar, rastgele dağılım ile
         // balon modunda eski davranış korunur
-        const spawnOffset = this.wishCards.length * (this.displayMode === 'lantern' ? 250 : 150);
+        // spawnOffset: viewport yüksekliğiyle sınırlı — büyük maxVisible'da binlerce px aşağıda doğmasını engelle
+        const maxSpawnDepth = Math.min(this.wishCards.length * (this.displayMode === 'lantern' ? 250 : 150), ch);
+        const spawnOffset = Math.random() * maxSpawnDepth;
         let y;
         if (animate && this.displayMode === 'lantern') {
             // Yeni dilek: ekranın alt kısmında görünür alanda doğ
             y = ch - 200 - Math.random() * 200;
         } else {
             y = this.displayMode === 'lantern'
-                ? ch + 100 + spawnOffset          // Ekranın tam altından doğar
+                ? ch + 100 + spawnOffset          // Ekranın altından doğar (viewport ile sınırlı)
                 : ch + 200 + spawnOffset + Math.random() * 1000;
         }
 
