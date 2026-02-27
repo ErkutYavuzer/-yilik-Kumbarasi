@@ -1156,11 +1156,32 @@
         display: none;
       }
 
+      /* Mobile fallback — JS çalışmadan önce bile mobil stiller uygulansın */
+      @media (max-width: 767px) {
+        body {
+          width: 100vw !important;
+          height: auto !important;
+          min-height: 100vh;
+          min-height: 100dvh;
+          overflow-y: auto !important;
+          overflow-x: hidden !important;
+          transform: none !important;
+          background: #030810;
+        }
+        .display-container {
+          width: 100vw !important;
+          height: auto !important;
+          min-height: 100vh;
+          min-height: 100dvh;
+        }
+      }
+
       /* Mobile Mode Styles */
       body.mobile-mode {
         width: 100vw !important;
         height: auto !important;
         min-height: 100vh;
+        min-height: 100dvh;
         overflow-y: auto !important;
         overflow-x: hidden !important;
         transform: none !important;
@@ -1171,6 +1192,7 @@
         width: 100vw !important;
         height: auto !important;
         min-height: 100vh;
+        min-height: 100dvh;
         padding: 20px 10px 100px 10px;
       }
 
@@ -1548,17 +1570,25 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      // Auto-scale 1920x4320 canvas to cover actual screen without gaps
-      let DESIGN_WIDTH = 1920;
-      let DESIGN_HEIGHT = 4320;
+      // matchMedia — innerWidth'ten daha güvenilir, resize event'e bağımlı değil
+      const mobileQuery = window.mobileQuery = window.matchMedia("(max-width: 767px)");
 
       function checkMobile() {
-        if (window.innerWidth < 768) {
+        if (mobileQuery.matches) {
           document.body.classList.add("mobile-mode");
+          // Inline style YOK — CSS !important + @media fallback halleder
+          // Sadece transform'u temizle (scaleToFit önceki çağrıda set etmiş olabilir)
           document.body.style.transform = "none";
-          document.body.style.width = "100vw";
-          document.body.style.height = "100vh";
-          document.body.style.overflowY = "auto";
+          document.body.style.transformOrigin = "";
+          document.body.style.marginLeft = "";
+          document.body.style.marginTop = "";
+          // Body ve container inline dimension'ları temizle — CSS devralır
+          document.body.style.width = "";
+          document.body.style.height = "";
+          document.body.style.overflowY = "";
+          document.body.style.overflowX = "";
+          const c = document.querySelector(".display-container");
+          if (c) { c.style.width = ""; c.style.height = ""; }
         } else {
           document.body.classList.remove("mobile-mode");
           document.body.style.width = DESIGN_WIDTH + "px";
@@ -1568,29 +1598,27 @@
       }
 
       function scaleToFit() {
-        if (document.body.classList.contains("mobile-mode")) return;
+        if (mobileQuery.matches) return;
 
         const scaleX = window.innerWidth / DESIGN_WIDTH;
         const scaleY = window.innerHeight / DESIGN_HEIGHT;
-        // Stretch X and Y independently.
-        // This guarantees absolutely 0 letterboxing and 0 cropping (perfect for LED hardware mapping)
         document.body.style.transform = `scale(${scaleX}, ${scaleY})`;
         document.body.style.transformOrigin = "top left";
-        // Since it stretches perfectly, no margin offsets are needed
         document.body.style.marginLeft = "0px";
         document.body.style.marginTop = "0px";
       }
 
       checkMobile();
       scaleToFit();
-      window.addEventListener("resize", () => {
-        checkMobile();
-        scaleToFit();
-      });
+      // matchMedia change — mobil/desktop geçişlerinde tetiklenir
+      mobileQuery.addEventListener("change", () => { checkMobile(); scaleToFit(); });
+      // resize — sadece desktop'ta scale günceller
+      window.addEventListener("resize", () => { if (!mobileQuery.matches) scaleToFit(); });
+
       // Ekran moduna göre canvas boyutlarını değiştir
       function applyScreenMode(mode) {
         // Mobilde canvas boyutlarını değiştirme — mobil layout bozulur
-        if (document.body.classList.contains('mobile-mode')) return;
+        if (mobileQuery.matches) return;
         if (mode === "normal") {
           DESIGN_WIDTH = 1920;
           DESIGN_HEIGHT = 1080;

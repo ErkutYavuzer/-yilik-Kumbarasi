@@ -434,7 +434,7 @@ class WishDisplay {
 
         // Mevcut tüm kartlara ölçeği anında uygula
         // Mobilde kartlara inline transform uygulama — CSS flow bozulur
-        if (!document.body.classList.contains('mobile-mode')) {
+        if (!(window.mobileQuery && window.mobileQuery.matches)) {
             this.wishCards.forEach(cardData => {
                 const depthScale = this.displayMode === 'lantern' ? scale * (cardData.zDepth || 1) : scale;
                 cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${depthScale}) rotate(${cardData.rotation}deg)`;
@@ -568,7 +568,7 @@ class WishDisplay {
         }
 
         // Mobile mode: skip absolute positioning, just append to container
-        if (document.body.classList.contains('mobile-mode')) {
+        if (window.mobileQuery && window.mobileQuery.matches) {
             card.style.left = '';
             card.style.top = '';
             card.style.transform = '';
@@ -722,7 +722,7 @@ class WishDisplay {
         });
 
         const animate = () => {
-            if (document.body.classList.contains('mobile-mode')) {
+            if (window.mobileQuery && window.mobileQuery.matches) {
                 requestAnimationFrame(animate);
                 return;
             }
