@@ -294,6 +294,18 @@
             font-style: italic;
         }
 
+        .char-counter {
+            text-align: right;
+            font-size: 13px;
+            font-weight: 700;
+            color: rgba(0, 0, 0, 0.4);
+            margin-top: 6px;
+            padding-right: 4px;
+        }
+        .char-counter.warning {
+            color: #FF6B6B;
+        }
+
         /* Preview */
         .photo-preview {
             display: none;
@@ -690,8 +702,9 @@
             <!-- YAZI ALANI (YENİ) -->
             <div class="text-area-wrapper" id="text-area-wrapper">
                 <textarea class="dilek-textarea" id="dilekInput" placeholder="Dileğini klavyeden buraya yazabilirsin..."
-                    maxlength="400"></textarea>
+                    maxlength="140"></textarea>
             </div>
+            <div class="char-counter" id="charCounter">0 / 140</div>
 
             <button class="next-btn" id="nextBtn1" onclick="goStep(2)">Devam Et &#x27A1;&#xFE0F;</button>
 
@@ -801,6 +814,13 @@
 
         // Metin yazarken kontrol
         textInput.addEventListener('input', checkStep1Valid);
+        textInput.addEventListener('input', function() {
+            var len = textInput.value.length;
+            var counter = document.getElementById('charCounter');
+            counter.textContent = len + ' / 140';
+            if (len > 120) counter.classList.add('warning');
+            else counter.classList.remove('warning');
+        });
 
         function handlePhoto(input) {
             if (!input.files || !input.files[0]) return;
@@ -862,6 +882,7 @@
             // (DEĞİŞTİRİLDİ) Ya fotoğraf olacak ya da metin!
             if (currentMode === 'photo' && !selectedFile) return alert('Fotograf zorunlu!');
             if (currentMode === 'text' && textInput.value.trim().length < 5) return alert('Dilek metni en az 5 karakter olmalı!');
+            if (currentMode === 'text' && textInput.value.trim().length > 140) return alert('Dilek metni en fazla 140 karakter olabilir!');
 
             var btn = document.getElementById('throwBtn');
             btn.disabled = true; btn.textContent = 'Gönderiliyor...';

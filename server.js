@@ -409,6 +409,9 @@ app.post('/api/upload', upload.single('photo'), async (req, res) => {
         if (!childName || childName.trim().length < 2) {
             return res.status(400).json({ error: 'Isim gerekli (en az 2 karakter)' });
         }
+        if (manualText && manualText.trim().length > 140) {
+            return res.status(400).json({ error: 'Dilek metni en fazla 140 karakter olabilir' });
+        }
 
         let wishText = '';
         let filePath = null;

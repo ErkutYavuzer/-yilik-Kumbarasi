@@ -544,7 +544,7 @@ class WishDisplay {
                 </div>
                 <div class="lantern-string"></div>
                 <div class="lantern-text">
-                    ${wish.wishText ? `<div class="wish-text">${wish.wishText.replace(/\n/g, '<br>')}</div>` : ''}
+                    ${wish.wishText ? `<div class="wish-text">${(wish.wishText.length > 140 ? wish.wishText.substring(0, 140) + '…' : wish.wishText).replace(/\n/g, '<br>')}</div>` : ''}
                     <div class="child-name">${wish.childName}</div>
                 </div>
             `;
@@ -557,7 +557,7 @@ class WishDisplay {
             card.style.setProperty('--bob-delay', (Math.random() * -5) + 's');
             card.innerHTML = `
                 <div class="balloon-body">
-                    ${wish.wishText ? `<div class="wish-text">${wish.wishText.replace(/\n/g, '<br>')}</div>` : ''}
+                    ${wish.wishText ? `<div class="wish-text">${(wish.wishText.length > 140 ? wish.wishText.substring(0, 140) + '…' : wish.wishText).replace(/\n/g, '<br>')}</div>` : ''}
                     <div class="child-name">${wish.childName}</div>
                 </div>
                 <div class="balloon-string"></div>
