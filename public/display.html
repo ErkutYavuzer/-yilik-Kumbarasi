@@ -335,10 +335,7 @@
             transform: none;
             width: auto;
             max-width: 100%;
-            display: -webkit-box;
-            -webkit-line-clamp: 1;
-            line-clamp: 1;
-            -webkit-box-orient: vertical;
+            display: block;
             font-size: 14px;
             font-weight: 800;
             color: rgba(255, 255, 255, 0.95);
@@ -551,12 +548,8 @@
             width: 75%;
             max-width: 250px;
 
-            /* Taşmaları alt satıra geçirme ve max 2 satırda (clamp) kesme */
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+            display: block;
+            overflow: visible;
             word-break: break-word;
         }
 
@@ -1157,7 +1150,7 @@
             }
         })();
     </script>
-    <script src="js/display.js?v=10.2.0"></script>
+    <script src="js/display.js?v=10.3.0"></script>
 </body>
 
 </html>

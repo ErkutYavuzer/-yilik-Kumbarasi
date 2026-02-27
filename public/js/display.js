@@ -191,6 +191,7 @@ class WishDisplay {
             // Animasyon tamamlandı
             this._raffleAnimating = false;
             console.log('🎁 Raffle animasyon tamamlandı');
+        }, 1000);
 
         // İlk pop animasyonu
         countdownEl.classList.add('countdown-pop');
