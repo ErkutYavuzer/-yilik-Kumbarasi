@@ -564,6 +564,37 @@ class WishDisplay {
             `;
         }
 
+        // Mobile mode: skip absolute positioning, just append to container
+        if (document.body.classList.contains('mobile-mode')) {
+            card.style.left = '';
+            card.style.top = '';
+            card.style.transform = '';
+            card.style.opacity = '1';
+            card.addEventListener('click', () => {
+                const currentWishId = card.dataset.wishId;
+                const currentWish = this.allServerWishes.find(w => w.id === currentWishId) || wish;
+                this.showSpotlight(currentWish);
+            });
+            this.container.appendChild(card);
+            this.wishes.push(wish);
+            // maxVisible kontrolü — mobilde daha az kart
+            const mobileMax = 20;
+            if (this.wishCards.length >= mobileMax) {
+                const oldest = this.wishCards.shift();
+                if (oldest && oldest.element) {
+                    this.wishes = this.wishes.filter(w => w.id !== oldest.element.dataset.wishId);
+                    oldest.element.remove();
+                }
+            }
+            this.wishCards.push({ element: card, x: 0, y: 0 });
+            if (animate) {
+                setTimeout(() => card.classList.remove('entering'), 500);
+            }
+            return; // Skip all desktop positioning logic
+        }
+
+        // Görsel kalabalığı azaltmak için ekran maksimum limit koruması
+
         // Görsel kalabalığı azaltmak için ekran maksimum limit koruması
         const maxVisible = (this.displaySettings && this.displaySettings.maxVisible) || (this.displayMode === 'lantern' ? 20 : 12);
         if (this.wishCards.length >= maxVisible) {
@@ -688,6 +719,10 @@ class WishDisplay {
         });
 
         const animate = () => {
+            if (document.body.classList.contains('mobile-mode')) {
+                requestAnimationFrame(animate);
+                return;
+            }
             const cards = this.wishCards;
 
             const currentScale = this.displaySettings.scaleMultiplier || 1.0;
