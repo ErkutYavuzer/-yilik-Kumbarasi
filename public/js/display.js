@@ -20,6 +20,7 @@ class WishDisplay {
         this.audioCtx = null;
         this.displaySettings = { speedMultiplier: 1.0, scaleMultiplier: 1.0, maxVisible: 20, screenMode: 'led' }; // Global ekran ayarları
         this.displayMode = 'balloon'; // 'balloon' veya 'lantern'
+        this._raffleAnimating = false; // Çekiliş animasyonu aktif mi
 
         this.init();
     }
@@ -117,10 +118,17 @@ class WishDisplay {
         const overlay = document.getElementById('raffle-overlay');
         const container = document.getElementById('raffle-winners-container');
 
-        if (!overlay || !container || !winners || winners.length === 0) return;
+        if (!overlay || !container || !winners || winners.length === 0) {
+            console.log('🎁 Raffle ABORT: overlay=', !!overlay, 'container=', !!container, 'winners=', winners);
+            return;
+        }
 
         // Önceki sonuçları temizle
         container.innerHTML = '';
+
+        // Animasyon aktif işaretle
+        this._raffleAnimating = true;
+        console.log('🎁 Raffle overlay SHOW — animasyon başlıyor');
 
         // Modal'ı göster
         overlay.classList.add('show');
@@ -180,7 +188,9 @@ class WishDisplay {
                     }, 200);
                 });
             }
-        }, 1000);
+            // Animasyon tamamlandı
+            this._raffleAnimating = false;
+            console.log('🎁 Raffle animasyon tamamlandı');
 
         // İlk pop animasyonu
         countdownEl.classList.add('countdown-pop');
@@ -366,6 +376,11 @@ class WishDisplay {
         });
 
         this.socket.on('raffle-close', () => {
+            // Animasyon devam ediyorsa close'u yoksay
+            if (this._raffleAnimating) {
+                console.log('🎁 Çekiliş CLOSE yoksayıldı — animasyon devam ediyor');
+                return;
+            }
             console.log('🎁 Çekiliş Ekranı Kapatıldı');
             const overlay = document.getElementById('raffle-overlay');
             if (overlay) overlay.classList.remove('show');
