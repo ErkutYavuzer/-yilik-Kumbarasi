@@ -1397,6 +1397,11 @@
         display: none !important;
       }
 
+      /* Mobile moon — hide to prevent text contrast issues */
+      body.mobile-mode .moon {
+        display: none !important;
+      }
+
       /* Mobile confetti adjustments */
       body.mobile-mode .display-confetti {
         display: none !important;
@@ -1619,6 +1624,6 @@
         }
       })();
     </script>
-    <script src="js/display.js?v=11.3.0"></script>
+    <script src="js/display.js?v=11.4.0"></script>
   </body>
 </html>
