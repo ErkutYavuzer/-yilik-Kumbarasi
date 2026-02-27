@@ -1589,6 +1589,8 @@
       });
       // Ekran moduna göre canvas boyutlarını değiştir
       function applyScreenMode(mode) {
+        // Mobilde canvas boyutlarını değiştirme — mobil layout bozulur
+        if (document.body.classList.contains('mobile-mode')) return;
         if (mode === "normal") {
           DESIGN_WIDTH = 1920;
           DESIGN_HEIGHT = 1080;

@@ -433,10 +433,13 @@ class WishDisplay {
         document.documentElement.style.setProperty('--card-scale', scale);
 
         // Mevcut tüm kartlara ölçeği anında uygula
-        this.wishCards.forEach(cardData => {
-            const depthScale = this.displayMode === 'lantern' ? scale * (cardData.zDepth || 1) : scale;
-            cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${depthScale}) rotate(${cardData.rotation}deg)`;
-        });
+        // Mobilde kartlara inline transform uygulama — CSS flow bozulur
+        if (!document.body.classList.contains('mobile-mode')) {
+            this.wishCards.forEach(cardData => {
+                const depthScale = this.displayMode === 'lantern' ? scale * (cardData.zDepth || 1) : scale;
+                cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${depthScale}) rotate(${cardData.rotation}deg)`;
+            });
+        }
 
         // maxVisible değiştiğinde: fazla kartları sil veya eksik kartları ekle
         if (this.wishCards.length > maxVisible) {
