@@ -611,11 +611,17 @@ class WishDisplay {
             rotationSpeed: (Math.random() - 0.5) * (this.displayMode === 'lantern' ? 0.1 : 0.8),
             radius: this.displayMode === 'lantern' ? 250 : 180,
             zDepth: zDepth,
-            // Salınım: her fener kendi frekans ve genliğiyle sağ-sol sallar
-            swayPhase: Math.random() * Math.PI * 2,   // Başlangıç faz (0–2π)
-            swayFreq:  0.006 + Math.random() * 0.005, // Salınım frekansı (daha yavaş)
-            swayAmp:   40 + Math.random() * 60,       // Salınım genliği px (40–100px)
-            swayBaseX: x,                             // Salınımın merkez X'i
+            // Salınım: çoklu sinüs ile doğal rüzgar akışı
+            swayPhase: Math.random() * Math.PI * 2,
+            swayFreq:  0.004 + Math.random() * 0.004,
+            swayAmp:   40 + Math.random() * 60,
+            sway2Phase: Math.random() * Math.PI * 2,
+            sway2Freq:  0.009 + Math.random() * 0.007,
+            sway2Amp:   15 + Math.random() * 25,
+            swayYPhase: Math.random() * Math.PI * 2,
+            swayYFreq:  0.003 + Math.random() * 0.003,
+            swayYAmp:   5 + Math.random() * 8,
+            swayBaseX: x,
             rising: !isNewWishEntry,                  // Yeni dilek zaten görünür
             opacity: isNewWishEntry ? (0.5 + zDepth * 0.5) : 0,
             isNewWish: isNewWishEntry                 // Yeni dilek giriş efekti
@@ -666,7 +672,12 @@ class WishDisplay {
                 // === FENER SALINIMU (SINÜS) — sadece lantern modunda ===
                 if (this.displayMode === 'lantern') {
                     cardData.swayPhase += cardData.swayFreq * currentSpeedMulti;
-                    cardData.x = cardData.swayBaseX + Math.sin(cardData.swayPhase) * cardData.swayAmp;
+                    cardData.sway2Phase += cardData.sway2Freq * currentSpeedMulti;
+                    cardData.swayYPhase += cardData.swayYFreq * currentSpeedMulti;
+                    const swayX = Math.sin(cardData.swayPhase) * cardData.swayAmp
+                              + Math.sin(cardData.sway2Phase) * cardData.sway2Amp;
+                    cardData.x = cardData.swayBaseX + swayX;
+                    cardData.y += Math.sin(cardData.swayYPhase) * cardData.swayYAmp * 0.02;
 
                     // swayBaseX sınırları — fener kenara çıkmasın
                     if (cardData.swayBaseX < paddingSides + cardData.swayAmp) {
@@ -714,6 +725,8 @@ class WishDisplay {
                             cardData.x = cardData.swayBaseX;
                             cardData.y = ch + 100 + Math.random() * 400;
                             cardData.swayPhase = Math.random() * Math.PI * 2;
+                            cardData.sway2Phase = Math.random() * Math.PI * 2;
+                            cardData.swayYPhase = Math.random() * Math.PI * 2;
                             cardData.rising = true;
                             cardData.opacity = 0;
                             cardData.element.style.opacity = '0';
@@ -759,7 +772,7 @@ class WishDisplay {
                 // SADECE GÖRÜNTÜ MATRİSİNİ VE EKSENİNİ (GPU) GÜNCELLE
                 // Fener modunda salınım x'i halleder, rotation sadece hafif eğim
                 const rot = this.displayMode === 'lantern'
-                    ? Math.sin(cardData.swayPhase) * 2  // Salınımla senkron hafif eğim
+                    ? (Math.sin(cardData.swayPhase) + Math.sin(cardData.sway2Phase) * 0.5) * 1.3  // Doğal salınım eğimi
                     : cardData.rotation;
                 const depthScale = this.displayMode === 'lantern' ? currentScale * cardData.zDepth : currentScale;
                 cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${depthScale}) rotate(${rot}deg)`;
