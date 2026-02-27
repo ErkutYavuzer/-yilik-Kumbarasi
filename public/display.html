@@ -24,9 +24,8 @@
       body {
         margin: 0;
         padding: 0;
-        overflow: hidden;
-        width: 1920px;
-        height: 4320px;
+        overflow-x: hidden;
+        overflow-y: auto;
         font-family: "Nunito", sans-serif;
         /* Scale to fit actual screen */
         transform-origin: top left;
@@ -34,10 +33,24 @@
 
       /* Main container */
       .display-container {
-        width: 1920px;
-        height: 4320px;
+        width: 100%;
+        min-height: 100vh;
+        min-height: 100dvh;
         position: relative;
         /* Arkaplan themes.css tarafindan yonetiliyor */
+      }
+
+      /* Desktop: LED panel boyutları — mobilde bu blok UYGULANMAZ */
+      @media (min-width: 768px) {
+        body {
+          width: 1920px;
+          height: 4320px;
+          overflow: hidden;
+        }
+        .display-container {
+          width: 1920px;
+          height: 4320px;
+        }
       }
 
       /* Background image covers entire viewport - no animation needed */
