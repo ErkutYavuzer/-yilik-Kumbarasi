@@ -590,58 +590,28 @@ class WishDisplay {
         const cardWidth = this.displayMode === 'lantern' ? 320 : 320;
         const maxX = cw - cardWidth;
 
-        // X ekseninde konum — fener modunda sütun bazlı dağılım
-        let x;
-        if (this.displayMode === 'lantern') {
-            const columns = 4;
-            const colWidth = Math.max(0, maxX) / columns;
-            const colIndex = this.wishCards.length % columns;
-            x = colIndex * colWidth + Math.random() * colWidth * 0.6 + colWidth * 0.2;
-        } else {
-            x = padding + Math.random() * Math.max(0, maxX - padding);
-        }
-
-        const zDepth = 1.0; // Tek derinlik — tüm fenerler aynı katmanda
-
-        // Avoid spawning on top of existing cards (zDepth-aware — farklı derinliktekiler yoksayılır)
-        const spawnCardWidth = 320 * (this.displayMode === 'lantern' ? (0.5 + 0.25) : 1.0);
-        for (let attempt = 0; attempt < 5; attempt++) {
-            let hasOverlap = false;
-            for (const existing of this.wishCards) {
-                // Farklı derinlikteki fenerler çakışma sayılmaz — parallax
-                // Tek derinlik — tüm fenerler aynı katmanda, zDepth kontrolü yok
-                const ex = existing.swayBaseX || existing.x;
-                if (Math.abs(x - ex) < spawnCardWidth + 40) {
-                    hasOverlap = true;
-                    break;
-                }
-            }
-            if (!hasOverlap) break;
-            // Try a new random X
-            if (this.displayMode === 'lantern') {
-                const columns = 4;
-                const colWidth = Math.max(0, maxX) / columns;
-                const colIndex = Math.floor(Math.random() * columns);
-                x = colIndex * colWidth + Math.random() * colWidth * 0.6 + colWidth * 0.2;
-            } else {
-                x = padding + Math.random() * Math.max(0, maxX - padding);
-            }
-        }
-
         // Y ekseni: fener modunda ekranın tam altından doğar, rastgele dağılım ile
-        // balon modunda eski davranış korunur
-        // spawnOffset: viewport yüksekliğiyle sınırlı — büyük maxVisible'da binlerce px aşağıda doğmasını engelle
         const maxSpawnDepth = Math.min(this.wishCards.length * (this.displayMode === 'lantern' ? 250 : 150), ch);
         const spawnOffset = Math.random() * maxSpawnDepth;
         let y;
         if (animate && this.displayMode === 'lantern') {
-            // Yeni dilek: ekranın alt kısmında görünür alanda doğ
             y = ch - 200 - Math.random() * 200;
         } else {
             y = this.displayMode === 'lantern'
-                ? ch + 100 + spawnOffset          // Ekranın altından doğar (viewport ile sınırlı)
+                ? -200 + Math.random() * (ch + 400)   // Distribute across full visible screen + margins
                 : ch + 200 + spawnOffset + Math.random() * 1000;
         }
+
+        // X ekseninde konum — 2D aday skorlama ile en iyi pozisyon
+        const tempSwayAmp = 40 + Math.random() * 60;
+        let x;
+        if (this.displayMode === 'lantern') {
+            x = this.findBestSpawnX(y, tempSwayAmp);
+        } else {
+            x = padding + Math.random() * Math.max(0, maxX - padding);
+        }
+
+        const zDepth = 1.0;
 
         const rotation = (Math.random() - 0.5) * (this.displayMode === 'lantern' ? 3 : 8);
 
@@ -675,7 +645,7 @@ class WishDisplay {
             // Salınım: çoklu sinüs ile doğal rüzgar akışı
             swayPhase: Math.random() * Math.PI * 2,
             swayFreq:  0.004 + Math.random() * 0.004,
-            swayAmp:   40 + Math.random() * 60,
+            swayAmp:   tempSwayAmp,
             sway2Phase: Math.random() * Math.PI * 2,
             sway2Freq:  0.009 + Math.random() * 0.007,
             sway2Amp:   15 + Math.random() * 25,
@@ -740,6 +710,10 @@ class WishDisplay {
                     const swayX = Math.sin(cardData.swayPhase) * cardData.swayAmp
                               + Math.sin(cardData.sway2Phase) * cardData.sway2Amp;
                     cardData.x = cardData.swayBaseX + swayX;
+                    
+                    // Soft boundary clamp — pencere küçültüldüğünde fener ekran dışına çıkmasın
+                    cardData.x = Math.max(-100, Math.min(cw - 320, cardData.x));
+                    
                     cardData.y += Math.sin(cardData.swayYPhase) * cardData.swayYAmp * 0.02;
 
                     // swayBaseX sınırları — fener kenara çıkmasın
@@ -782,10 +756,10 @@ class WishDisplay {
                             cardData.element.classList.remove('new-wish-highlight');
                             cardData.zDepth = 1.0;
                             cardData.vy = -(0.4 + Math.random() * 0.6);
-                            // Ekranın altından yeni spawn — rastgele X merkezi
-                            cardData.swayBaseX = paddingSides + cardData.swayAmp + Math.random() * (maxX - cardData.swayAmp * 2);
-                            cardData.x = cardData.swayBaseX;
+                            // Ekranın altından yeni spawn — 2D aday skorlama ile en iyi pozisyon
                             cardData.y = ch + 100 + Math.random() * 400;
+                            cardData.swayBaseX = this.findBestSpawnX(cardData.y, cardData.swayAmp);
+                            cardData.x = cardData.swayBaseX;
                             cardData.swayPhase = Math.random() * Math.PI * 2;
                             cardData.sway2Phase = Math.random() * Math.PI * 2;
                             cardData.swayYPhase = Math.random() * Math.PI * 2;
@@ -840,8 +814,7 @@ class WishDisplay {
                 cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${depthScale}) rotate(${rot}deg)`;
             });
 
-            // Z-aware soft drift — sadece aynı derinlikteki fenerler için minimal rüzgar itme
-            this.zAwareSoftDrift();
+            // Removed zAwareSoftDrift
 
             requestAnimationFrame(animate);
         };
@@ -855,45 +828,57 @@ class WishDisplay {
         // Yeni Kar/Yağmur akışında X ve Y ekseni tamamen serbest bırakılmalıdır.
     }
 
-    zAwareSoftDrift() {
-        const cards = this.wishCards;
-        const len = cards.length;
-        if (len < 2 || this.displayMode !== 'lantern') return;
 
+    findBestSpawnX(spawnY, swayAmp) {
+        const cw = this.container.offsetWidth;
+        const cardWidth = 320;
         const currentScale = this.displaySettings.scaleMultiplier || 1.0;
-        const cardW = 320 * currentScale;
-        const cardH = 400 * currentScale;
-        // Minimum swayBaseX mesafesi — kart genişliği + küçük boşluk
-        const minDistX = cardW + 60;
-        // Sadece dikeyde yakın olan fenerler itilsin
-        const minDistY = cardH + 40;
-
-        for (let i = 0; i < len; i++) {
-            const a = cards[i];
-            if (a.element.classList.contains('spotlight-active')) continue;
-
-            for (let j = i + 1; j < len; j++) {
-                const b = cards[j];
-                if (b.element.classList.contains('spotlight-active')) continue;
-
-                // Dikeyde uzak fenerler birbirini etkilemesin
-                const dy = Math.abs(a.y - b.y);
-                if (dy > minDistY) continue;
-
-                // swayBaseX (anchor) karşılaştır — geçici sinüs pozisyonlarını yoksay
-                const dx = a.swayBaseX - b.swayBaseX;
-                const dist = Math.abs(dx);
-                if (dist < minDistX) {
-                    // Orantılı itme — yakınlığa göre güçlenir, uzaklaştıkça zayıflar
-                    const overlap = minDistX - dist;
-                    const push = overlap * 0.03;
-                    const sign = dx > 0 ? 1 : (dx < 0 ? -1 : (Math.random() > 0.5 ? 1 : -1));
-                    a.swayBaseX += sign * push;
-                    b.swayBaseX -= sign * push;
-                }
+        // minX/maxX account for sway amplitude so cards don't swing off-screen
+        const minX = -100 + swayAmp;  // paddingSides + swayAmp
+        const maxX = cw - cardWidth - swayAmp;
+        
+        // Collect positions of on-screen cards
+        const ch = this.container.offsetHeight;
+        const onScreen = this.wishCards.filter(c => c.y > -600 && c.y < ch + 500);
+        
+        if (onScreen.length === 0) {
+            // No cards — random position
+            return minX + Math.random() * Math.max(0, maxX - minX);
+        }
+        
+        // Generate 12 evenly-spaced candidate X positions
+        const numCandidates = 12;
+        const candidates = [];
+        for (let i = 0; i < numCandidates; i++) {
+            candidates.push(minX + (i / (numCandidates - 1)) * Math.max(0, maxX - minX));
+        }
+        
+        // Score each candidate: find minimum 2D distance to any existing card
+        let bestX = candidates[0];
+        let bestMinDist = -1;
+        
+        for (const cx of candidates) {
+            let minDist = Infinity;
+            for (const card of onScreen) {
+                const dx = cx - (card.swayBaseX || card.x);
+                const dy = spawnY - card.y;
+                // Weight X more heavily (1.5x) since horizontal overlap is more visible
+                const dist = Math.sqrt((dx * 1.5) * (dx * 1.5) + dy * dy);
+                if (dist < minDist) minDist = dist;
+            }
+            if (minDist > bestMinDist) {
+                bestMinDist = minDist;
+                bestX = cx;
             }
         }
+        
+        // Add small random jitter (±5% of available width) for organic feel
+        const jitter = (Math.random() - 0.5) * (maxX - minX) * 0.1;
+        bestX = Math.max(minX, Math.min(maxX, bestX + jitter));
+        
+        return bestX;
     }
+
 
     updateCounter() {
         if (!this.counterNumber) return;
