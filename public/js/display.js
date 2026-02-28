@@ -601,11 +601,15 @@ class WishDisplay {
             x = padding + Math.random() * Math.max(0, maxX - padding);
         }
 
-        // Avoid spawning on top of existing cards
-        const spawnCardWidth = 320 * (this.displayMode === 'lantern' ? (0.5 + 0.25) : 1.0); // average scale
+        const zDepth = this.displayMode === 'lantern' ? (0.5 + Math.random() * 0.5) : 1.0;
+
+        // Avoid spawning on top of existing cards (zDepth-aware — farklı derinliktekiler yoksayılır)
+        const spawnCardWidth = 320 * (this.displayMode === 'lantern' ? (0.5 + 0.25) : 1.0);
         for (let attempt = 0; attempt < 5; attempt++) {
             let hasOverlap = false;
             for (const existing of this.wishCards) {
+                // Farklı derinlikteki fenerler çakışma sayılmaz — parallax
+                if (this.displayMode === 'lantern' && Math.abs(zDepth - (existing.zDepth || 0.75)) > 0.2) continue;
                 const ex = existing.swayBaseX || existing.x;
                 if (Math.abs(x - ex) < spawnCardWidth + 40) {
                     hasOverlap = true;
@@ -656,7 +660,7 @@ class WishDisplay {
         this.container.appendChild(card);
         this.wishes.push(wish);
 
-        const zDepth = this.displayMode === 'lantern' ? (0.5 + Math.random() * 0.5) : 1.0;
+        // zDepth yukarıda (spawn overlap kontrolünden önce) hesaplandı
         const isNewWishEntry = animate && this.displayMode === 'lantern';
         const cardData = {
             element: card,
@@ -684,6 +688,8 @@ class WishDisplay {
             isNewWish: isNewWishEntry                 // Yeni dilek giriş efekti
         };
         this.wishCards.push(cardData);
+        // zDepth → CSS z-index eşleme — yakın fenerler uzak fenerlerin üstünden geçsin
+        card.style.zIndex = Math.round(zDepth * 100);
 
         if (animate) {
             setTimeout(() => {
@@ -837,8 +843,8 @@ class WishDisplay {
                 cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${depthScale}) rotate(${rot}deg)`;
             });
 
-            // Overlap prevention — soft repulsion
-            this.resolveOverlaps();
+            // Z-aware soft drift — sadece aynı derinlikteki fenerler için minimal rüzgar itme
+            this.zAwareSoftDrift();
 
             requestAnimationFrame(animate);
         };
@@ -852,61 +858,29 @@ class WishDisplay {
         // Yeni Kar/Yağmur akışında X ve Y ekseni tamamen serbest bırakılmalıdır.
     }
 
-    resolveOverlaps() {
+    zAwareSoftDrift() {
         const cards = this.wishCards;
         const len = cards.length;
-        if (len < 2) return;
-
-        const currentScale = this.displaySettings.scaleMultiplier || 1.0;
-        const baseCardWidth = 320;
-        const baseCardHeight = 400; // approximate card height including text
-        const minPadding = 40;
+        if (len < 2 || this.displayMode !== 'lantern') return;
 
         for (let i = 0; i < len; i++) {
             const a = cards[i];
             if (a.element.classList.contains('spotlight-active')) continue;
 
-            const aScale = this.displayMode === 'lantern' ? currentScale * a.zDepth : currentScale;
-            const aW = baseCardWidth * aScale;
-            const aH = baseCardHeight * aScale;
-
             for (let j = i + 1; j < len; j++) {
                 const b = cards[j];
                 if (b.element.classList.contains('spotlight-active')) continue;
 
-                const bScale = this.displayMode === 'lantern' ? currentScale * b.zDepth : currentScale;
-                const bW = baseCardWidth * bScale;
-                const bH = baseCardHeight * bScale;
+                // Farklı derinlikteki fenerler birbirini etkilemesin — parallax illüzyonu
+                if (Math.abs(a.zDepth - b.zDepth) > 0.15) continue;
 
-                // Center-to-center distance
-                const dx = (a.x + aW / 2) - (b.x + bW / 2);
-                const dy = (a.y + aH / 2) - (b.y + bH / 2);
-
-                // Minimum required distance (sum of half-widths + padding)
-                const minDistX = (aW + bW) / 2 + minPadding;
-                const minDistY = (aH + bH) / 2 + minPadding;
-
-                // Check overlap using AABB
-                const overlapX = minDistX - Math.abs(dx);
-                const overlapY = minDistY - Math.abs(dy);
-
-                if (overlapX > 0 && overlapY > 0) {
-                    // Resolve via the axis with less overlap (cheaper resolution)
-                    const repulsionStrength = 0.15; // lerp factor — smooth, not jarring
-
-                    if (overlapX < overlapY) {
-                        // Push apart horizontally via swayBaseX
-                        const pushX = overlapX * repulsionStrength;
-                        const signX = dx > 0 ? 1 : -1;
-                        a.swayBaseX += signX * pushX;
-                        b.swayBaseX -= signX * pushX;
-                    } else {
-                        // Push apart vertically via slight speed adjustment
-                        const pushY = overlapY * repulsionStrength * 0.5;
-                        const signY = dy > 0 ? 1 : -1;
-                        a.y += signY * pushY;
-                        b.y -= signY * pushY;
-                    }
+                // Sadece swayBaseX (anchor) karşılaştır, geçici sinüs pozisyonlarını yoksay
+                const dx = a.swayBaseX - b.swayBaseX;
+                if (Math.abs(dx) < 200) {
+                    // Çok hafif rüzgar kuvveti — doğal akışı bozmaz
+                    const push = dx > 0 ? 0.2 : -0.2;
+                    a.swayBaseX += push;
+                    b.swayBaseX -= push;
                 }
             }
         }
