@@ -292,7 +292,7 @@ class WishDisplay {
             this.allServerWishes = [...serverWishes]; // Tüm veriyi havuza al
 
             // Görsel kalabalığı düşürmek için maxVisible ayarı kullan
-            const maxVisible = (this.displaySettings && this.displaySettings.maxVisible) || (this.displayMode === 'lantern' ? 20 : 12);
+            const maxVisible = this.displayMode === 'lantern' ? this.getAdaptiveMaxVisible() : ((this.displaySettings && this.displaySettings.maxVisible) || 12);
             const shuffled = [...serverWishes].sort(() => 0.5 - Math.random());
             const selected = shuffled.slice(0, maxVisible);
 
@@ -406,7 +406,7 @@ class WishDisplay {
             this.container.querySelectorAll('.wish-card').forEach(c => c.remove());
             this.wishCards = [];
             this.wishes = [];
-            const maxVisible = (this.displaySettings && this.displaySettings.maxVisible) || (this.displayMode === 'lantern' ? 20 : 12);
+            const maxVisible = this.displayMode === 'lantern' ? this.getAdaptiveMaxVisible() : ((this.displaySettings && this.displaySettings.maxVisible) || 12);
             if (this.allServerWishes && this.allServerWishes.length > 0) {
                 const shuffled = [...this.allServerWishes].sort(() => 0.5 - Math.random());
                 const selected = shuffled.slice(0, maxVisible);
@@ -419,7 +419,7 @@ class WishDisplay {
     applyDisplaySettings() {
         const scale = this.displaySettings.scaleMultiplier || 1.0;
         const speed = this.displaySettings.speedMultiplier || 1.0;
-        const maxVisible = (this.displaySettings && this.displaySettings.maxVisible) || 20;
+        const maxVisible = this.displayMode === 'lantern' ? this.getAdaptiveMaxVisible() : ((this.displaySettings && this.displaySettings.maxVisible) || 20);
         console.log(`📺 Ayarlar uygulanıyor: Hız=${speed}x, Ölçek=${scale}x, Max=${maxVisible}`);
 
         // Screen mode değişimini uygula
@@ -507,6 +507,17 @@ class WishDisplay {
     }
 
     // === WISH CARDS ===
+    getAdaptiveMaxVisible() {
+        const cw = this.container.offsetWidth;
+        const cardWidth = 320;
+        const scale = this.displaySettings.scaleMultiplier || 1.0;
+        // How many non-overlapping columns fit with 80% packing factor
+        const maxAllowed = Math.floor(cw / (cardWidth * scale * 0.8));
+        // Never exceed admin setting, never below 2
+        const adminMax = (this.displaySettings && this.displaySettings.maxVisible) || 20;
+        return Math.max(2, Math.min(adminMax, maxAllowed));
+    }
+
     addWish(wish, animate = true) {
         // Duplicate guard: ayni ID zaten varsa ekleme
         if (this.wishes.some(w => w.id === wish.id)) {
@@ -568,7 +579,7 @@ class WishDisplay {
         // Görsel kalabalığı azaltmak için ekran maksimum limit koruması
 
         // Görsel kalabalığı azaltmak için ekran maksimum limit koruması
-        const maxVisible = (this.displaySettings && this.displaySettings.maxVisible) || (this.displayMode === 'lantern' ? 20 : 12);
+        const maxVisible = this.displayMode === 'lantern' ? this.getAdaptiveMaxVisible() : ((this.displaySettings && this.displaySettings.maxVisible) || 12);
         if (this.wishCards.length >= maxVisible) {
             // En eski giren balonu ekran dizisinden çıkart (fade-out ile)
             const oldestCard = this.wishCards.shift();
@@ -709,6 +720,30 @@ class WishDisplay {
                     cardData.swayYPhase += cardData.swayYFreq * currentSpeedMulti;
                     const swayX = Math.sin(cardData.swayPhase) * cardData.swayAmp
                               + Math.sin(cardData.sway2Phase) * cardData.sway2Amp;
+                    // === SOFT ANTI-OVERLAP DRIFT ===
+                    // Very gentle horizontal push when cards get too close
+                    const scaledCardW = cardWidth * currentScale;
+                    const scaledCardH = (this.displayMode === 'lantern' ? 400 : 300) * currentScale;
+                    for (const other of cards) {
+                        if (other === cardData) continue;
+                        const dx = cardData.x - other.x;
+                        const dy = cardData.y - other.y;
+                        if (Math.abs(dx) < scaledCardW * 0.8 && Math.abs(dy) < scaledCardH * 0.7) {
+                            // Cards are overlapping — very gentle push
+                            const pushDir = dx >= 0 ? 1 : -1;
+                            const overlap = scaledCardW * 0.8 - Math.abs(dx);
+                            const pushForce = overlap * 0.005; // Very gentle
+                            cardData.swayBaseX += pushDir * pushForce;
+                        }
+                    }
+                    // Clamp swayBaseX drift to prevent edge accumulation
+                    const driftFromOriginal = cardData.swayBaseX - cardData.x;
+                    // (swayBaseX IS the original spawn X, x is computed from it — no clamping needed on swayBaseX itself, 
+                    //  but we clamp it to stay within screen bounds)
+                    const swayMaxX = cw - cardWidth;
+                    const swayMinX = -100;
+                    cardData.swayBaseX = Math.max(swayMinX, Math.min(swayMaxX, cardData.swayBaseX));
+
                     cardData.x = cardData.swayBaseX + swayX;
                     
                     // Soft boundary clamp — pencere küçültüldüğünde fener ekran dışına çıkmasın
@@ -743,6 +778,14 @@ class WishDisplay {
                         cardData.element.style.opacity = fadeOut;
 
                         if (cardData.y < -200) {
+                            const currentMaxVisible = this.displayMode === 'lantern' ? this.getAdaptiveMaxVisible() : ((this.displaySettings && this.displaySettings.maxVisible) || 12);
+                            if (this.wishCards.length > currentMaxVisible) {
+                                cardData.element.remove();
+                                const idx = this.wishCards.indexOf(cardData);
+                                if (idx > -1) this.wishCards.splice(idx, 1);
+                                this.wishes = this.wishes.filter(w => w.id !== cardData.element.dataset.wishId);
+                                return;
+                            }
                             // Yeni dilek yükle
                             if (this.allServerWishes && this.allServerWishes.length > 0) {
                                 const randomWish = this.allServerWishes[Math.floor(Math.random() * this.allServerWishes.length)];

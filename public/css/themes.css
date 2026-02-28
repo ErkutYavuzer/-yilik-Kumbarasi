@@ -218,22 +218,42 @@ html {
 /* ═══════════════════════════════════════════
    HEADER — Premium Glassmorphism + Gradient
    ═══════════════════════════════════════════ */
-.display-header {
-    display: flex !important;
+.header-logo-box {
     position: absolute;
     top: 40px;
     left: 40px;
-    right: 40px;
     z-index: 200;
-    justify-content: space-between;
-    align-items: center;
 
     /* Glassmorphism */
     background: rgba(3, 8, 16, 0.75);
     backdrop-filter: blur(28px) saturate(150%);
     -webkit-backdrop-filter: blur(28px) saturate(150%);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
+    border-radius: 16px;
+    padding: 16px 24px;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+    /* Reveal animation */
+    animation: headerReveal 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+    display: flex;
+    align-items: center;
+}
+
+.header-title-box {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    z-index: 200;
+
+    /* Glassmorphism */
+    background: rgba(3, 8, 16, 0.75);
+    backdrop-filter: blur(28px) saturate(150%);
+    -webkit-backdrop-filter: blur(28px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
     padding: 24px 40px;
     box-shadow:
         0 8px 32px rgba(0, 0, 0, 0.5),
@@ -241,6 +261,12 @@ html {
 
     /* Reveal animation */
     animation: headerReveal 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    gap: 2px;
 }
 
 @keyframes headerReveal {
@@ -254,12 +280,6 @@ html {
         transform: translateY(0);
         filter: blur(0);
     }
-}
-
-.header-left {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
 }
 
 .title-logo {
@@ -286,14 +306,6 @@ html {
             drop-shadow(0 0 25px rgba(0, 140, 255, 0.5))
             drop-shadow(0 0 60px rgba(0, 100, 220, 0.3));
     }
-}
-
-.header-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    text-align: right;
-    gap: 2px;
 }
 
 /* Title glow wrapper — drop-shadow here so gradient text stays clean */
