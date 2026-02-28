@@ -860,6 +860,14 @@ class WishDisplay {
         const len = cards.length;
         if (len < 2 || this.displayMode !== 'lantern') return;
 
+        const currentScale = this.displaySettings.scaleMultiplier || 1.0;
+        const cardW = 320 * currentScale;
+        const cardH = 400 * currentScale;
+        // Minimum swayBaseX mesafesi — kart genişliği + küçük boşluk
+        const minDistX = cardW + 60;
+        // Sadece dikeyde yakın olan fenerler itilsin
+        const minDistY = cardH + 40;
+
         for (let i = 0; i < len; i++) {
             const a = cards[i];
             if (a.element.classList.contains('spotlight-active')) continue;
@@ -868,15 +876,20 @@ class WishDisplay {
                 const b = cards[j];
                 if (b.element.classList.contains('spotlight-active')) continue;
 
-                // Tek derinlik — tüm fenerler aynı katmanda, zDepth kontrolü yok
+                // Dikeyde uzak fenerler birbirini etkilemesin
+                const dy = Math.abs(a.y - b.y);
+                if (dy > minDistY) continue;
 
-                // Sadece swayBaseX (anchor) karşılaştır, geçici sinüs pozisyonlarını yoksay
+                // swayBaseX (anchor) karşılaştır — geçici sinüs pozisyonlarını yoksay
                 const dx = a.swayBaseX - b.swayBaseX;
-                if (Math.abs(dx) < 200) {
-                    // Çok hafif rüzgar kuvveti — doğal akışı bozmaz
-                    const push = dx > 0 ? 0.2 : -0.2;
-                    a.swayBaseX += push;
-                    b.swayBaseX -= push;
+                const dist = Math.abs(dx);
+                if (dist < minDistX) {
+                    // Orantılı itme — yakınlığa göre güçlenir, uzaklaştıkça zayıflar
+                    const overlap = minDistX - dist;
+                    const push = overlap * 0.03;
+                    const sign = dx > 0 ? 1 : (dx < 0 ? -1 : (Math.random() > 0.5 ? 1 : -1));
+                    a.swayBaseX += sign * push;
+                    b.swayBaseX -= sign * push;
                 }
             }
         }
