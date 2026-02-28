@@ -52,6 +52,7 @@ if (!fs.existsSync(sessionsDir)) {
 const dataFile = path.join(dataDir, 'wishes.json');
 const archiveFile = path.join(dataDir, 'archive_wishes.json');
 const rejectedFile = path.join(dataDir, 'rejected_wishes.json');
+const pendingFile = path.join(dataDir, 'pending_wishes.json');
 const settingsFile = path.join(dataDir, 'settings.json');
 
 // Ayarları dosyadan yükle
@@ -114,6 +115,28 @@ function saveToRejected(wish, reason) {
     }
 }
 
+// Bekleyen dilekleri dosyaya kaydet
+function savePendingWishes() {
+    try {
+        fs.writeFileSync(pendingFile, JSON.stringify(pendingWishes, null, 2), 'utf8');
+    } catch (err) {
+        console.error('Bekleyen veri kaydetme hatası:', err.message);
+    }
+}
+
+// Bekleyen dilekleri JSON dosyasından yükle
+function loadPendingWishes() {
+    try {
+        if (fs.existsSync(pendingFile)) {
+            const data = fs.readFileSync(pendingFile, 'utf8');
+            return JSON.parse(data);
+        }
+    } catch (err) {
+        console.error('Bekleyen veri yükleme hatası:', err.message);
+    }
+    return [];
+}
+
 // Dilekleri JSON dosyasına kaydet
 function saveWishes() {
     try {
@@ -167,7 +190,21 @@ app.use(express.json());
 
 // Dilekleri dosyadan yükle
 let wishes = loadWishes();
+// Geriye dönük uyumluluk: Mevcut tüm dilekleri onaylı olarak işaretle
+let wishesUpdated = false;
+wishes.forEach(w => {
+    if (!w.status) {
+        w.status = 'approved';
+        wishesUpdated = true;
+    }
+});
+if (wishesUpdated) {
+    saveWishes();
+}
+
+let pendingWishes = loadPendingWishes();
 console.log(`📂 ${wishes.length} dilek yüklendi.`);
+console.log(`📂 ${pendingWishes.length} bekleyen dilek yüklendi.`);
 
 // Çekiliş Hafızası (Bu oturumda çıkan talihlilerin ID'lerini tutar)
 let drawnWishes = [];
@@ -503,13 +540,14 @@ app.post('/api/upload', upload.single('photo'), async (req, res) => {
             wishText,
             photoUrl: photoUrl, // Fotoğraf yoksa null olacak, display.js bu durumu sorunsuz halleder
             timestamp: new Date().toISOString(),
-            isSpotlight: false
+            isSpotlight: false,
+            status: 'pending'
         };
 
-        wishes.push(wish);
-        saveWishes();
-        io.emit('new-wish', wish);
-        console.log(`✅ Yeni dilek onaylandı: ${wish.childName}`);
+        pendingWishes.push(wish);
+        savePendingWishes();
+        io.emit('new-pending-wish', wish);
+        console.log(`⏳ Yeni dilek onaya gönderildi: ${wish.childName}`);
         res.json({ success: true, wish });
     } catch (error) {
         console.error('Yukleme hatasi:', error);
@@ -779,7 +817,62 @@ app.get('/api/stats', (req, res) => {
 
 // Tüm dilekleri getir
 app.get('/api/wishes', (req, res) => {
-    res.json(wishes);
+    const approvedWishes = wishes.filter(w => !w.status || w.status === 'approved');
+    res.json(approvedWishes);
+});
+
+// Tüm bekleyen dilekleri getir
+app.get('/api/pending-wishes', (req, res) => {
+    res.json(pendingWishes);
+});
+
+// Dilek onayla
+app.post('/api/wishes/:id/approve', (req, res) => {
+    const { id } = req.params;
+    const wishIndex = pendingWishes.findIndex(w => w.id === id);
+    if (wishIndex === -1) {
+        return res.status(404).json({ error: 'Bekleyen dilek bulunamadı' });
+    }
+    const wish = pendingWishes.splice(wishIndex, 1)[0];
+    wish.status = 'approved';
+    wishes.push(wish);
+    saveWishes();
+    savePendingWishes();
+    io.emit('new-wish', wish);
+    console.log(`✅ Dilek onaylandı: ${wish.childName}`);
+    res.json({ success: true, wish });
+});
+
+// Dilek reddet
+app.post('/api/wishes/:id/reject', (req, res) => {
+    const { id } = req.params;
+    const wishIndex = pendingWishes.findIndex(w => w.id === id);
+    if (wishIndex === -1) {
+        return res.status(404).json({ error: 'Bekleyen dilek bulunamadı' });
+    }
+    const wish = pendingWishes.splice(wishIndex, 1)[0];
+    wish.status = 'rejected';
+    saveToRejected(wish, 'Yönetici tarafından reddedildi');
+    savePendingWishes();
+    io.emit('wish-rejected', wish);
+    console.log(`🚫 Dilek reddedildi: ${wish.childName}`);
+    res.json({ success: true });
+});
+
+// Tüm bekleyenleri onayla
+app.post('/api/pending-wishes/approve-all', (req, res) => {
+    let count = 0;
+    pendingWishes.forEach(wish => {
+        wish.status = 'approved';
+        wishes.push(wish);
+        io.emit('new-wish', wish);
+        count++;
+    });
+    pendingWishes.length = 0;
+    saveWishes();
+    savePendingWishes();
+    console.log(`✅ ${count} dilek topluca onaylandı`);
+    res.json({ success: true, count });
 });
 
 // Yerel IP adresini bul
@@ -901,7 +994,8 @@ io.on('connection', (socket) => {
     console.log('🔌 Yeni bağlantı:', socket.id);
 
     // Mevcut dilekleri ve ekran ayarlarını gönder
-    socket.emit('all-wishes', wishes);
+    const approvedWishes = wishes.filter(w => !w.status || w.status === 'approved');
+    socket.emit('all-wishes', approvedWishes);
     socket.emit('display-settings', displaySettings);
 
     socket.on('disconnect', () => {

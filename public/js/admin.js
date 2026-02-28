@@ -143,6 +143,7 @@ function switchTab(name, btn) {
 
     const titles = {
         dashboard: '📊 Dashboard',
+        pending: '⏳ Bekleyen Dilekler',
         qr: '📱 QR Kod',
         moderation: '🤖 Moderasyon',
         slideshow: '🔄 Slayt Gösterisi',
@@ -171,6 +172,10 @@ function switchTab(name, btn) {
     if (name === 'archive') {
         loadArchivedWishes();
     }
+    if (name === 'pending') {
+        loadPendingWishes();
+    }
+
 }
 
 // ─── SOCKET ───
@@ -179,6 +184,8 @@ socket.on('wish-deleted', () => loadWishes());
 socket.on('all-cleared', () => loadWishes());
 socket.on('moderation-state', (data) => setModerationUI(data));
 
+socket.on('new-pending-wish', () => loadPendingWishes());
+socket.on('wish-rejected', () => loadPendingWishes());
 // ─── LOAD WISHES ───
 let currentQuickFilter = 'all';
 
@@ -1133,8 +1140,113 @@ function showToast(msg) {
     }
 })();
 
+// ─── PENDING WISHES ───
+let pendingWishes = [];
+
+async function loadPendingWishes() {
+    try {
+        const res = await fetch('/api/pending-wishes');
+        pendingWishes = await res.json();
+        renderPendingWishes();
+        updatePendingBadge();
+    } catch (e) {
+        console.error('Bekleyen dilekler yüklenemedi:', e);
+    }
+}
+
+function renderPendingWishes() {
+    const tbody = document.getElementById('pending-tbody');
+    const empty = document.getElementById('pending-empty');
+    const approveAllBtn = document.getElementById('btn-approve-all');
+    
+    if (!pendingWishes.length) {
+        if (tbody) tbody.parentElement.parentElement.style.display = 'none';
+        if (empty) empty.style.display = 'block';
+        if (approveAllBtn) approveAllBtn.style.display = 'none';
+        return;
+    }
+    
+    if (tbody) {
+        tbody.parentElement.parentElement.style.display = 'block';
+        tbody.innerHTML = pendingWishes.map(w => `
+        <tr>
+            <td style="font-weight:600;">${w.childName}</td>
+            <td><div class="ocr-text" title="${(w.wishText || '').replace(/"/g, '&quot;')}">${w.wishText || '<span style="color:var(--text3);font-style:italic">Metin yok</span>'}</div></td>
+            <td style="color:var(--text2);font-size:13px">${formatTime(w.timestamp)}</td>
+            <td>
+                <div style="display:flex; gap:6px;">
+                    <button class="btn btn-primary" onclick="approveWish('${w.id}')" style="padding:6px 12px; font-size:12px;"><i data-lucide="check" style="width:14px;height:14px;"></i> Onayla</button>
+                    <button class="btn btn-danger" onclick="rejectWish('${w.id}')" style="padding:6px 12px; font-size:12px;"><i data-lucide="x" style="width:14px;height:14px;"></i> Reddet</button>
+                </div>
+            </td>
+        </tr>
+        `).join('');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+    if (empty) empty.style.display = 'none';
+    if (approveAllBtn) approveAllBtn.style.display = '';
+}
+
+function updatePendingBadge() {
+    const badge = document.getElementById('pending-badge');
+    if (badge) {
+        if (pendingWishes.length > 0) {
+            badge.textContent = pendingWishes.length;
+            badge.style.display = 'inline';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+}
+
+async function approveWish(id) {
+    try {
+        const res = await fetch(`/api/wishes/${id}/approve`, { method: 'POST' });
+        if (res.ok) {
+            showToast('Dilek onaylandı ✅');
+            loadPendingWishes();
+            loadWishes();
+        } else {
+            showToast('Onaylama hatası', 'error');
+        }
+    } catch (e) {
+        showToast('Bağlantı hatası', 'error');
+    }
+}
+
+async function rejectWish(id) {
+    try {
+        const res = await fetch(`/api/wishes/${id}/reject`, { method: 'POST' });
+        if (res.ok) {
+            showToast('Dilek reddedildi 🚫');
+            loadPendingWishes();
+        } else {
+            showToast('Reddetme hatası', 'error');
+        }
+    } catch (e) {
+        showToast('Bağlantı hatası', 'error');
+    }
+}
+
+async function approveAllPending() {
+    if (!pendingWishes.length) return;
+    try {
+        const res = await fetch('/api/pending-wishes/approve-all', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            showToast(`${data.count} dilek toplu onaylandı ✅`);
+            loadPendingWishes();
+            loadWishes();
+        }
+    } catch (e) {
+        showToast('Toplu onay hatası', 'error');
+    }
+}
+
+
 // ─── INIT ───
 loadWishes();
+loadPendingWishes();
 loadCurrentTheme();
 loadModerationState();
 loadDisplaySettings();

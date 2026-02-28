@@ -601,6 +601,29 @@ class WishDisplay {
             x = padding + Math.random() * Math.max(0, maxX - padding);
         }
 
+        // Avoid spawning on top of existing cards
+        const spawnCardWidth = 320 * (this.displayMode === 'lantern' ? (0.5 + 0.25) : 1.0); // average scale
+        for (let attempt = 0; attempt < 5; attempt++) {
+            let hasOverlap = false;
+            for (const existing of this.wishCards) {
+                const ex = existing.swayBaseX || existing.x;
+                if (Math.abs(x - ex) < spawnCardWidth + 40) {
+                    hasOverlap = true;
+                    break;
+                }
+            }
+            if (!hasOverlap) break;
+            // Try a new random X
+            if (this.displayMode === 'lantern') {
+                const columns = 4;
+                const colWidth = Math.max(0, maxX) / columns;
+                const colIndex = Math.floor(Math.random() * columns);
+                x = colIndex * colWidth + Math.random() * colWidth * 0.6 + colWidth * 0.2;
+            } else {
+                x = padding + Math.random() * Math.max(0, maxX - padding);
+            }
+        }
+
         // Y ekseni: fener modunda ekranın tam altından doğar, rastgele dağılım ile
         // balon modunda eski davranış korunur
         // spawnOffset: viewport yüksekliğiyle sınırlı — büyük maxVisible'da binlerce px aşağıda doğmasını engelle
@@ -814,6 +837,9 @@ class WishDisplay {
                 cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${depthScale}) rotate(${rot}deg)`;
             });
 
+            // Overlap prevention — soft repulsion
+            this.resolveOverlaps();
+
             requestAnimationFrame(animate);
         };
 
@@ -826,7 +852,68 @@ class WishDisplay {
         // Yeni Kar/Yağmur akışında X ve Y ekseni tamamen serbest bırakılmalıdır.
     }
 
+    resolveOverlaps() {
+        const cards = this.wishCards;
+        const len = cards.length;
+        if (len < 2) return;
+
+        const currentScale = this.displaySettings.scaleMultiplier || 1.0;
+        const baseCardWidth = 320;
+        const baseCardHeight = 400; // approximate card height including text
+        const minPadding = 40;
+
+        for (let i = 0; i < len; i++) {
+            const a = cards[i];
+            if (a.element.classList.contains('spotlight-active')) continue;
+
+            const aScale = this.displayMode === 'lantern' ? currentScale * a.zDepth : currentScale;
+            const aW = baseCardWidth * aScale;
+            const aH = baseCardHeight * aScale;
+
+            for (let j = i + 1; j < len; j++) {
+                const b = cards[j];
+                if (b.element.classList.contains('spotlight-active')) continue;
+
+                const bScale = this.displayMode === 'lantern' ? currentScale * b.zDepth : currentScale;
+                const bW = baseCardWidth * bScale;
+                const bH = baseCardHeight * bScale;
+
+                // Center-to-center distance
+                const dx = (a.x + aW / 2) - (b.x + bW / 2);
+                const dy = (a.y + aH / 2) - (b.y + bH / 2);
+
+                // Minimum required distance (sum of half-widths + padding)
+                const minDistX = (aW + bW) / 2 + minPadding;
+                const minDistY = (aH + bH) / 2 + minPadding;
+
+                // Check overlap using AABB
+                const overlapX = minDistX - Math.abs(dx);
+                const overlapY = minDistY - Math.abs(dy);
+
+                if (overlapX > 0 && overlapY > 0) {
+                    // Resolve via the axis with less overlap (cheaper resolution)
+                    const repulsionStrength = 0.15; // lerp factor — smooth, not jarring
+
+                    if (overlapX < overlapY) {
+                        // Push apart horizontally via swayBaseX
+                        const pushX = overlapX * repulsionStrength;
+                        const signX = dx > 0 ? 1 : -1;
+                        a.swayBaseX += signX * pushX;
+                        b.swayBaseX -= signX * pushX;
+                    } else {
+                        // Push apart vertically via slight speed adjustment
+                        const pushY = overlapY * repulsionStrength * 0.5;
+                        const signY = dy > 0 ? 1 : -1;
+                        a.y += signY * pushY;
+                        b.y -= signY * pushY;
+                    }
+                }
+            }
+        }
+    }
+
     updateCounter() {
+        if (!this.counterNumber) return;
         const count = this.totalWishesCount !== undefined ? this.totalWishesCount : this.wishes.length;
         this.counterNumber.textContent = count;
     }
