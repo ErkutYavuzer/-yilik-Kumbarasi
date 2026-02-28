@@ -230,7 +230,7 @@ html {
     -webkit-backdrop-filter: blur(28px) saturate(150%);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
-    padding: 16px 24px;
+    padding: 8px 10px;
     box-shadow:
         0 8px 32px rgba(0, 0, 0, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -286,9 +286,9 @@ html {
     display: block;
     width: 240px;
     height: auto;
-    max-height: 70px;
+    max-height: 60px;
     object-fit: contain;
-    border-radius: 6px;
+    border-radius: 4px;
     filter:
         drop-shadow(0 0 15px rgba(0, 120, 255, 0.3))
         drop-shadow(0 0 40px rgba(0, 80, 200, 0.2));
