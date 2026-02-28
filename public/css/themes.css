@@ -284,7 +284,7 @@ html {
 
 .title-logo {
     display: block;
-    height: 70px;
+    height: 90px;
     width: auto;
     object-fit: contain;
     border-radius: 6px;
@@ -324,7 +324,7 @@ html {
 }
 
 .header-line1 {
-    font-size: 40px;
+    font-size: 30px;
     font-weight: 800;
     letter-spacing: 3px;
     line-height: 1.15;
@@ -350,7 +350,7 @@ html {
 }
 
 .header-line2 {
-    font-size: 54px;
+    font-size: 42px;
     font-weight: 900;
     letter-spacing: 6px;
     line-height: 1.15;
