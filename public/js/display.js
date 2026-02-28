@@ -601,7 +601,7 @@ class WishDisplay {
             x = padding + Math.random() * Math.max(0, maxX - padding);
         }
 
-        const zDepth = this.displayMode === 'lantern' ? (0.5 + Math.random() * 0.5) : 1.0;
+        const zDepth = 1.0; // Tek derinlik — tüm fenerler aynı katmanda
 
         // Avoid spawning on top of existing cards (zDepth-aware — farklı derinliktekiler yoksayılır)
         const spawnCardWidth = 320 * (this.displayMode === 'lantern' ? (0.5 + 0.25) : 1.0);
@@ -609,7 +609,7 @@ class WishDisplay {
             let hasOverlap = false;
             for (const existing of this.wishCards) {
                 // Farklı derinlikteki fenerler çakışma sayılmaz — parallax
-                if (this.displayMode === 'lantern' && Math.abs(zDepth - (existing.zDepth || 0.75)) > 0.2) continue;
+                // Tek derinlik — tüm fenerler aynı katmanda, zDepth kontrolü yok
                 const ex = existing.swayBaseX || existing.x;
                 if (Math.abs(x - ex) < spawnCardWidth + 40) {
                     hasOverlap = true;
@@ -667,7 +667,7 @@ class WishDisplay {
             x: x,
             y: y,
             vx: (Math.random() - 0.5) * (this.displayMode === 'lantern' ? 0.5 : 1.5),
-            vy: -(this.displayMode === 'lantern' ? (0.4 + Math.random() * 0.6) * zDepth : (1.5 + Math.random() * 2)),
+            vy: -(this.displayMode === 'lantern' ? (0.4 + Math.random() * 0.6) : (1.5 + Math.random() * 2)),
             rotation: rotation,
             rotationSpeed: (Math.random() - 0.5) * (this.displayMode === 'lantern' ? 0.1 : 0.8),
             radius: this.displayMode === 'lantern' ? 250 : 180,
@@ -688,8 +688,6 @@ class WishDisplay {
             isNewWish: isNewWishEntry                 // Yeni dilek giriş efekti
         };
         this.wishCards.push(cardData);
-        // zDepth → CSS z-index eşleme — yakın fenerler uzak fenerlerin üstünden geçsin
-        card.style.zIndex = Math.round(zDepth * 100);
 
         if (animate) {
             setTimeout(() => {
@@ -757,7 +755,7 @@ class WishDisplay {
                         // ch'den ch-400'e kadar olan bölgede opacity 0→maxOpacity
                         const fadeZone = 400;
                         const progress = Math.max(0, Math.min(1, (ch - cardData.y) / fadeZone));
-                        const maxOpacity = 0.5 + cardData.zDepth * 0.5; // Uzak=0.75, yakın=1.0
+                        const maxOpacity = 1.0;
                         cardData.opacity = progress * maxOpacity;
                         cardData.element.style.opacity = cardData.opacity;
                         if (progress >= 1) cardData.rising = false;
@@ -782,9 +780,8 @@ class WishDisplay {
                             // Recycling guard: yeni dilek efektini kaldır
                             cardData.isNewWish = false;
                             cardData.element.classList.remove('new-wish-highlight');
-                            // Yeni zDepth ata (derinlik çeşitliliği)
-                            cardData.zDepth = 0.5 + Math.random() * 0.5;
-                            cardData.vy = -(0.4 + Math.random() * 0.6) * cardData.zDepth;
+                            cardData.zDepth = 1.0;
+                            cardData.vy = -(0.4 + Math.random() * 0.6);
                             // Ekranın altından yeni spawn — rastgele X merkezi
                             cardData.swayBaseX = paddingSides + cardData.swayAmp + Math.random() * (maxX - cardData.swayAmp * 2);
                             cardData.x = cardData.swayBaseX;
@@ -839,7 +836,7 @@ class WishDisplay {
                 const rot = this.displayMode === 'lantern'
                     ? (Math.sin(cardData.swayPhase) + Math.sin(cardData.sway2Phase) * 0.5) * 1.3  // Doğal salınım eğimi
                     : cardData.rotation;
-                const depthScale = this.displayMode === 'lantern' ? currentScale * cardData.zDepth : currentScale;
+                const depthScale = currentScale;
                 cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${depthScale}) rotate(${rot}deg)`;
             });
 
@@ -871,8 +868,7 @@ class WishDisplay {
                 const b = cards[j];
                 if (b.element.classList.contains('spotlight-active')) continue;
 
-                // Farklı derinlikteki fenerler birbirini etkilemesin — parallax illüzyonu
-                if (Math.abs(a.zDepth - b.zDepth) > 0.15) continue;
+                // Tek derinlik — tüm fenerler aynı katmanda, zDepth kontrolü yok
 
                 // Sadece swayBaseX (anchor) karşılaştır, geçici sinüs pozisyonlarını yoksay
                 const dx = a.swayBaseX - b.swayBaseX;
