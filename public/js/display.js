@@ -603,7 +603,7 @@ class WishDisplay {
         }
 
         // X ekseninde konum — 2D aday skorlama ile en iyi pozisyon
-        const tempSwayAmp = 40 + Math.random() * 60;
+        const tempSwayAmp = 30 + Math.random() * 30;  // 30-60px (daraltıldı — overlap önleme)
         let x;
         if (this.displayMode === 'lantern') {
             x = this.findBestSpawnX(y, tempSwayAmp);
@@ -637,7 +637,7 @@ class WishDisplay {
             x: x,
             y: y,
             vx: (Math.random() - 0.5) * (this.displayMode === 'lantern' ? 0.5 : 1.5),
-            vy: -(this.displayMode === 'lantern' ? (0.4 + Math.random() * 0.6) : (1.5 + Math.random() * 2)),
+            vy: -(this.displayMode === 'lantern' ? (0.5 + Math.random() * 0.2) : (1.5 + Math.random() * 2)),
             rotation: rotation,
             rotationSpeed: (Math.random() - 0.5) * (this.displayMode === 'lantern' ? 0.1 : 0.8),
             radius: this.displayMode === 'lantern' ? 250 : 180,
@@ -648,7 +648,7 @@ class WishDisplay {
             swayAmp:   tempSwayAmp,
             sway2Phase: Math.random() * Math.PI * 2,
             sway2Freq:  0.009 + Math.random() * 0.007,
-            sway2Amp:   15 + Math.random() * 25,
+            sway2Amp:   10 + Math.random() * 15,   // 10-25px (daraltıldı)
             swayYPhase: Math.random() * Math.PI * 2,
             swayYFreq:  0.003 + Math.random() * 0.003,
             swayYAmp:   5 + Math.random() * 8,
@@ -735,13 +735,14 @@ class WishDisplay {
                         if (progress >= 1) cardData.rising = false;
                     }
 
-                    // === FADE-OUT + RESPAWN: tavandan çıkınca aşağıya dön ===
-                    if (cardData.y < -200) {
-                        // Fade-out: -200 ile -600 arasında opacity düş
-                        const fadeOut = Math.max(0, 1 - (Math.abs(cardData.y) - 200) / 400);
+                    // === FADE-OUT + RESPAWN: header bölgesine yaklaşırken kaybol ===
+                    // Header y≈40-200 arasında — fenerler y<300'den itibaren solmaya başlar
+                    if (!cardData.rising && cardData.y < 300) {
+                        // y=300 → opacity=1, y=-200 → opacity=0 (500px fade zone)
+                        const fadeOut = Math.max(0, Math.min(1, (cardData.y + 200) / 500));
                         cardData.element.style.opacity = fadeOut;
 
-                        if (cardData.y < -600) {
+                        if (cardData.y < -200) {
                             // Yeni dilek yükle
                             if (this.allServerWishes && this.allServerWishes.length > 0) {
                                 const randomWish = this.allServerWishes[Math.floor(Math.random() * this.allServerWishes.length)];
@@ -755,7 +756,7 @@ class WishDisplay {
                             cardData.isNewWish = false;
                             cardData.element.classList.remove('new-wish-highlight');
                             cardData.zDepth = 1.0;
-                            cardData.vy = -(0.4 + Math.random() * 0.6);
+                            cardData.vy = -(0.5 + Math.random() * 0.2);
                             // Ekranın altından yeni spawn — 2D aday skorlama ile en iyi pozisyon
                             cardData.y = ch + 100 + Math.random() * 400;
                             cardData.swayBaseX = this.findBestSpawnX(cardData.y, cardData.swayAmp);
