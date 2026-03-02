@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>İyilik Kumbarası - Gösterim</title>
-    <link rel="stylesheet" href="/css/themes.css?v=17.6.0" />
+    <link rel="stylesheet" href="/css/themes.css?v=17.7.0" />
     <link
       href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
@@ -1146,11 +1146,34 @@
           transform: translateY(0) scale(1);
         }
       }
+      /* #scaled-app — scale edilen ana uygulama katmanı */
+      #scaled-app {
+        position: absolute;
+        top: 0; left: 0;
+        transform-origin: top left;
+        overflow: hidden;
+      }
+
+      /* #ui-overlay — scale'den bağımsız, viewport'a sabit UI katmanı */
+      #ui-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        pointer-events: none;
+      }
+
+      /* Overlay içindeki etkileşimli elemanlar tıklanabilir */
+      #ui-overlay .logo-box,
+      #ui-overlay .header-title-box,
+      #ui-overlay .fullscreen-btn,
+      #ui-overlay .mute-btn {
+        pointer-events: auto;
+      }
     </style>
   </head>
 
   <body>
-    <div class="display-container">
+    <div id="scaled-app"><div class="display-container">
       <!-- Floating shapes -->
       <div class="shapes" id="shapes"></div>
 
@@ -1205,6 +1228,54 @@
       <!-- Kor parçacıkları container -->
       <div id="embers-container"></div>
 
+      <!-- logos moved to #ui-overlay -->
+
+
+
+
+      <!-- AKM logo moved to #ui-overlay -->
+
+
+
+
+      <!-- TT logo moved to #ui-overlay -->
+
+
+
+
+      <!-- header-title-box moved to #ui-overlay -->
+
+
+
+
+
+
+
+      <!-- Wishes float here -->
+      <div id="wishes-container"></div>
+
+      <!-- Logo layer: renders ON TOP of wishes so lanterns pass BEHIND logos -->
+      <div class="logo-layer"></div>
+
+      <!-- Empty state -->
+      <div id="empty-state">
+        <div class="empty-icon">&#x2728;</div>
+        <div class="empty-text">Dilekler Bekleniyor...</div>
+        <div class="empty-sub">Ilk dilek yazildiginda burada gorunecek</div>
+      </div>
+      <!-- Raffle (Çekiliş) Overlay -->
+      <div id="raffle-overlay">
+        <div class="raffle-box">
+          <div class="raffle-title">🎁 ŞANSLI KALPLER 🎁</div>
+          <div class="raffle-winners-container" id="raffle-winners-container">
+            <!-- Javascript will inject winners here -->
+          </div>
+        </div>
+      </div>
+    </div></div><!-- /.display-container /.scaled-app -->
+
+    <!-- Spotlight + Controls + Logos — scale'den bağımsız UI overlay -->
+    <div id="ui-overlay">
       <!-- Bakanlık Logo — sol alt (büyük) -->
       <div class="logo-box logo-box--left">
         <img class="bakanlik-logo" src="/images/bakanlik.png?v=1" alt="T.C. Kültür ve Turizm Bakanlığı" />
@@ -1228,38 +1299,21 @@
         </div>
       </div>
 
-      <!-- Wishes float here -->
-      <div id="wishes-container"></div>
+      <!-- Spotlight -->
+      <div id="spotlight-overlay"></div>
+      <div id="spotlight-label">🌟 <span id="spotlight-name"></span></div>
 
-      <!-- Logo layer: renders ON TOP of wishes so lanterns pass BEHIND logos -->
-      <div class="logo-layer"></div>
-
-      <!-- Empty state -->
-      <div id="empty-state">
-        <div class="empty-icon">&#x2728;</div>
-        <div class="empty-text">Dilekler Bekleniyor...</div>
-        <div class="empty-sub">Ilk dilek yazildiginda burada gorunecek</div>
-      </div>
-      <!-- Raffle (Çekiliş) Overlay -->
-      <div id="raffle-overlay">
-        <div class="raffle-box">
-          <div class="raffle-title">🎁 ŞANSLI KALPLER 🎁</div>
-          <div class="raffle-winners-container" id="raffle-winners-container">
-            <!-- Javascript will inject winners here -->
-          </div>
-        </div>
-      </div>
+      <!-- Controls -->
+      <button class="fullscreen-btn" id="fullscreen-btn" title="Tam Ekran">&#x26F6;</button>
+      <button class="mute-btn" id="mute-btn" title="Ses Aç/Kapa">🔊</button>
     </div>
 
-    <!-- Spotlight -->
-    <div id="spotlight-overlay"></div>
-    <div id="spotlight-label">🌟 <span id="spotlight-name"></span></div>
 
-    <!-- Controls -->
-    <button class="fullscreen-btn" id="fullscreen-btn" title="Tam Ekran">
-      &#x26F6;
-    </button>
-    <button class="mute-btn" id="mute-btn" title="Ses Aç/Kapa">🔊</button>
+
+
+
+
+
 
 
     <!-- New wish toast -->
@@ -1288,56 +1342,30 @@
 
         // Uniform scale — no distortion
         const scale = w / DESIGN_WIDTH;
-        document.body.style.transform = `scale(${scale})`;
-        document.body.style.transformOrigin = "top left";
-        document.body.style.marginLeft = "0px";
-        document.body.style.marginTop = "0px";
-        document.body.style.width = DESIGN_WIDTH + "px";
-        document.body.style.height = DESIGN_HEIGHT + "px";
-        document.body.style.overflow = "hidden";
+        // Scale'i #scaled-app'e uygula (body transform-free → fixed overlay çalışır)
+        const scaledApp = document.getElementById('scaled-app');
+        if (scaledApp) {
+          scaledApp.style.transform = `scale(${scale})`;
+          scaledApp.style.transformOrigin = 'top left';
+          scaledApp.style.width = DESIGN_WIDTH + 'px';
+          scaledApp.style.height = DESIGN_HEIGHT + 'px';
+        }
+
+
+
+
+
+        document.body.style.overflow = 'hidden';
+        document.body.style.margin = '0';
+        document.body.style.padding = '0';
 
         const container = document.querySelector(".display-container");
         if (container) {
             container.style.width = DESIGN_WIDTH + "px";
             container.style.height = DESIGN_HEIGHT + "px";
         }
+      }
 
-        // Counter-scale header & logo so they stay readable on small screens
-        const counterScale = 1 / Math.max(scale, 0.1);
-        // Only counter-scale when page is significantly shrunk (scale < 0.8)
-        if (scale < 0.8) {
-            const boost = Math.min(counterScale, 4.0); // Cap at 4x — dar ekranda logolar okunablı kalsın
-            const titleBox = document.querySelector('.header-title-box');
-            const logoLeft = document.querySelector('.logo-box--left');
-            const logoCenter = document.querySelector('.logo-box--center');
-            const logoRight = document.querySelector('.logo-box--right');
-            if (titleBox) {
-                titleBox.style.transform = `translateX(-50%) scale(${boost})`;
-                titleBox.style.transformOrigin = 'top center';
-            }
-            if (logoLeft) {
-                logoLeft.style.transform = `scale(${boost})`;
-                logoLeft.style.transformOrigin = 'bottom left';
-            }
-            if (logoCenter) {
-                logoCenter.style.transform = `translateX(-50%) scale(${boost})`;
-                logoCenter.style.transformOrigin = 'bottom center';
-            }
-            if (logoRight) {
-                logoRight.style.transform = `scale(${boost})`;
-                logoRight.style.transformOrigin = 'bottom right';
-            }
-        } else {
-            const titleBox = document.querySelector('.header-title-box');
-            const logoLeft = document.querySelector('.logo-box--left');
-            const logoCenter = document.querySelector('.logo-box--center');
-            const logoRight = document.querySelector('.logo-box--right');
-            if (titleBox) titleBox.style.transform = 'translateX(-50%)';
-            if (logoLeft) logoLeft.style.transform = '';
-            if (logoCenter) logoCenter.style.transform = 'translateX(-50%)';
-            if (logoRight) logoRight.style.transform = '';
-      }
-      }
 
       scaleToFit();
       // resize — recalculate scale + dimensions

@@ -515,3 +515,27 @@ html {
     background: linear-gradient(135deg, #0a1628, #0f2040) !important;
     color: white !important;
 }
+/* Sol ve sağ logo köşe animasyonu — translateX(-50%) olmadan */
+.logo-box--left,
+.logo-box--right {
+    animation: headerRevealCorner 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes headerRevealCorner {
+    from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
+    to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+}
+
+/* ─── Responsive: dar ekranlar ─── */
+@media (max-width: 600px) {
+    .logo-box--left   { width: 180px; height: 70px; left: 10px;  bottom: 10px; padding: 8px 10px; }
+    .logo-box--center { width: 140px; height: 70px; bottom: 10px; }
+    .logo-box--right  { width: 160px; height: 70px; right: 10px; bottom: 10px; padding: 8px 10px; }
+    .header-title-box { padding: 10px 16px; top: 10px; }
+    .header-line1, .header-line2 { font-size: 20px; letter-spacing: 2px; }
+    .bakanlik-logo { max-width: 160px; max-height: 54px; }
+    .akm-logo      { max-width: 110px; max-height: 54px; }
+    .logo-box--right .title-logo { max-width: 130px; max-height: 54px; }
+    .fullscreen-btn { bottom: 10px; left: 10px; width: 36px; height: 36px; font-size: 18px; }
+    .mute-btn       { bottom: 10px; left: 56px; width: 36px; height: 36px; font-size: 18px; }
+}
