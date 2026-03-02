@@ -259,6 +259,7 @@ html {
 .logo-box {
     position: absolute;
     z-index: 200;
+    overflow: hidden;
 
     /* Glassmorphism */
     background: rgba(3, 8, 16, 0.75);
@@ -266,7 +267,7 @@ html {
     -webkit-backdrop-filter: blur(28px) saturate(150%);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
-    padding: 12px;
+    padding: 16px 20px;
     box-shadow:
         0 8px 32px rgba(0, 0, 0, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -282,6 +283,8 @@ html {
 .logo-box--left {
     bottom: 40px;
     left: 40px;
+    width: 220px;
+    height: 140px;
 }
 
 /* Orta alt — AKM */
@@ -289,19 +292,25 @@ html {
     bottom: 40px;
     left: 50%;
     transform: translateX(-50%);
+    width: 260px;
+    height: 120px;
 }
 
 /* Sağ alt — TT */
 .logo-box--right {
     bottom: 40px;
     right: 40px;
+    width: 280px;
+    height: 120px;
 }
 
 /* Bakanlık logosu — en büyük */
 .bakanlik-logo {
     display: block;
-    height: 140px;
+    max-height: 110px;
+    max-width: 190px;
     width: auto;
+    height: auto;
     object-fit: contain;
     filter:
         drop-shadow(0 0 12px rgba(255, 255, 255, 0.15))
@@ -311,8 +320,10 @@ html {
 /* AKM logosu — orta */
 .akm-logo {
     display: block;
+    max-height: 90px;
+    max-width: 230px;
+    width: auto;
     height: auto;
-    width: 220px;
     object-fit: contain;
     filter:
         drop-shadow(0 0 12px rgba(255, 255, 255, 0.15))
@@ -321,8 +332,12 @@ html {
 
 /* TT logosu — sağ */
 .logo-box--right .title-logo {
-    height: 90px;
+    display: block;
+    max-height: 90px;
+    max-width: 250px;
     width: auto;
+    height: auto;
+    object-fit: contain;
 }
 
 .header-title-box {

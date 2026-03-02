@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>İyilik Kumbarası - Gösterim</title>
-    <link rel="stylesheet" href="/css/themes.css?v=17.3.0" />
+    <link rel="stylesheet" href="/css/themes.css?v=17.4.0" />
     <link
       href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
@@ -233,12 +233,12 @@
       /* Fener gövdesi — yuvarlak kağıt balon şekli */
       .lantern-body {
         position: relative;
-        width: 240px;
-        height: 240px;
+        width: var(--lantern-size, 240px);
+        height: var(--lantern-size, 240px);
         margin: 0 auto;
         background: url("/images/lantern.png?v=10.0.0") center/contain no-repeat;
         overflow: visible;
-        transition: filter 0.4s ease;
+        transition: filter 0.4s ease, width 0.3s ease, height 0.3s ease;
       }
 
       /* İç parıltı + kağıt grain efekti */
@@ -1278,6 +1278,13 @@
         const h = window.innerHeight || 1;
         // Recalculate height for current aspect ratio
         DESIGN_HEIGHT = Math.round(DESIGN_WIDTH * (h / w));
+
+        // Aspect-ratio-aware lantern size:
+        // Tall screens (LED 960x2160, ratio>2) → big lanterns (240px)
+        // Wide screens (1920x1080, ratio≈0.56) → small lanterns (~120px)
+        // Formula: clamp(120, 240 * (DESIGN_HEIGHT / 2160), 260)
+        const lanternPx = Math.round(Math.max(120, Math.min(260, 240 * (DESIGN_HEIGHT / 2160))));
+        document.documentElement.style.setProperty('--lantern-size', lanternPx + 'px');
 
         // Uniform scale — no distortion
         const scale = w / DESIGN_WIDTH;
