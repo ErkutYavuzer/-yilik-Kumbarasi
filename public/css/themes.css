@@ -256,9 +256,23 @@ html {
    HEADER — Premium Glassmorphism + Gradient
    ═══════════════════════════════════════════ */
 /* Logo Box — ortak glassmorphism stil */
-.logo-box {
+/* Logo bar — viewport altına yapışık flexbox şerit */
+.logos-bottom-bar {
     position: absolute;
+    bottom: 30px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    pointer-events: none;
     z-index: 200;
+}
+
+/* Logo Box — ortak glassmorphism stil */
+.logo-box {
+    position: relative;
     overflow: hidden;
 
     /* Glassmorphism */
@@ -275,38 +289,37 @@ html {
     display: flex;
     align-items: center;
     justify-content: center;
-
-    animation: headerReveal 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    pointer-events: auto;
 }
 
 /* Sol alt — Bakanlık (büyük, öne çıkan) */
 .logo-box--left {
-    bottom: 30px;
-    left: 20px;
     width: 400px;
     height: 130px;
+    flex-shrink: 0;
     border: 1px solid rgba(255, 255, 255, 0.18);
     box-shadow:
         0 8px 32px rgba(0, 0, 0, 0.6),
         0 0 30px rgba(255, 255, 255, 0.07),
         inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    animation: headerRevealCorner 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Orta alt — AKM */
+/* Orta — AKM */
 .logo-box--center {
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 220px;
+    flex: 1;
+    min-width: 160px;
+    max-width: 260px;
     height: 100px;
+    animation: headerRevealCenter 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Sağ alt — TT */
 .logo-box--right {
-    bottom: 30px;
-    right: 20px;
     width: 260px;
     height: 100px;
+    flex-shrink: 0;
+    animation: headerRevealCorner 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Bakanlık logosu — büyük */
@@ -373,6 +386,8 @@ html {
     gap: 2px;
 }
 
+/* .logo-box--center için headerRevealCenter kullanılıyor (aşağıda tanımlı) */
+/* Sol ve sağ için headerRevealCorner */
 @keyframes headerReveal {
     from {
         opacity: 0;
@@ -515,27 +530,41 @@ html {
     background: linear-gradient(135deg, #0a1628, #0f2040) !important;
     color: white !important;
 }
-/* Sol ve sağ logo köşe animasyonu — translateX(-50%) olmadan */
-.logo-box--left,
-.logo-box--right {
-    animation: headerRevealCorner 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
+/* Sol ve sağ logo köşe animasyonu */
 @keyframes headerRevealCorner {
     from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
     to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
 }
 
-/* ─── Responsive: dar ekranlar ─── */
-@media (max-width: 600px) {
-    .logo-box--left   { width: 160px; height: 72px; left: 80px;  bottom: 10px; padding: 6px 10px; }
-    .logo-box--center { width: 120px; height: 60px; bottom: 10px; }
-    .logo-box--right  { width: 140px; height: 60px; right: 10px; bottom: 10px; padding: 6px 10px; }
+/* Orta logo animasyonu */
+@keyframes headerRevealCenter {
+    from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
+    to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+}
+
+/* ─── Responsive: dar + portrait ekranlar ─── */
+@media (max-width: 1024px) {
+    .logo-box--left   { width: 280px; height: 100px; }
+    .logo-box--center { max-width: 200px; height: 80px; }
+    .logo-box--right  { width: 200px; height: 80px; }
+    .bakanlik-logo    { max-width: 250px; max-height: 80px; }
+}
+
+@media (max-width: 600px), (max-aspect-ratio: 9/16) {
+    .logos-bottom-bar {
+        flex-direction: column;
+        align-items: center;
+        bottom: 20px;
+        left: 10px;
+        right: 10px;
+        gap: 10px;
+    }
+    .logo-box--left   { width: 85vw; max-width: 400px; height: 70px; flex-shrink: unset; }
+    .logo-box--center { width: 70vw; max-width: 300px; height: 60px; min-width: unset; flex: none; }
+    .logo-box--right  { width: 70vw; max-width: 300px; height: 60px; flex-shrink: unset; }
     .header-title-box { padding: 10px 16px; top: 10px; }
-    .header-line1, .header-line2 { font-size: 18px; letter-spacing: 2px; }
-    .bakanlik-logo { max-width: 140px; max-height: 54px; }
-    .akm-logo      { max-width: 100px; max-height: 44px; }
-    .logo-box--right .title-logo { max-width: 120px; max-height: 44px; }
-    .fullscreen-btn { bottom: 130px; left: 10px; width: 36px; height: 36px; font-size: 16px; }
-    .mute-btn       { bottom: 86px;  left: 10px; width: 36px; height: 36px; font-size: 16px; }
+    .header-line1, .header-line2 { font-size: 24px; letter-spacing: 2px; }
+    .bakanlik-logo { max-width: 85%; max-height: 54px; }
+    .akm-logo      { max-width: 85%; max-height: 44px; }
+    .logo-box--right .title-logo { max-width: 85%; max-height: 44px; }
 }

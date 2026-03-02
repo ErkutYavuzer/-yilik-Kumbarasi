@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>İyilik Kumbarası - Gösterim</title>
-    <link rel="stylesheet" href="/css/themes.css?v=17.8.0" />
+    <link rel="stylesheet" href="/css/themes.css?v=17.9.0" />
     <link
       href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
@@ -1228,7 +1228,7 @@
       ></div>
 
       <!-- Kor parçacıkları container -->
-      <div id="embers-container"></div>
+      <!-- Kor parçacıkları container — ui-overlay'e taşındı -->
 
       <!-- logos moved to #ui-overlay -->
 
@@ -1278,20 +1278,26 @@
 
     <!-- Spotlight + Controls + Logos — scale'den bağımsız UI overlay -->
     <div id="ui-overlay">
-      <!-- Bakanlık Logo — sol alt (büyük) -->
+      <!-- Kor parçacıkları — viewport koordinatlarında, fenerin altından yükselir -->
+      <div id="embers-container"></div>
+
+      <!-- Logolar — flexbox bar -->
+      <div class="logos-bottom-bar">
+        <!-- Bakanlık Logo — sol alt (büyük) -->
       <div class="logo-box logo-box--left">
         <img class="bakanlik-logo" src="/images/bakanlik.png?v=1" alt="T.C. Kültür ve Turizm Bakanlığı" />
       </div>
 
-      <!-- AKM Logo — orta alt -->
+        <!-- AKM Logo — orta alt -->
       <div class="logo-box logo-box--center">
         <img class="akm-logo" src="/images/akm.png?v=1" alt="Atatürk Kültür Merkezi" />
       </div>
 
-      <!-- TT Logo — sağ alt -->
+        <!-- TT Logo — sağ alt -->
       <div class="logo-box logo-box--right">
         <img class="title-logo" src="/images/tt.png?v=4" alt="Türk Telekom" />
       </div>
+      </div><!-- /.logos-bottom-bar -->
 
       <!-- Header Title -->
       <div class="header-title-box">
