@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>İyilik Kumbarası - Gösterim</title>
-    <link rel="stylesheet" href="/css/themes.css?v=17.9.1" />
+    <link rel="stylesheet" href="/css/themes.css?v=17.9.2" />
     <link
       href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
@@ -1254,7 +1254,10 @@
 
 
       <!-- Wishes float here -->
-      <div id="wishes-container"></div>
+      <!-- Kor parçacıkları container — geri scaled-app içine taşındı (tasarım koordinatları için) ama z-index ayarlandı -->
+      <div id="embers-container"></div>
+
+      <!-- Wishes float here -->
 
       <!-- Logo layer: renders ON TOP of wishes so lanterns pass BEHIND logos -->
       <div class="logo-layer"></div>
@@ -1278,9 +1281,6 @@
 
     <!-- Spotlight + Controls + Logos — scale'den bağımsız UI overlay -->
     <div id="ui-overlay">
-      <!-- Kor parçacıkları — viewport koordinatlarında, fenerin altından yükselir -->
-      <div id="embers-container"></div>
-
       <!-- Logolar — flexbox bar -->
       <div class="logos-bottom-bar">
         <!-- Bakanlık Logo — sol alt (büyük) -->
@@ -1374,7 +1374,7 @@
         // Portrait mod tespiti — logos-bottom-bar column layout için
         const bar = document.querySelector('.logos-bottom-bar');
         if (bar) {
-          if (h > w) {
+          if (h > w || w < 800) {
             bar.classList.add('portrait-mode');
           } else {
             bar.classList.remove('portrait-mode');
