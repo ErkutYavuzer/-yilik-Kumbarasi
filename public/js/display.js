@@ -422,12 +422,7 @@ class WishDisplay {
         const maxVisible = this.displayMode === 'lantern' ? this.getAdaptiveMaxVisible() : ((this.displaySettings && this.displaySettings.maxVisible) || 20);
         console.log(`📺 Ayarlar uygulanıyor: Hız=${speed}x, Ölçek=${scale}x, Max=${maxVisible}`);
 
-        // Screen mode değişimini uygula
-        const screenMode = this.displaySettings.screenMode || 'led';
-        if (this._lastScreenMode !== screenMode && typeof window.applyScreenMode === 'function') {
-            this._lastScreenMode = screenMode;
-            window.applyScreenMode(screenMode);
-        }
+        // screenMode artık otomatik — her ekran kendi aspect ratio'suna göre ayarlanıyor
 
         // CSS değişkenini ayarla (transform'da kullanılıyor)
         document.documentElement.style.setProperty('--card-scale', scale);

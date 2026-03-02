@@ -1258,22 +1258,24 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      // Auto-scale 1920x4320 canvas to cover actual screen without gaps
-      let DESIGN_WIDTH = 1920;
-      let DESIGN_HEIGHT = 4320;
+      // Auto-scale canvas to cover actual screen — aspect ratio auto-detected
+      const DESIGN_WIDTH = 1920;
+      let DESIGN_HEIGHT = Math.round(DESIGN_WIDTH * (window.innerHeight / window.innerWidth));
 
       function scaleToFit() {
-        const scaleX = window.innerWidth / DESIGN_WIDTH;
-        const scaleY = window.innerHeight / DESIGN_HEIGHT;
-        // Force it to fit the screen EXACTLY, even if it looks tiny on mobile
-        document.body.style.transform = `scale(${scaleX}, ${scaleY})`;
+        // Recalculate height for current aspect ratio
+        DESIGN_HEIGHT = Math.round(DESIGN_WIDTH * (window.innerHeight / window.innerWidth));
+
+        // Uniform scale — no distortion
+        const scale = window.innerWidth / DESIGN_WIDTH;
+        document.body.style.transform = `scale(${scale})`;
         document.body.style.transformOrigin = "top left";
         document.body.style.marginLeft = "0px";
         document.body.style.marginTop = "0px";
         document.body.style.width = DESIGN_WIDTH + "px";
         document.body.style.height = DESIGN_HEIGHT + "px";
         document.body.style.overflow = "hidden";
-        
+
         const container = document.querySelector(".display-container");
         if (container) {
             container.style.width = DESIGN_WIDTH + "px";
@@ -1282,20 +1284,8 @@
       }
 
       scaleToFit();
-      // resize — recalculate scale
+      // resize — recalculate scale + dimensions
       window.addEventListener("resize", scaleToFit);
-
-      // Ekran moduna göre canvas boyutlarını değiştir
-      function applyScreenMode(mode) {
-        if (mode === "normal") {
-          DESIGN_WIDTH = 1920;
-          DESIGN_HEIGHT = 1080;
-        } else {
-          DESIGN_WIDTH = 1920;
-          DESIGN_HEIGHT = 4320;
-        }
-        scaleToFit();
-      }
 
       // Kor parçacıkları oluştur
       (function () {
