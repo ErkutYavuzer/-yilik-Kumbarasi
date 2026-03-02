@@ -5,6 +5,14 @@
     font-style: normal;
     font-display: swap;
 }
+@font-face {
+    font-family: 'Centrale Sans';
+    src: url('/fonts/CentraleSans-Bold.otf') format('opentype');
+    font-weight: 600 900;
+    font-style: normal;
+    font-display: swap;
+}
+
 
 /* === İYİLİK KUMBARASI — TEMA SİSTEMİ ===
    Sadece Türk Telekom teması — varsayılan olarak uygulanır.
