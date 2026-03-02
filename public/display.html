@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>İyilik Kumbarası - Gösterim</title>
-    <link rel="stylesheet" href="/css/themes.css?v=17.7.0" />
+    <link rel="stylesheet" href="/css/themes.css?v=17.8.0" />
     <link
       href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
@@ -768,17 +768,18 @@
       /* Fullscreen button */
       .fullscreen-btn {
         position: absolute;
-        bottom: 40px;
-        left: 40px;
-        z-index: 200;
-        width: 60px;
-        height: 60px;
-        background: white;
-        border: none;
-        border-radius: 16px;
+        bottom: 170px;
+        left: 20px;
+        z-index: 9999;
+        width: 52px;
+        height: 52px;
+        background: rgba(10, 22, 40, 0.85);
+        border: 1px solid rgba(0, 100, 200, 0.4);
+        border-radius: 14px;
         cursor: pointer;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-        font-size: 28px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        font-size: 24px;
+        color: white;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -793,17 +794,18 @@
       /* Mute button */
       .mute-btn {
         position: absolute;
-        bottom: 40px;
-        left: 120px;
-        z-index: 200;
-        width: 60px;
-        height: 60px;
-        background: white;
-        border: none;
-        border-radius: 16px;
+        bottom: 110px;
+        left: 20px;
+        z-index: 9999;
+        width: 52px;
+        height: 52px;
+        background: rgba(10, 22, 40, 0.85);
+        border: 1px solid rgba(0, 100, 200, 0.4);
+        border-radius: 14px;
         cursor: pointer;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-        font-size: 28px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        font-size: 24px;
+        color: white;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1303,9 +1305,7 @@
       <div id="spotlight-overlay"></div>
       <div id="spotlight-label">🌟 <span id="spotlight-name"></span></div>
 
-      <!-- Controls -->
-      <button class="fullscreen-btn" id="fullscreen-btn" title="Tam Ekran">&#x26F6;</button>
-      <button class="mute-btn" id="mute-btn" title="Ses Aç/Kapa">🔊</button>
+      <!-- Controls kaldırıldı — admin panelinden yönetilecek -->
     </div>
 
 
