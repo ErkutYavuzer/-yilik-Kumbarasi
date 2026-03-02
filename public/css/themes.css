@@ -308,18 +308,18 @@ html {
 
 /* Orta — AKM */
 .logo-box--center {
-    width: 15vw;
-    max-width: 200px;
-    height: 80px;
+    width: 20vw;
+    max-width: 280px;
+    height: 100px;
     flex-shrink: 0;
     animation: headerRevealCenter 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Sağ alt — TT */
 .logo-box--right {
-    width: 18vw;
-    max-width: 220px;
-    height: 80px;
+    width: 22vw;
+    max-width: 300px;
+    height: 100px;
     flex-shrink: 0;
     animation: headerRevealCorner 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -337,8 +337,8 @@ html {
 /* AKM logosu — orta */
 .akm-logo {
     display: block;
-    max-height: 80%;
-    max-width: 90%;
+    max-height: 85%;
+    max-width: 92%;
     object-fit: contain;
     filter:
         drop-shadow(0 0 12px rgba(255, 255, 255, 0.15))
@@ -348,8 +348,8 @@ html {
 /* TT logosu — sağ */
 .logo-box--right .title-logo {
     display: block;
-    max-height: 80%;
-    max-width: 90%;
+    max-height: 85%;
+    max-width: 92%;
     object-fit: contain;
 }
 .header-title-box {
@@ -538,48 +538,63 @@ html {
 
 /* ─── Responsive: dar + portrait ekranlar ─── */
 @media (max-width: 1024px) {
-    .logo-box--left   { width: 280px; height: 100px; }
-    .logo-box--center { max-width: 200px; height: 80px; }
-    .logo-box--right  { width: 200px; height: 80px; }
-    .bakanlik-logo    { max-width: 250px; max-height: 80px; }
-/* Responsive: 1024px altı (iPad vs.) */
-@media (max-width: 1024px) {
-    .logo-box--left   { width: 30vw; max-width: 260px; height: 80px; }
-    .logo-box--center { width: 25vw; max-width: 180px; height: 70px; }
-    .logo-box--right  { width: 25vw; max-width: 180px; height: 70px; }
+    .logo-box--left   { width: 30vw; max-width: 280px; height: 85px; }
+    .logo-box--center { width: 22vw; max-width: 220px; height: 75px; }
+    .logo-box--right  { width: 22vw; max-width: 220px; height: 75px; }
     .bakanlik-logo    { max-height: 80%; }
 }
 
+/* Portrait / narrow — compact horizontal row (NOT column stack) */
 @media (max-width: 800px), (orientation: portrait), (max-aspect-ratio: 1/1) {
     .logos-bottom-bar {
-        flex-direction: column !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
         align-items: center !important;
-        bottom: 20px !important;
-        left: 10px !important;
-        right: 10px !important;
-        gap: 12px !important;
-        flex-wrap: nowrap !important;
+        bottom: 12px !important;
+        left: 6px !important;
+        right: 6px !important;
+        gap: 6px !important;
     }
-    .logo-box--left   { width: 85vw !important; max-width: 400px !important; height: 80px !important; flex-shrink: 0 !important; }
-    .logo-box--center { width: 70vw !important; max-width: 300px !important; height: 70px !important; flex-shrink: 0 !important; }
-    .logo-box--right  { width: 70vw !important; max-width: 300px !important; height: 70px !important; flex-shrink: 0 !important; }
+    .logo-box--left {
+        flex: 1 1 38% !important;
+        max-width: 200px !important;
+        height: 52px !important;
+        padding: 8px 10px !important;
+        border-radius: 8px !important;
+    }
+    .logo-box--center {
+        flex: 0 1 24% !important;
+        max-width: 120px !important;
+        height: 52px !important;
+        padding: 8px 10px !important;
+        border-radius: 8px !important;
+    }
+    .logo-box--right {
+        flex: 1 1 30% !important;
+        max-width: 160px !important;
+        height: 52px !important;
+        padding: 8px 10px !important;
+        border-radius: 8px !important;
+    }
+    .bakanlik-logo { max-width: 100% !important; max-height: 36px !important; }
+    .akm-logo      { max-width: 100% !important; max-height: 34px !important; }
+    .logo-box--right .title-logo { max-width: 100% !important; max-height: 34px !important; }
     .header-title-box { padding: 10px 16px !important; top: 10px !important; }
     .header-line1, .header-line2 { font-size: 24px !important; letter-spacing: 2px !important; }
-    .bakanlik-logo { max-width: 85% !important; max-height: 60px !important; }
-    .akm-logo      { max-width: 85% !important; max-height: 50px !important; }
-    .logo-box--right .title-logo { max-width: 85% !important; max-height: 50px !important; }
 }
 
 /* JS-based portrait class — media query fallback için */
 .logos-bottom-bar.portrait-mode {
-    flex-direction: column !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
     align-items: center !important;
-    bottom: 20px !important;
-    left: 10px !important;
-    right: 10px !important;
-    gap: 12px !important;
-    flex-wrap: nowrap !important;
+    bottom: 12px !important;
+    left: 6px !important;
+    right: 6px !important;
+    gap: 6px !important;
 }
-.logos-bottom-bar.portrait-mode .logo-box--left   { width: 85vw !important; max-width: 400px !important; height: 80px !important; flex-shrink: 0 !important; }
-.logos-bottom-bar.portrait-mode .logo-box--center { width: 70vw !important; max-width: 300px !important; height: 70px !important; flex-shrink: 0 !important; }
-.logos-bottom-bar.portrait-mode .logo-box--right  { width: 70vw !important; max-width: 300px !important; height: 70px !important; flex-shrink: 0 !important; }
+.logos-bottom-bar.portrait-mode .logo-box--left   { flex: 1 1 38% !important; max-width: 200px !important; height: 52px !important; padding: 8px 10px !important; border-radius: 8px !important; }
+.logos-bottom-bar.portrait-mode .logo-box--center { flex: 0 1 24% !important; max-width: 120px !important; height: 52px !important; padding: 8px 10px !important; border-radius: 8px !important; }
+.logos-bottom-bar.portrait-mode .logo-box--right  { flex: 1 1 30% !important; max-width: 160px !important; height: 52px !important; padding: 8px 10px !important; border-radius: 8px !important; }
