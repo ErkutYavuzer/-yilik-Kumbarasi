@@ -220,9 +220,9 @@ html {
    ═══════════════════════════════════════════ */
 .header-logo-box {
     position: absolute;
-    top: 40px;
-    left: 40px;
-    z-index: 200;
+    top: auto;
+    bottom: 40px;
+    right: 40px;
 
     /* Glassmorphism */
     background: rgba(3, 8, 16, 0.75);
