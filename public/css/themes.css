@@ -550,7 +550,7 @@ html {
     .bakanlik-logo    { max-width: 250px; max-height: 80px; }
 }
 
-@media (max-width: 600px), (max-aspect-ratio: 9/16) {
+@media (max-width: 600px), (orientation: portrait) {
     .logos-bottom-bar {
         flex-direction: column;
         align-items: center;
