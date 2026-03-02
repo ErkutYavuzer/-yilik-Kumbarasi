@@ -440,7 +440,7 @@ class WishDisplay {
 
         // Mevcut tüm kartlara ölçeği anında uygula
         this.wishCards.forEach(cardData => {
-            const depthScale = this.displayMode === 'lantern' ? scale * (cardData.zDepth || 1) : scale;
+            const depthScale = this.displayMode === 'lantern' ? scale * (cardData.zDepth || 1) * this.getLanternSizeFactor() : scale;
             cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${depthScale}) rotate(${cardData.rotation}deg)`;
         });
 
@@ -522,6 +522,17 @@ class WishDisplay {
         // Never exceed admin setting, never below 2
         const adminMax = (this.displaySettings && this.displaySettings.maxVisible) || 20;
         return Math.max(2, Math.min(adminMax, maxAllowed));
+    }
+
+    /**
+     * Aspect-ratio-aware lantern size factor.
+     * On tall screens (960×2160 LED, DESIGN_HEIGHT≈4320) → 1.0 (no change).
+     * On wide screens (1920×1080, DESIGN_HEIGHT≈1080) → ~0.5 (smaller lanterns).
+     * Ensures consistent visual proportion across all screen shapes.
+     */
+    getLanternSizeFactor() {
+        const h = (typeof DESIGN_HEIGHT !== 'undefined') ? DESIGN_HEIGHT : 1080;
+        return Math.max(0.5, Math.min(1.0, h / 2400));
     }
 
     addWish(wish, animate = true) {
@@ -728,8 +739,9 @@ class WishDisplay {
                               + Math.sin(cardData.sway2Phase) * cardData.sway2Amp;
                     // === SOFT ANTI-OVERLAP DRIFT ===
                     // Very gentle horizontal push when cards get too close
-                    const scaledCardW = cardWidth * currentScale;
-                    const scaledCardH = (this.displayMode === 'lantern' ? 400 : 300) * currentScale;
+                    const lanternFactor = this.displayMode === 'lantern' ? this.getLanternSizeFactor() : 1;
+                    const scaledCardW = cardWidth * currentScale * lanternFactor;
+                    const scaledCardH = (this.displayMode === 'lantern' ? 400 : 300) * currentScale * lanternFactor;
                     for (const other of cards) {
                         if (other === cardData) continue;
                         const dx = cardData.x - other.x;
@@ -860,7 +872,7 @@ class WishDisplay {
                 const rot = this.displayMode === 'lantern'
                     ? (Math.sin(cardData.swayPhase) + Math.sin(cardData.sway2Phase) * 0.5) * 1.3  // Doğal salınım eğimi
                     : cardData.rotation;
-                const depthScale = currentScale;
+                const depthScale = this.displayMode === 'lantern' ? currentScale * this.getLanternSizeFactor() : currentScale;
                 cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${depthScale}) rotate(${rot}deg)`;
             });
 

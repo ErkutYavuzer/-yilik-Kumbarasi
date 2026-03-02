@@ -1205,17 +1205,19 @@
       <!-- Kor parçacıkları container -->
       <div id="embers-container"></div>
 
-      <!-- Bottom Logo Bar — 3 logo yan yana -->
-      <div class="header-logo-bar">
-        <div class="header-logo-item header-logo-item--large">
-          <img class="bakanlik-logo" src="/images/bakanlik.png?v=1" alt="T.C. Kültür ve Turizm Bakanlığı" />
-        </div>
-        <div class="header-logo-item">
-          <img class="akm-logo" src="/images/akm.png?v=1" alt="Atatürk Kültür Merkezi" />
-        </div>
-        <div class="header-logo-item header-logo-item--large">
-          <img class="title-logo" src="/images/tt.png?v=4" alt="Türk Telekom" />
-        </div>
+      <!-- Bakanlık Logo — sol alt (büyük) -->
+      <div class="logo-box logo-box--left">
+        <img class="bakanlik-logo" src="/images/bakanlik.png?v=1" alt="T.C. Kültür ve Turizm Bakanlığı" />
+      </div>
+
+      <!-- AKM Logo — orta alt -->
+      <div class="logo-box logo-box--center">
+        <img class="akm-logo" src="/images/akm.png?v=1" alt="Atatürk Kültür Merkezi" />
+      </div>
+
+      <!-- TT Logo — sağ alt -->
+      <div class="logo-box logo-box--right">
+        <img class="title-logo" src="/images/tt.png?v=4" alt="Türk Telekom" />
       </div>
 
       <!-- Header Title -->
@@ -1299,21 +1301,34 @@
         if (scale < 0.8) {
             const boost = Math.min(counterScale, 2.5); // Cap at 2.5x
             const titleBox = document.querySelector('.header-title-box');
-            const logoBar = document.querySelector('.header-logo-bar');
+            const logoLeft = document.querySelector('.logo-box--left');
+            const logoCenter = document.querySelector('.logo-box--center');
+            const logoRight = document.querySelector('.logo-box--right');
             if (titleBox) {
                 titleBox.style.transform = `translateX(-50%) scale(${boost})`;
                 titleBox.style.transformOrigin = 'top center';
             }
-            if (logoBar) {
-                logoBar.style.transform = `translateX(-50%) scale(${boost})`;
-                logoBar.style.transformOrigin = 'bottom center';
+            if (logoLeft) {
+                logoLeft.style.transform = `scale(${boost})`;
+                logoLeft.style.transformOrigin = 'bottom left';
+            }
+            if (logoCenter) {
+                logoCenter.style.transform = `translateX(-50%) scale(${boost})`;
+                logoCenter.style.transformOrigin = 'bottom center';
+            }
+            if (logoRight) {
+                logoRight.style.transform = `scale(${boost})`;
+                logoRight.style.transformOrigin = 'bottom right';
             }
         } else {
             const titleBox = document.querySelector('.header-title-box');
-            const logoBar = document.querySelector('.header-logo-bar');
+            const logoLeft = document.querySelector('.logo-box--left');
+            const logoCenter = document.querySelector('.logo-box--center');
+            const logoRight = document.querySelector('.logo-box--right');
             if (titleBox) titleBox.style.transform = 'translateX(-50%)';
-            if (logoBar) logoBar.style.transform = 'translateX(-50%)';
-        }
+            if (logoLeft) logoLeft.style.transform = '';
+            if (logoCenter) logoCenter.style.transform = 'translateX(-50%)';
+            if (logoRight) logoRight.style.transform = '';
       }
 
       scaleToFit();
@@ -1350,6 +1365,6 @@
         }
       })();
     </script>
-    <script src="js/display.js?v=17.1.0"></script>
+    <script src="js/display.js?v=17.2.0"></script>
   </body>
 </html>

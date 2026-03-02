@@ -255,56 +255,52 @@ html {
 /* ═══════════════════════════════════════════
    HEADER — Premium Glassmorphism + Gradient
    ═══════════════════════════════════════════ */
-/* Bottom Logo Bar — 3 logo yan yana, altta ortalı */
-.header-logo-bar {
+/* Logo Box — ortak glassmorphism stil */
+.logo-box {
     position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
     z-index: 200;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 40px;
 
     /* Glassmorphism */
     background: rgba(3, 8, 16, 0.75);
     backdrop-filter: blur(28px) saturate(150%);
     -webkit-backdrop-filter: blur(28px) saturate(150%);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    padding: 20px 50px;
+    border-radius: 12px;
+    padding: 12px;
     box-shadow:
         0 8px 32px rgba(0, 0, 0, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
-    animation: logoBarReveal 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes logoBarReveal {
-    from {
-        opacity: 0;
-        transform: translateX(-50%) translateY(20px);
-        filter: blur(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-        filter: blur(0);
-    }
-}
-
-.header-logo-item {
     display: flex;
     align-items: center;
     justify-content: center;
+
+    animation: headerReveal 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Bakanlık logosu — sol, büyük */
+/* Sol alt — Bakanlık (büyük) */
+.logo-box--left {
+    bottom: 40px;
+    left: 40px;
+}
+
+/* Orta alt — AKM */
+.logo-box--center {
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Sağ alt — TT */
+.logo-box--right {
+    bottom: 40px;
+    right: 40px;
+}
+
+/* Bakanlık logosu — en büyük */
 .bakanlik-logo {
     display: block;
-    height: 120px;
+    height: 140px;
     width: auto;
     object-fit: contain;
     filter:
@@ -316,15 +312,15 @@ html {
 .akm-logo {
     display: block;
     height: auto;
-    width: 250px;
+    width: 220px;
     object-fit: contain;
     filter:
         drop-shadow(0 0 12px rgba(255, 255, 255, 0.15))
         drop-shadow(0 0 30px rgba(255, 255, 255, 0.08));
 }
 
-/* TT logosu — sağ, bakanlıkla aynı yükseklik */
-.header-logo-bar .title-logo {
+/* TT logosu — sağ */
+.logo-box--right .title-logo {
     height: 90px;
     width: auto;
 }
