@@ -308,18 +308,18 @@ html {
 
 /* Orta — AKM */
 .logo-box--center {
-    width: 20vw;
-    max-width: 280px;
-    height: 100px;
+    width: 24vw;
+    max-width: 320px;
+    height: 110px;
     flex-shrink: 0;
     animation: headerRevealCenter 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Sağ alt — TT */
 .logo-box--right {
-    width: 22vw;
-    max-width: 300px;
-    height: 100px;
+    width: 26vw;
+    max-width: 340px;
+    height: 110px;
     flex-shrink: 0;
     animation: headerRevealCorner 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -337,8 +337,8 @@ html {
 /* AKM logosu — orta */
 .akm-logo {
     display: block;
-    max-height: 85%;
-    max-width: 92%;
+    max-height: 90%;
+    max-width: 95%;
     object-fit: contain;
     filter:
         drop-shadow(0 0 12px rgba(255, 255, 255, 0.15))
@@ -348,8 +348,8 @@ html {
 /* TT logosu — sağ */
 .logo-box--right .title-logo {
     display: block;
-    max-height: 85%;
-    max-width: 92%;
+    max-height: 90%;
+    max-width: 95%;
     object-fit: contain;
 }
 .header-title-box {
