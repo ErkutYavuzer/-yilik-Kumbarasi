@@ -26,13 +26,24 @@ class WishDisplay {
     }
 
     async init() {
-        await this.loadDisplayMode();
-        await this.loadDisplaySettings();
-        this.connectSocket();
-        this.bindEvents();
-        this.startFloatingAnimation();
-        this.setupAudio();
-        this.loadTheme();
+        try {
+            await this.loadDisplayMode();
+            await this.loadDisplaySettings();
+            this.connectSocket();
+            this.bindEvents();
+            this.startFloatingAnimation();
+            this.setupAudio();
+            this.loadTheme();
+        } catch (e) {
+            console.error('WishDisplay init hatası:', e);
+            // Retry after 2s — mobilde ilk yüklemede ağ gecikmesi olabilir
+            setTimeout(() => {
+                this.connectSocket();
+                this.bindEvents();
+                this.startFloatingAnimation();
+                this.setupAudio();
+            }, 2000);
+        }
     }
 
     // === AUDIO ===
@@ -685,12 +696,12 @@ class WishDisplay {
     startFloatingAnimation() {
         // Layout Thrashing Fix: Cache the dimensions outside the animation loop
         // Otherwise reading offsetWidth inside the 60FPS loop for 380 items causes 22,800 layout recalcs per second!
-        let cw = this.container.offsetWidth;
-        let ch = this.container.offsetHeight;
+        let cw = this.container.offsetWidth || DESIGN_WIDTH;
+        let ch = this.container.offsetHeight || DESIGN_HEIGHT;
 
         window.addEventListener('resize', () => {
-            cw = this.container.offsetWidth;
-            ch = this.container.offsetHeight;
+            cw = this.container.offsetWidth || DESIGN_WIDTH;
+            ch = this.container.offsetHeight || DESIGN_HEIGHT;
         });
 
         const animate = () => {
