@@ -1370,6 +1370,15 @@
             container.style.width = DESIGN_WIDTH + "px";
             container.style.height = DESIGN_HEIGHT + "px";
         }
+
+        // Portrait mod tespiti — logos-bottom-bar column layout için
+        const bar = document.querySelector('.logos-bottom-bar');
+        if (bar) {
+          if (h > w) {
+            bar.classList.add('portrait-mode');
+          } else {
+            bar.classList.remove('portrait-mode');
+          }
       }
 
 
