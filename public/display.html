@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>İyilik Kumbarası - Gösterim</title>
-    <link rel="stylesheet" href="/css/themes.css?v=17.4.0" />
+    <link rel="stylesheet" href="/css/themes.css?v=17.5.0" />
     <link
       href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
@@ -1306,7 +1306,7 @@
         const counterScale = 1 / Math.max(scale, 0.1);
         // Only counter-scale when page is significantly shrunk (scale < 0.8)
         if (scale < 0.8) {
-            const boost = Math.min(counterScale, 2.5); // Cap at 2.5x
+            const boost = Math.min(counterScale, 4.0); // Cap at 4x — dar ekranda logolar okunablı kalsın
             const titleBox = document.querySelector('.header-title-box');
             const logoLeft = document.querySelector('.logo-box--left');
             const logoCenter = document.querySelector('.logo-box--center');
@@ -1373,6 +1373,6 @@
         }
       })();
     </script>
-    <script src="js/display.js?v=17.3.0"></script>
+    <script src="js/display.js?v=17.4.0"></script>
   </body>
 </html>

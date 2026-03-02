@@ -710,7 +710,7 @@ class WishDisplay {
 
             const currentScale = this.displaySettings.scaleMultiplier || 1.0;
             const currentSpeedMulti = this.displaySettings.speedMultiplier || 1.0;
-            const paddingSides = -100; // Allow slight peek from left edge
+            const paddingSides = 80; // Min kenar boşluğu — fenerler kenara yapışmasın
             const cardWidth = this.displayMode === 'lantern' ? 320 : 320;
             const maxX = cw - cardWidth; // Account for card width so right edge doesn't clip
 
@@ -748,13 +748,13 @@ class WishDisplay {
                     // (swayBaseX IS the original spawn X, x is computed from it — no clamping needed on swayBaseX itself, 
                     //  but we clamp it to stay within screen bounds)
                     const swayMaxX = cw - cardWidth;
-                    const swayMinX = -100;
+                    const swayMinX = 80;
                     cardData.swayBaseX = Math.max(swayMinX, Math.min(swayMaxX, cardData.swayBaseX));
 
                     cardData.x = cardData.swayBaseX + swayX;
                     
                     // Soft boundary clamp — pencere küçültüldüğünde fener ekran dışına çıkmasın
-                    cardData.x = Math.max(-100, Math.min(cw - 320, cardData.x));
+                    cardData.x = Math.max(80, Math.min(cw - 320 - 80, cardData.x));
                     
                     cardData.y += Math.sin(cardData.swayYPhase) * cardData.swayYAmp * 0.02;
 
@@ -885,7 +885,7 @@ class WishDisplay {
         const cardWidth = 320;
         const currentScale = this.displaySettings.scaleMultiplier || 1.0;
         // minX/maxX account for sway amplitude so cards don't swing off-screen
-        const minX = -100 + swayAmp;  // paddingSides + swayAmp
+        const minX = 80 + swayAmp;  // paddingSides + swayAmp — kenara yapışmasın
         const maxX = cw - cardWidth - swayAmp;
         
         // Collect positions of on-screen cards
