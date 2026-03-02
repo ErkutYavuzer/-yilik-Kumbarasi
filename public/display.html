@@ -1293,8 +1293,8 @@
             const titleBox = document.querySelector('.header-title-box');
             const logoBox = document.querySelector('.header-logo-box');
             if (titleBox) {
-                titleBox.style.transform = `scale(${boost})`;
-                titleBox.style.transformOrigin = 'top right';
+                titleBox.style.transform = `translateX(-50%) scale(${boost})`;
+                titleBox.style.transformOrigin = 'top center';
             }
             if (logoBox) {
                 logoBox.style.transform = `scale(${boost})`;
@@ -1303,7 +1303,7 @@
         } else {
             const titleBox = document.querySelector('.header-title-box');
             const logoBox = document.querySelector('.header-logo-box');
-            if (titleBox) titleBox.style.transform = '';
+            if (titleBox) titleBox.style.transform = 'translateX(-50%)';
             if (logoBox) logoBox.style.transform = '';
         }
       }
