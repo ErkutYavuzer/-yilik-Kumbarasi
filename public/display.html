@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>İyilik Kumbarası - Gösterim</title>
-    <link rel="stylesheet" href="/css/themes.css?v=17.2.0" />
+    <link rel="stylesheet" href="/css/themes.css?v=17.3.0" />
     <link
       href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
@@ -1205,9 +1205,17 @@
       <!-- Kor parçacıkları container -->
       <div id="embers-container"></div>
 
-      <!-- Header Logo -->
-      <div class="header-logo-box">
-        <img class="title-logo" src="/images/tt.png?v=4" alt="Türk Telekom" />
+      <!-- Bottom Logo Bar — 3 logo yan yana -->
+      <div class="header-logo-bar">
+        <div class="header-logo-item header-logo-item--large">
+          <img class="bakanlik-logo" src="/images/bakanlik.png?v=1" alt="T.C. Kültür ve Turizm Bakanlığı" />
+        </div>
+        <div class="header-logo-item">
+          <img class="akm-logo" src="/images/akm.png?v=1" alt="Atatürk Kültür Merkezi" />
+        </div>
+        <div class="header-logo-item header-logo-item--large">
+          <img class="title-logo" src="/images/tt.png?v=4" alt="Türk Telekom" />
+        </div>
       </div>
 
       <!-- Header Title -->
@@ -1291,20 +1299,20 @@
         if (scale < 0.8) {
             const boost = Math.min(counterScale, 2.5); // Cap at 2.5x
             const titleBox = document.querySelector('.header-title-box');
-            const logoBox = document.querySelector('.header-logo-box');
+            const logoBar = document.querySelector('.header-logo-bar');
             if (titleBox) {
                 titleBox.style.transform = `translateX(-50%) scale(${boost})`;
                 titleBox.style.transformOrigin = 'top center';
             }
-            if (logoBox) {
-                logoBox.style.transform = `scale(${boost})`;
-                logoBox.style.transformOrigin = 'bottom right';
+            if (logoBar) {
+                logoBar.style.transform = `translateX(-50%) scale(${boost})`;
+                logoBar.style.transformOrigin = 'bottom center';
             }
         } else {
             const titleBox = document.querySelector('.header-title-box');
-            const logoBox = document.querySelector('.header-logo-box');
+            const logoBar = document.querySelector('.header-logo-bar');
             if (titleBox) titleBox.style.transform = 'translateX(-50%)';
-            if (logoBox) logoBox.style.transform = '';
+            if (logoBar) logoBar.style.transform = 'translateX(-50%)';
         }
       }
 
