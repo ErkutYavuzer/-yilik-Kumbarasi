@@ -1,3 +1,11 @@
+@font-face {
+    font-family: 'Centrale Sans';
+    src: url('/fonts/CentraleSans-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
 /* === İYİLİK KUMBARASI — TEMA SİSTEMİ ===
    Sadece Türk Telekom teması — varsayılan olarak uygulanır.
    data-theme attribute'üne gerek yok, sayfa açılır açılmaz TT arka planı gelir.
@@ -328,6 +336,7 @@ html {
     font-weight: 800;
     letter-spacing: 3px;
     line-height: 1.15;
+    font-family: 'Centrale Sans', 'Nunito', sans-serif;
 
     /* Warm gradient — lantern gold to soft rose */
     background: linear-gradient(
@@ -354,6 +363,7 @@ html {
     font-weight: 900;
     letter-spacing: 6px;
     line-height: 1.15;
+    font-family: 'Centrale Sans', 'Nunito', sans-serif;
 
     /* Brighter, more saturated gradient for emphasis */
     background: linear-gradient(
