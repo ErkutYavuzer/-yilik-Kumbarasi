@@ -3,8 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>İyilik Kumbarası - Gösterim</title>
-    <link rel="stylesheet" href="/css/themes.css?v=18.1.0" />
+    <title>__DISPLAY_TITLE__</title>
+    <meta property="og:title" content="__DISPLAY_TITLE__" />
+    <meta property="og:site_name" content="__DISPLAY_SITE__" />
+    <meta property="og:type" content="website" />
+    <meta property="twitter:title" content="__DISPLAY_TITLE__" />
+    <link rel="stylesheet" href="/css/themes.css?v=18.4.5" />
     <link
       href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
@@ -1281,23 +1285,10 @@
 
     <!-- Spotlight + Controls + Logos — scale'den bağımsız UI overlay -->
     <div id="ui-overlay">
-      <!-- Logolar — flexbox bar -->
-      <div class="logos-bottom-bar">
-        <!-- Bakanlık Logo — sol alt (büyük) -->
-      <div class="logo-box logo-box--left">
-        <img class="bakanlik-logo" src="/images/bakanlik.png?v=1" alt="T.C. Kültür ve Turizm Bakanlığı" />
+      <!-- Logolar — ust bolum -->
+      <div class="logos-top-bar">
+        <img class="logos-top-image" src="/images/logolar.png?v=1" alt="T.C. Kültür ve Turizm Bakanlığı, AKM ve Türk Telekom" />
       </div>
-
-        <!-- AKM Logo — orta alt -->
-      <div class="logo-box logo-box--center">
-        <img class="akm-logo" src="/images/akm.png?v=1" alt="Atatürk Kültür Merkezi" />
-      </div>
-
-        <!-- TT Logo — sağ alt -->
-      <div class="logo-box logo-box--right">
-        <img class="title-logo" src="/images/tt.png?v=4" alt="Türk Telekom" />
-      </div>
-      </div><!-- /.logos-bottom-bar -->
 
       <!-- Header Title -->
       <div class="header-title-box">
@@ -1389,9 +1380,9 @@
 
       // Kor parçacıkları oluştur
       (function () {
-        var ec = document.getElementById("embers-container");
+        const ec = document.getElementById("embers-container");
         if (!ec) return;
-        var colors = [
+        const colors = [
           "#FFD700",
           "#FFA500",
           "#FF6600",
@@ -1399,10 +1390,10 @@
           "#FF8C00",
           "#FFB347",
         ];
-        for (var i = 0; i < 18; i++) {
-          var e = document.createElement("div");
+        for (let i = 0; i < 18; i++) {
+          const e = document.createElement("div");
           e.className = "ember";
-          var size = 2 + Math.random() * 4;
+          const size = 2 + Math.random() * 4;
           e.style.left = 5 + Math.random() * 90 + "%";
           e.style.bottom = "-2%";
           e.style.width = size + "px";
