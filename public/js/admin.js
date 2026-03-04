@@ -133,8 +133,12 @@ function setViewMode(mode) {
 
 // ─── TAB NAVIGATION ───
 function switchTab(name, btn) {
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => {
+        p.classList.remove('active');
+    });
+    document.querySelectorAll('.nav-item').forEach(n => {
+        n.classList.remove('active');
+    });
 
     const panel = document.getElementById('tab-' + name);
     if (panel) panel.classList.add('active');
@@ -217,7 +221,9 @@ function getFilteredWishes() {
 
 function applyQuickFilter(filter, btnElement) {
     currentQuickFilter = filter;
-    document.querySelectorAll('.filter-chips .btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.filter-chips .btn').forEach(b => {
+        b.classList.remove('active');
+    });
     if (btnElement) btnElement.classList.add('active');
     renderWishes();
 }
@@ -709,7 +715,9 @@ async function adminUpload() {
 // ─── THEME ───
 async function setTheme(theme) {
     await fetch('/api/theme', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ theme }) });
-    document.querySelectorAll('.theme-option').forEach(b => b.classList.toggle('active', b.dataset.theme === theme));
+    document.querySelectorAll('.theme-option').forEach(b => {
+        b.classList.toggle('active', b.dataset.theme === theme);
+    });
     showToast('Tema değiştirildi!');
 }
 
@@ -717,14 +725,18 @@ async function loadCurrentTheme() {
     try {
         const res = await fetch('/api/theme');
         const data = await res.json();
-        document.querySelectorAll('.theme-option').forEach(b => b.classList.toggle('active', b.dataset.theme === data.theme));
+        document.querySelectorAll('.theme-option').forEach(b => {
+            b.classList.toggle('active', b.dataset.theme === data.theme);
+        });
     } catch (e) { }
 }
 
 // ─── DISPLAY MODE ───
 async function setDisplayMode(mode) {
     await fetch('/api/display-mode', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ displayMode: mode }) });
-    document.querySelectorAll('.display-mode-option').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+    document.querySelectorAll('.display-mode-option').forEach(b => {
+        b.classList.toggle('active', b.dataset.mode === mode);
+    });
     showToast('Gösterim modu değiştirildi!');
 }
 
@@ -732,7 +744,9 @@ async function loadCurrentDisplayMode() {
     try {
         const res = await fetch('/api/display-mode');
         const data = await res.json();
-        document.querySelectorAll('.display-mode-option').forEach(b => b.classList.toggle('active', b.dataset.mode === data.displayMode));
+        document.querySelectorAll('.display-mode-option').forEach(b => {
+            b.classList.toggle('active', b.dataset.mode === data.displayMode);
+        });
     } catch (e) { }
 }
 loadCurrentDisplayMode();
@@ -776,15 +790,17 @@ document.addEventListener('keydown', (e) => {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
     switch (e.key.toLowerCase()) {
-        case 'f':
+        case 'f': {
             toggleFocusMode();
             break;
-        case 's':
+        }
+        case 's': {
             const startBtn = document.getElementById('auto-start-btn');
             const isPlaying = startBtn && startBtn.style.display === 'none';
             if (isPlaying) stopAutoSpotlight(); else startAutoSpotlight();
             break;
-        case 'escape':
+        }
+        case 'escape': {
             // Varsa modalları kapat, yoksa spotlight kapat
             const overlay = document.getElementById('modal-overlay');
             const editObj = document.getElementById('edit-modal');
@@ -796,6 +812,7 @@ document.addEventListener('keydown', (e) => {
                 spotlightOff();
             }
             break;
+        }
     }
 });
 
@@ -904,7 +921,10 @@ async function saveDisplaySettings() {
         speedMultiplier: parseFloat(document.getElementById('display-speed').value),
         scaleMultiplier: parseFloat(document.getElementById('display-scale').value),
         maxVisible: parseInt(document.getElementById('display-maxvisible').value),
-        screenMode: document.querySelector('.screen-mode-btn.active')?.dataset.mode || 'led'
+        logoOffsetPx: parseInt(document.getElementById('display-logo-offset').value),
+        headerOffsetPx: parseInt(document.getElementById('display-header-offset').value),
+        screenMode: document.querySelector('.screen-mode-btn.active')?.dataset.mode || 'led',
+        dayMode: !!document.getElementById('display-daymode')?.checked
     };
     try {
         const res = await fetch('/api/display-settings', {
@@ -934,6 +954,22 @@ function setDisplaySettingsUI(data) {
         if (el) el.value = data.maxVisible;
         updateMaxVisibleLabel(data.maxVisible);
     }
+    if (data.logoOffsetPx !== undefined) {
+        const el = document.getElementById('display-logo-offset');
+        if (el) el.value = data.logoOffsetPx;
+        updateLogoOffsetLabel(data.logoOffsetPx);
+    }
+    if (data.headerOffsetPx !== undefined) {
+        const el = document.getElementById('display-header-offset');
+        if (el) el.value = data.headerOffsetPx;
+        updateHeaderOffsetLabel(data.headerOffsetPx);
+    }
+    if (data.dayMode !== undefined) {
+        const dayToggle = document.getElementById('display-daymode');
+        const dayLabel = document.getElementById('display-daymode-label');
+        if (dayToggle) dayToggle.checked = !!data.dayMode;
+        if (dayLabel) dayLabel.textContent = data.dayMode ? 'Açık' : 'Kapalı';
+    }
     if (data.screenMode) {
         document.querySelectorAll('.screen-mode-btn').forEach(btn => {
             const isActive = btn.dataset.mode === data.screenMode;
@@ -958,6 +994,16 @@ function updateScaleLabel(val) {
 function updateMaxVisibleLabel(val) {
     const el = document.getElementById('maxvisible-value');
     if (el) el.textContent = parseInt(val);
+}
+
+function updateLogoOffsetLabel(val) {
+    const el = document.getElementById('logo-offset-value');
+    if (el) el.textContent = `${parseInt(val)}px`;
+}
+
+function updateHeaderOffsetLabel(val) {
+    const el = document.getElementById('header-offset-value');
+    if (el) el.textContent = `${parseInt(val)}px`;
 }
 
 function setScreenMode(mode) {
@@ -1104,32 +1150,14 @@ function showToast(msg) {
 // ─── QR CODE ───
 (async function () {
     try {
-        const res = await fetch('/api/local-ip');
-        const data = await res.json();
-        let url = '';
-        const currentHost = window.location.hostname;
-
-        // Eğer sunucudan özel bir domain (PUBLIC_DOMAIN) ayarlanmışsa öncelikli olarak onu kullan
-        if (data.isCustomUrl) {
-            // Eğer HTTPS veya HTTP yoksa güvenli varsayılan olarak https ekle
-            url = `https://${data.ip}/upload`;
-        }
-        // Eğer uygulama bir domain üzerinden (dilek-kumbarasi.mindops.net vs) açılmışsa o domaini kullan
-        else if (currentHost !== 'localhost' && currentHost !== '127.0.0.1') {
-            url = `${window.location.protocol}//${window.location.host}/upload`;
-        }
-        // Localhost'tan girildiyse ağdaki diğer cihazların bağlanabilmesi için sunucu IP'sini kullan
-        else {
-            const port = window.location.port ? ':' + window.location.port : '';
-            url = `http://${data.ip}${port}/upload`;
-        }
+        const url = 'https://dilekfeneri.mezodigi.ai/upload';
 
         const container = document.getElementById('qr-container');
         const urlEl = document.getElementById('qr-url');
 
         if (container) {
             container.innerHTML = '';
-            var img = document.createElement('img');
+            const img = document.createElement('img');
             img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(url);
             img.style.cssText = 'width:180px;height:180px;display:block;';
             container.appendChild(img);

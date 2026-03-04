@@ -183,6 +183,61 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+function renderDisplayPage(req, res) {
+    const displayPath = path.join(__dirname, 'public', 'display.html');
+    const host = (req.hostname || '').toLowerCase();
+    const isDilekFeneri = host.includes('dilekfeneri');
+    const title = isDilekFeneri ? 'Dilek Feneri - Gösterim' : 'İyilik Kumbarası - Gösterim';
+    const siteName = isDilekFeneri ? 'Dilek Feneri' : 'İyilik Kumbarası';
+    let html = fs.readFileSync(displayPath, 'utf8');
+    html = html
+        .replace(/__DISPLAY_TITLE__/g, title)
+        .replace(/__DISPLAY_SITE__/g, siteName);
+    res.set('Content-Type', 'text/html; charset=utf-8');
+    res.send(html);
+}
+
+function renderAdminPage(req, res) {
+    const adminPath = path.join(__dirname, 'public', 'admin.html');
+    const host = (req.hostname || '').toLowerCase();
+    const isDilekFeneri = host.includes('dilekfeneri');
+    const title = isDilekFeneri ? 'Dilek Feneri — Yönetim (Pro)' : 'İyilik Kumbarası — Yönetim (Pro)';
+    const siteName = isDilekFeneri ? 'Dilek Feneri' : 'İyilik Kumbarası';
+    let html = fs.readFileSync(adminPath, 'utf8');
+    html = html
+        .replace(/__ADMIN_TITLE__/g, title)
+        .replace(/__ADMIN_SITE__/g, siteName);
+    res.set('Content-Type', 'text/html; charset=utf-8');
+    res.send(html);
+}
+
+function renderUploadPage(req, res) {
+    const uploadPath = path.join(__dirname, 'public', 'upload.html');
+    const host = (req.hostname || '').toLowerCase();
+    const isDilekFeneri = host.includes('dilekfeneri');
+    const title = isDilekFeneri ? 'Dilek Feneri — Dilek Yükle' : 'İyilik Kumbarası — Dilek Yükle';
+    const siteName = isDilekFeneri ? 'Dilek Feneri' : 'İyilik Kumbarası';
+    let html = fs.readFileSync(uploadPath, 'utf8');
+    html = html
+        .replace(/__UPLOAD_TITLE__/g, title)
+        .replace(/__UPLOAD_SITE__/g, siteName);
+    res.set('Content-Type', 'text/html; charset=utf-8');
+    res.send(html);
+}
+
+// Ana sayfa
+app.get('/', (req, res) => {
+    renderDisplayPage(req, res);
+});
+
+// Clean URLs - .html uzantısız erişim
+app.get('/display', (req, res) => {
+    renderDisplayPage(req, res);
+});
+app.get('/display.html', (req, res) => {
+    renderDisplayPage(req, res);
+});
+
 // Static dosyalar
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
@@ -224,23 +279,23 @@ let displaySettings = {
     speedMultiplier: savedDisplaySettings.speedMultiplier || 1.0,
     scaleMultiplier: savedDisplaySettings.scaleMultiplier || 1.0,
     maxVisible: savedDisplaySettings.maxVisible || 20,
-    screenMode: savedDisplaySettings.screenMode || 'led'
+    logoOffsetPx: typeof savedDisplaySettings.logoOffsetPx === 'number' ? savedDisplaySettings.logoOffsetPx : 0,
+    headerOffsetPx: typeof savedDisplaySettings.headerOffsetPx === 'number' ? savedDisplaySettings.headerOffsetPx : 0,
+    screenMode: savedDisplaySettings.screenMode || 'led',
+    dayMode: typeof savedDisplaySettings.dayMode === 'boolean' ? savedDisplaySettings.dayMode : false
 };
 
-// Ana sayfa
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'display.html'));
-});
-
-// Clean URLs - .html uzantısız erişim
-app.get('/display', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'display.html'));
-});
 app.get('/upload', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'upload.html'));
+    renderUploadPage(req, res);
+});
+app.get('/upload.html', (req, res) => {
+    renderUploadPage(req, res);
 });
 app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+    renderAdminPage(req, res);
+});
+app.get('/admin.html', (req, res) => {
+    renderAdminPage(req, res);
 });
 
 // Moderasyon Ayarları API'leri (Frontend Arayüzüne Uygun)
@@ -284,12 +339,15 @@ app.get('/api/display-settings', (req, res) => {
 
 // Ekran Ayarlarını Güncelle API'si
 app.post('/api/display-settings', (req, res) => {
-    const { speedMultiplier, scaleMultiplier, maxVisible, screenMode } = req.body;
+    const { speedMultiplier, scaleMultiplier, maxVisible, logoOffsetPx, headerOffsetPx, screenMode, dayMode } = req.body;
 
     if (typeof speedMultiplier === 'number') displaySettings.speedMultiplier = speedMultiplier;
     if (typeof scaleMultiplier === 'number') displaySettings.scaleMultiplier = scaleMultiplier;
     if (typeof maxVisible === 'number') displaySettings.maxVisible = Math.max(1, Math.min(100, maxVisible));
+    if (typeof logoOffsetPx === 'number') displaySettings.logoOffsetPx = Math.max(-1200, Math.min(1200, logoOffsetPx));
+    if (typeof headerOffsetPx === 'number') displaySettings.headerOffsetPx = Math.max(-1200, Math.min(1200, headerOffsetPx));
     if (['led', 'normal'].includes(screenMode)) displaySettings.screenMode = screenMode;
+    if (typeof dayMode === 'boolean') displaySettings.dayMode = dayMode;
 
     console.log(`
 📺 Ekran Ayarları Güncellendi: Hız: ${displaySettings.speedMultiplier}x, Büyüklük: ${displaySettings.scaleMultiplier}x, Max: ${displaySettings.maxVisible}`);
@@ -562,7 +620,9 @@ app.post('/api/spotlight/:id', (req, res) => {
     const { id } = req.params;
 
     // Tüm spotlight'ları kapat
-    wishes.forEach(w => w.isSpotlight = false);
+    wishes.forEach(w => {
+        w.isSpotlight = false;
+    });
 
     // Seçilen dileği spotlight yap
     const wish = wishes.find(w => w.id === id);
@@ -583,7 +643,9 @@ app.post('/api/spotlight-latest', (req, res) => {
     }
 
     // Tüm spotlight'ları kapat
-    wishes.forEach(w => w.isSpotlight = false);
+    wishes.forEach(w => {
+        w.isSpotlight = false;
+    });
 
     // Son dileği spotlight yap
     const latestWish = wishes[wishes.length - 1];
@@ -595,7 +657,9 @@ app.post('/api/spotlight-latest', (req, res) => {
 
 // Spotlight'ı kapat
 app.post('/api/spotlight-off', (req, res) => {
-    wishes.forEach(w => w.isSpotlight = false);
+    wishes.forEach(w => {
+        w.isSpotlight = false;
+    });
     io.emit('spotlight-off');
     console.log('💫 Spotlight kapatıldı');
     res.json({ success: true });
@@ -622,7 +686,9 @@ app.post('/api/auto-spotlight/start', (req, res) => {
         if (wishes.length === 0) return;
         autoSpotlightIndex = autoSpotlightIndex % wishes.length;
         const wish = wishes[autoSpotlightIndex];
-        wishes.forEach(w => w.isSpotlight = false);
+        wishes.forEach(w => {
+            w.isSpotlight = false;
+        });
         wish.isSpotlight = true;
         io.emit('spotlight', wish);
         console.log(`🔄 Oto-Spotlight: ${wish.childName} (${autoSpotlightIndex + 1}/${wishes.length})`);
@@ -640,7 +706,9 @@ app.post('/api/auto-spotlight/stop', (req, res) => {
         clearInterval(autoSpotlightInterval);
         autoSpotlightInterval = null;
     }
-    wishes.forEach(w => w.isSpotlight = false);
+    wishes.forEach(w => {
+        w.isSpotlight = false;
+    });
     io.emit('spotlight-off');
     console.log('⏹️ Otomatik Spotlight durduruldu');
     res.json({ success: true });
@@ -725,7 +793,9 @@ app.post('/api/raffle/start', (req, res) => {
     const winners = uniqueWishes.slice(0, count);
 
     // Çekilen kişiyi (veya kişileri) hafızaya kaydet
-    winners.forEach(w => drawnWishes.push(w.id));
+    winners.forEach(w => {
+        drawnWishes.push(w.id);
+    });
 
     console.log(`🎁 ÇEKİLİŞ YAPILDI! Sıradaki Kazanan: ${winners[0].childName}`);
 

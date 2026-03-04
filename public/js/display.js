@@ -18,7 +18,7 @@ class WishDisplay {
         this.socket = null;
         this.isMuted = false;
         this.audioCtx = null;
-        this.displaySettings = { speedMultiplier: 1.0, scaleMultiplier: 1.0, maxVisible: 20, screenMode: 'led' }; // Global ekran ayarları
+        this.displaySettings = { speedMultiplier: 1.0, scaleMultiplier: 1.0, maxVisible: 20, logoOffsetPx: 0, headerOffsetPx: 0, screenMode: 'led', dayMode: false }; // Global ekran ayarları
         this.displayMode = 'balloon'; // 'balloon' veya 'lantern'
         this._raffleAnimating = false; // Çekiliş animasyonu aktif mi
 
@@ -294,7 +294,9 @@ class WishDisplay {
         this.socket.on('all-wishes', (serverWishes) => {
             console.log('📥 Mevcut dilekler:', serverWishes.length);
             // Reconnect'te duplicate olmaması icin once temizle
-            this.container.querySelectorAll('.wish-card').forEach(c => c.remove());
+            this.container.querySelectorAll('.wish-card').forEach(c => {
+                c.remove();
+            });
             this.wishes = [];
             this.wishCards = [];
 
@@ -307,7 +309,9 @@ class WishDisplay {
             const shuffled = [...serverWishes].sort(() => 0.5 - Math.random());
             const selected = shuffled.slice(0, maxVisible);
 
-            selected.forEach(wish => this.addWish(wish, false));
+            selected.forEach(wish => {
+                this.addWish(wish, false);
+            });
             this.updateCounter();
         });
 
@@ -414,14 +418,18 @@ class WishDisplay {
             console.log('🎭 Gösterim modu değişti:', mode);
             this.displayMode = mode;
             // Tüm kartları temizle ve yeni modda yeniden oluştur
-            this.container.querySelectorAll('.wish-card').forEach(c => c.remove());
+            this.container.querySelectorAll('.wish-card').forEach(c => {
+                c.remove();
+            });
             this.wishCards = [];
             this.wishes = [];
             const maxVisible = this.displayMode === 'lantern' ? this.getAdaptiveMaxVisible() : ((this.displaySettings && this.displaySettings.maxVisible) || 12);
             if (this.allServerWishes && this.allServerWishes.length > 0) {
                 const shuffled = [...this.allServerWishes].sort(() => 0.5 - Math.random());
                 const selected = shuffled.slice(0, maxVisible);
-                selected.forEach(wish => this.addWish(wish, false));
+                selected.forEach(wish => {
+                    this.addWish(wish, false);
+                });
             }
         });
     }
@@ -431,12 +439,19 @@ class WishDisplay {
         const scale = this.displaySettings.scaleMultiplier || 1.0;
         const speed = this.displaySettings.speedMultiplier || 1.0;
         const maxVisible = this.displayMode === 'lantern' ? this.getAdaptiveMaxVisible() : ((this.displaySettings && this.displaySettings.maxVisible) || 20);
+        const logoOffsetPx = typeof this.displaySettings.logoOffsetPx === 'number' ? this.displaySettings.logoOffsetPx : 0;
+        const headerOffsetPx = typeof this.displaySettings.headerOffsetPx === 'number' ? this.displaySettings.headerOffsetPx : 0;
         console.log(`📺 Ayarlar uygulanıyor: Hız=${speed}x, Ölçek=${scale}x, Max=${maxVisible}`);
 
         // screenMode artık otomatik — her ekran kendi aspect ratio'suna göre ayarlanıyor
 
         // CSS değişkenini ayarla (transform'da kullanılıyor)
         document.documentElement.style.setProperty('--card-scale', scale);
+        document.documentElement.style.setProperty('--logo-offset', `${logoOffsetPx}px`);
+        document.documentElement.style.setProperty('--header-offset', `${headerOffsetPx}px`);
+
+        // Gündüz modu sınıfı
+        document.documentElement.classList.toggle('day-mode', !!this.displaySettings.dayMode);
 
         // Mevcut tüm kartlara ölçeği anında uygula
         this.wishCards.forEach(cardData => {
@@ -463,7 +478,9 @@ class WishDisplay {
             const available = this.allServerWishes.filter(w => !currentIds.has(w.id));
             const shuffled = [...available].sort(() => 0.5 - Math.random());
             const toAdd = shuffled.slice(0, maxVisible - this.wishCards.length);
-            toAdd.forEach(wish => this.addWish(wish, false));
+            toAdd.forEach(wish => {
+                this.addWish(wish, false);
+            });
         }
     }
 
@@ -989,7 +1006,9 @@ class WishDisplay {
         });
 
         setTimeout(() => {
-            cards.forEach(c => c.remove());
+            cards.forEach(c => {
+                c.remove();
+            });
         }, 800);
 
         this.wishes = [];
