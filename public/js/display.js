@@ -453,6 +453,10 @@ class WishDisplay {
         // Gündüz modu sınıfı
         document.documentElement.classList.toggle('day-mode', !!this.displaySettings.dayMode);
 
+        // Logo ve başlık çakışmasını önle (ekranlar arası ölçek farkı)
+        this.updateHeaderLogoSpacing();
+        requestAnimationFrame(() => this.updateHeaderLogoSpacing());
+
         // Mevcut tüm kartlara ölçeği anında uygula
         this.wishCards.forEach(cardData => {
             const depthScale = this.displayMode === 'lantern' ? scale * (cardData.zDepth || 1) : scale;
@@ -484,6 +488,20 @@ class WishDisplay {
         }
     }
 
+    updateHeaderLogoSpacing() {
+        const logoBar = document.querySelector('.logos-top-bar');
+        const headerBox = document.querySelector('.header-title-box');
+        if (!logoBar || !headerBox) return;
+
+        const gap = 16;
+        const logoRect = logoBar.getBoundingClientRect();
+        const headerRect = headerBox.getBoundingClientRect();
+        const overlap = (logoRect.bottom + gap) - headerRect.top;
+        const safeOffset = overlap > 0 ? -Math.ceil(overlap) : 0;
+
+        document.documentElement.style.setProperty('--header-safe-offset', `${safeOffset}px`);
+    }
+
     // === EVENTS ===
     bindEvents() {
         // Spotlight overlay'e tıklayınca kapat
@@ -495,6 +513,7 @@ class WishDisplay {
         window.addEventListener('resize', () => {
             // Balonlar yeni algoritmada tamamen özgür aktığı için resize sırasında 
             // balonların yerini zorla sınırlandırmaya gerek yoktur.
+            this.updateHeaderLogoSpacing();
         });
 
         // Fullscreen

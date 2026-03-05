@@ -375,7 +375,7 @@ html.day-mode .display-container {
 .header-title-box {
     position: absolute;
     top: auto;
-    bottom: calc(clamp(140px, 12vh, 260px) - 56px + var(--header-offset, 0px));
+    bottom: calc(clamp(140px, 12vh, 260px) - 56px + var(--header-offset, 0px) + var(--header-safe-offset, 0px));
     left: 50%;
     transform: translateX(-50%);
     z-index: 200;
@@ -541,7 +541,7 @@ html.day-mode .display-container {
     }
     .logos-top-image { max-height: clamp(50px, 8vh, 120px); }
     .header-title-box {
-        bottom: calc(clamp(120px, 10vh, 200px) - 48px + var(--header-offset, 0px));
+        bottom: calc(clamp(120px, 10vh, 200px) - 48px + var(--header-offset, 0px) + var(--header-safe-offset, 0px));
         padding: 14px 20px;
         top: auto;
     }
@@ -583,7 +583,7 @@ html.day-mode .display-container {
     .bakanlik-logo { max-width: 100% !important; max-height: 36px !important; }
     .akm-logo      { max-width: 100% !important; max-height: 34px !important; }
     .logo-box--right .title-logo { max-width: 100% !important; max-height: 34px !important; }
-    .header-title-box { padding: 14px 20px !important; top: auto !important; bottom: calc(clamp(120px, 10vh, 200px) - 48px + var(--header-offset, 0px)) !important; }
+    .header-title-box { padding: 14px 20px !important; top: auto !important; bottom: calc(clamp(120px, 10vh, 200px) - 48px + var(--header-offset, 0px) + var(--header-safe-offset, 0px)) !important; }
     .header-line1, .header-line2 { font-size: clamp(15px, 2.6vw, 24px) !important; letter-spacing: clamp(0.4px, 0.25vw, 2.25px) !important; }
 }
 
