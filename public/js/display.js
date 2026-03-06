@@ -455,6 +455,24 @@ class WishDisplay {
         document.documentElement.style.setProperty('--logo-scale', logoScale.toString());
         document.documentElement.style.setProperty('--header-scale', headerScale.toString());
 
+        // Ayrı logo boyutları
+        const bakanlikScale = typeof this.displaySettings.bakanlikScale === 'number' ? this.displaySettings.bakanlikScale : 1;
+        const akmScale = typeof this.displaySettings.akmScale === 'number' ? this.displaySettings.akmScale : 1;
+        document.documentElement.style.setProperty('--bakanlik-scale', bakanlikScale.toString());
+        document.documentElement.style.setProperty('--akm-scale', akmScale.toString());
+
+        // Logo X/Y pozisyon (piksel)
+        const logoTopX = typeof this.displaySettings.logoTopX === 'number' ? this.displaySettings.logoTopX : 0;
+        const logoTopY = typeof this.displaySettings.logoTopY === 'number' ? this.displaySettings.logoTopY : 0;
+        document.documentElement.style.setProperty('--logo-top-x', `${logoTopX}px`);
+        document.documentElement.style.setProperty('--logo-top-y', `${logoTopY}px`);
+
+        // Başlık X/Y pozisyon (piksel)
+        const headerX = typeof this.displaySettings.headerX === 'number' ? this.displaySettings.headerX : 0;
+        const headerY = typeof this.displaySettings.headerY === 'number' ? this.displaySettings.headerY : 0;
+        document.documentElement.style.setProperty('--header-x', `${headerX}px`);
+        document.documentElement.style.setProperty('--header-y', `${headerY}px`);
+
         // Gündüz modu sınıfı
         document.documentElement.classList.toggle('day-mode', !!this.displaySettings.dayMode);
 
@@ -533,7 +551,7 @@ class WishDisplay {
         }
 
         if (document.fonts && document.fonts.ready) {
-            document.fonts.ready.then(schedule).catch(() => {});
+            document.fonts.ready.then(schedule).catch(() => { });
         }
 
         window.addEventListener('load', schedule, { once: true });
@@ -735,14 +753,14 @@ class WishDisplay {
             zDepth: zDepth,
             // Salınım: çoklu sinüs ile doğal rüzgar akışı
             swayPhase: Math.random() * Math.PI * 2,
-            swayFreq:  0.004 + Math.random() * 0.004,
-            swayAmp:   tempSwayAmp,
+            swayFreq: 0.004 + Math.random() * 0.004,
+            swayAmp: tempSwayAmp,
             sway2Phase: Math.random() * Math.PI * 2,
-            sway2Freq:  0.009 + Math.random() * 0.007,
-            sway2Amp:   10 + Math.random() * 15,   // 10-25px (daraltıldı)
+            sway2Freq: 0.009 + Math.random() * 0.007,
+            sway2Amp: 10 + Math.random() * 15,   // 10-25px (daraltıldı)
             swayYPhase: Math.random() * Math.PI * 2,
-            swayYFreq:  0.003 + Math.random() * 0.003,
-            swayYAmp:   5 + Math.random() * 8,
+            swayYFreq: 0.003 + Math.random() * 0.003,
+            swayYAmp: 5 + Math.random() * 8,
             swayBaseX: x,
             rising: !isNewWishEntry,                  // Yeni dilek zaten görünür
             opacity: isNewWishEntry ? (0.5 + zDepth * 0.5) : 0,
@@ -799,7 +817,7 @@ class WishDisplay {
                     cardData.sway2Phase += cardData.sway2Freq * currentSpeedMulti;
                     cardData.swayYPhase += cardData.swayYFreq * currentSpeedMulti;
                     const swayX = Math.sin(cardData.swayPhase) * cardData.swayAmp
-                              + Math.sin(cardData.sway2Phase) * cardData.sway2Amp;
+                        + Math.sin(cardData.sway2Phase) * cardData.sway2Amp;
                     // === SOFT ANTI-OVERLAP DRIFT ===
                     // Very gentle horizontal push when cards get too close
                     const scaledCardW = cardWidth * currentScale;
@@ -825,10 +843,10 @@ class WishDisplay {
                     cardData.swayBaseX = Math.max(swayMinX, Math.min(swayMaxX, cardData.swayBaseX));
 
                     cardData.x = cardData.swayBaseX + swayX;
-                    
+
                     // Soft boundary clamp — pencere küçültüldüğünde fener ekran dışına çıkmasın
                     cardData.x = Math.max(80, Math.min(cw - 320 - 80, cardData.x));
-                    
+
                     cardData.y += Math.sin(cardData.swayYPhase) * cardData.swayYAmp * 0.02;
 
                     // swayBaseX sınırları — fener kenara çıkmasın
@@ -960,27 +978,27 @@ class WishDisplay {
         // minX/maxX account for sway amplitude so cards don't swing off-screen
         const minX = 80 + swayAmp;  // paddingSides + swayAmp — kenara yapışmasın
         const maxX = cw - cardWidth - swayAmp;
-        
+
         // Collect positions of on-screen cards
         const ch = this.container.offsetHeight;
         const onScreen = this.wishCards.filter(c => c.y > -600 && c.y < ch + 500);
-        
+
         if (onScreen.length === 0) {
             // No cards — random position
             return minX + Math.random() * Math.max(0, maxX - minX);
         }
-        
+
         // Generate 12 evenly-spaced candidate X positions
         const numCandidates = 12;
         const candidates = [];
         for (let i = 0; i < numCandidates; i++) {
             candidates.push(minX + (i / (numCandidates - 1)) * Math.max(0, maxX - minX));
         }
-        
+
         // Score each candidate: find minimum 2D distance to any existing card
         let bestX = candidates[0];
         let bestMinDist = -1;
-        
+
         for (const cx of candidates) {
             let minDist = Infinity;
             for (const card of onScreen) {
@@ -995,11 +1013,11 @@ class WishDisplay {
                 bestX = cx;
             }
         }
-        
+
         // Add small random jitter (±5% of available width) for organic feel
         const jitter = (Math.random() - 0.5) * (maxX - minX) * 0.1;
         bestX = Math.max(minX, Math.min(maxX, bestX + jitter));
-        
+
         return bestX;
     }
 

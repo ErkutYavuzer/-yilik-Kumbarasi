@@ -925,6 +925,12 @@ async function saveDisplaySettings() {
         headerOffsetPx: parseInt(document.getElementById('display-header-offset').value),
         logoScale: parseInt(document.getElementById('display-logo-scale').value) / 100,
         headerScale: parseInt(document.getElementById('display-header-scale').value) / 100,
+        bakanlikScale: parseInt(document.getElementById('display-bakanlik-scale').value) / 100,
+        akmScale: parseInt(document.getElementById('display-akm-scale').value) / 100,
+        logoTopX: parseInt(document.getElementById('display-logo-x').value),
+        logoTopY: parseInt(document.getElementById('display-logo-y').value),
+        headerX: parseInt(document.getElementById('display-header-x').value),
+        headerY: parseInt(document.getElementById('display-header-y').value),
         dayMode: !!document.getElementById('display-daymode')?.checked
     };
     try {
@@ -982,6 +988,44 @@ function setDisplaySettingsUI(data) {
         const dayLabel = document.getElementById('display-daymode-label');
         if (dayToggle) dayToggle.checked = !!data.dayMode;
         if (dayLabel) dayLabel.textContent = data.dayMode ? 'Açık' : 'Kapalı';
+    }
+    if (data.bakanlikScale !== undefined) {
+        const el = document.getElementById('display-bakanlik-scale');
+        const v = Math.round(data.bakanlikScale * 100);
+        if (el) el.value = v;
+        const lbl = document.getElementById('bakanlik-scale-value');
+        if (lbl) lbl.textContent = v + '%';
+    }
+    if (data.akmScale !== undefined) {
+        const el = document.getElementById('display-akm-scale');
+        const v = Math.round(data.akmScale * 100);
+        if (el) el.value = v;
+        const lbl = document.getElementById('akm-scale-value');
+        if (lbl) lbl.textContent = v + '%';
+    }
+    if (data.logoTopX !== undefined) {
+        const el = document.getElementById('display-logo-x');
+        if (el) el.value = data.logoTopX;
+        const lbl = document.getElementById('logo-x-value');
+        if (lbl) lbl.textContent = data.logoTopX + 'px';
+    }
+    if (data.logoTopY !== undefined) {
+        const el = document.getElementById('display-logo-y');
+        if (el) el.value = data.logoTopY;
+        const lbl = document.getElementById('logo-y-value');
+        if (lbl) lbl.textContent = data.logoTopY + 'px';
+    }
+    if (data.headerX !== undefined) {
+        const el = document.getElementById('display-header-x');
+        if (el) el.value = data.headerX;
+        const lbl = document.getElementById('header-x-value');
+        if (lbl) lbl.textContent = data.headerX + 'px';
+    }
+    if (data.headerY !== undefined) {
+        const el = document.getElementById('display-header-y');
+        if (el) el.value = data.headerY;
+        const lbl = document.getElementById('header-y-value');
+        if (lbl) lbl.textContent = data.headerY + 'px';
     }
     if (data.screenMode) {
         document.querySelectorAll('.screen-mode-btn').forEach(btn => {
@@ -1209,14 +1253,14 @@ function renderPendingWishes() {
     const tbody = document.getElementById('pending-tbody');
     const empty = document.getElementById('pending-empty');
     const approveAllBtn = document.getElementById('btn-approve-all');
-    
+
     if (!pendingWishes.length) {
         if (tbody) tbody.parentElement.parentElement.style.display = 'none';
         if (empty) empty.style.display = 'block';
         if (approveAllBtn) approveAllBtn.style.display = 'none';
         return;
     }
-    
+
     if (tbody) {
         tbody.parentElement.parentElement.style.display = 'block';
         tbody.innerHTML = pendingWishes.map(w => `

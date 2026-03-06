@@ -270,9 +270,10 @@ html.day-mode .display-container {
 
 .logos-top-bar {
     position: absolute;
-    top: calc(clamp(24px, 3vh, 80px) + 24px + var(--logo-offset, 0px));
-    left: 50%;
+    top: calc(clamp(24px, 3vh, 80px) + 24px + var(--logo-offset, 0px) + var(--logo-top-y, 0px));
+    left: calc(50% + var(--logo-top-x, 0px));
     transform: translateX(-50%);
+    gap: 24px;
     width: min(92vw, 1800px);
     display: flex;
     justify-content: center;
@@ -377,8 +378,8 @@ html.day-mode .display-container {
 .header-title-box {
     position: absolute;
     top: auto;
-    bottom: calc(clamp(140px, 12vh, 260px) - 56px + var(--header-offset, 0px) + var(--header-safe-offset, 0px));
-    left: 50%;
+    bottom: calc(clamp(140px, 12vh, 260px) - 56px + var(--header-offset, 0px) + var(--header-safe-offset, 0px) + var(--header-y, 0px));
+    left: calc(50% + var(--header-x, 0px));
     transform: translateX(-50%) scale(var(--header-scale, 1));
     transform-origin: center top;
     z-index: 200;

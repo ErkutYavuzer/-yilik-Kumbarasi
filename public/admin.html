@@ -69,7 +69,9 @@
             </button>
 
             <button type="button" class="nav-item" onclick="switchTab('pending', this)">
-                <span class="icon" title="Bekleyen Dilekler"><i data-lucide="clock"></i></span> <span class="nav-text">Bekleyen Dilekler <span class="pending-badge" id="pending-badge" style="background:#FF6B6B;color:white;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:700;margin-left:4px;display:none;">0</span></span>
+                <span class="icon" title="Bekleyen Dilekler"><i data-lucide="clock"></i></span> <span
+                    class="nav-text">Bekleyen Dilekler <span class="pending-badge" id="pending-badge"
+                        style="background:#FF6B6B;color:white;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:700;margin-left:4px;display:none;">0</span></span>
             </button>
 
             <button type="button" class="nav-item" onclick="switchTab('slideshow', this)">
@@ -113,7 +115,8 @@
             <div class="theme-toggle">
                 <span class="nav-text">Tema</span>
                 <div class="mode-pills">
-                    <button type="button" class="mode-pill active" id="pill-dark" onclick="setUIMode('dark')">🌙</button>
+                    <button type="button" class="mode-pill active" id="pill-dark"
+                        onclick="setUIMode('dark')">🌙</button>
                     <button type="button" class="mode-pill" id="pill-light" onclick="setUIMode('light')">☀️</button>
                 </div>
             </div>
@@ -356,45 +359,161 @@
                     <div class="settings-grid">
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="gauge"
-                                    style="width:14px;height:14px;vertical-align:middle;"></i> Animasyon Hızı <span id="speed-value" style="color:var(--accent);font-weight:700;margin-left:6px;">1.0x</span></div>
-                            <input type="range" class="setting-range" id="display-speed" min="0.1" max="5.0" step="0.1" value="1.0" oninput="updateSpeedLabel(this.value)" onchange="saveDisplaySettings()">
-                            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;"><span>0.1x</span><span>5.0x</span></div>
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Animasyon Hızı <span
+                                    id="speed-value"
+                                    style="color:var(--accent);font-weight:700;margin-left:6px;">1.0x</span></div>
+                            <input type="range" class="setting-range" id="display-speed" min="0.1" max="5.0" step="0.1"
+                                value="1.0" oninput="updateSpeedLabel(this.value)" onchange="saveDisplaySettings()">
+                            <div
+                                style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
+                                <span>0.1x</span><span>5.0x</span></div>
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="scaling"
-                                    style="width:14px;height:14px;vertical-align:middle;"></i> Fener Büyüklüğü <span id="scale-value" style="color:var(--accent);font-weight:700;margin-left:6px;">1.0x</span></div>
-                            <input type="range" class="setting-range" id="display-scale" min="0.1" max="5.0" step="0.05" value="1.0" oninput="updateScaleLabel(this.value)" onchange="saveDisplaySettings()">
-                            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;"><span>0.1x</span><span>5.0x</span></div>
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Fener Büyüklüğü <span
+                                    id="scale-value"
+                                    style="color:var(--accent);font-weight:700;margin-left:6px;">1.0x</span></div>
+                            <input type="range" class="setting-range" id="display-scale" min="0.1" max="5.0" step="0.05"
+                                value="1.0" oninput="updateScaleLabel(this.value)" onchange="saveDisplaySettings()">
+                            <div
+                                style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
+                                <span>0.1x</span><span>5.0x</span></div>
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="layers"
-                                    style="width:14px;height:14px;vertical-align:middle;"></i> Maksimum Dilek Sayısı <span id="maxvisible-value" style="color:var(--accent);font-weight:700;margin-left:6px;">20</span></div>
-                            <input type="range" class="setting-range" id="display-maxvisible" min="1" max="100" step="1" value="20" oninput="updateMaxVisibleLabel(this.value)" onchange="saveDisplaySettings()">
-                            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;"><span>1</span><span>100</span></div>
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Maksimum Dilek Sayısı
+                                <span id="maxvisible-value"
+                                    style="color:var(--accent);font-weight:700;margin-left:6px;">20</span></div>
+                            <input type="range" class="setting-range" id="display-maxvisible" min="1" max="100" step="1"
+                                value="20" oninput="updateMaxVisibleLabel(this.value)" onchange="saveDisplaySettings()">
+                            <div
+                                style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
+                                <span>1</span><span>100</span></div>
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="image-down"
-                                    style="width:14px;height:14px;vertical-align:middle;"></i> Logo Üst Şerit Ofseti <span id="logo-offset-value" style="color:var(--accent);font-weight:700;margin-left:6px;">0px</span></div>
-                            <input type="range" class="setting-range" id="display-logo-offset" min="-1200" max="1200" step="4" value="0" oninput="updateLogoOffsetLabel(this.value)" onchange="saveDisplaySettings()">
-                            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;"><span>-1200px</span><span>1200px</span></div>
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Logo Üst Şerit Ofseti
+                                <span id="logo-offset-value"
+                                    style="color:var(--accent);font-weight:700;margin-left:6px;">0px</span></div>
+                            <input type="range" class="setting-range" id="display-logo-offset" min="-1200" max="1200"
+                                step="4" value="0" oninput="updateLogoOffsetLabel(this.value)"
+                                onchange="saveDisplaySettings()">
+                            <div
+                                style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
+                                <span>-1200px</span><span>1200px</span></div>
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="maximize"
-                                    style="width:14px;height:14px;vertical-align:middle;"></i> Logo Boyutu <span id="logo-scale-value" style="color:var(--accent);font-weight:700;margin-left:6px;">100%</span></div>
-                            <input type="range" class="setting-range" id="display-logo-scale" min="60" max="160" step="2" value="100" oninput="updateLogoScaleLabel(this.value)" onchange="saveDisplaySettings()">
-                            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;"><span>60%</span><span>160%</span></div>
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Logo Boyutu <span
+                                    id="logo-scale-value"
+                                    style="color:var(--accent);font-weight:700;margin-left:6px;">100%</span></div>
+                            <input type="range" class="setting-range" id="display-logo-scale" min="60" max="160"
+                                step="2" value="100" oninput="updateLogoScaleLabel(this.value)"
+                                onchange="saveDisplaySettings()">
+                            <div
+                                style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
+                                <span>60%</span><span>160%</span></div>
+                        </div>
+                        <div class="setting-card">
+                            <div class="setting-label"><i data-lucide="maximize"
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Bakanlık Logo Boyutu
+                                <span id="bakanlik-scale-value"
+                                    style="color:var(--accent);font-weight:700;margin-left:6px;">100%</span></div>
+                            <input type="range" class="setting-range" id="display-bakanlik-scale" min="20" max="300"
+                                step="5" value="100"
+                                oninput="document.getElementById('bakanlik-scale-value').textContent=this.value+'%'"
+                                onchange="saveDisplaySettings()">
+                            <div
+                                style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
+                                <span>20%</span><span>300%</span></div>
+                        </div>
+                        <div class="setting-card">
+                            <div class="setting-label"><i data-lucide="maximize"
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> AKM Logo Boyutu <span
+                                    id="akm-scale-value"
+                                    style="color:var(--accent);font-weight:700;margin-left:6px;">100%</span></div>
+                            <input type="range" class="setting-range" id="display-akm-scale" min="20" max="300" step="5"
+                                value="100"
+                                oninput="document.getElementById('akm-scale-value').textContent=this.value+'%'"
+                                onchange="saveDisplaySettings()">
+                            <div
+                                style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
+                                <span>20%</span><span>300%</span></div>
+                        </div>
+                        <div class="setting-card">
+                            <div class="setting-label"><i data-lucide="move"
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Logo X Pozisyon <span
+                                    id="logo-x-value"
+                                    style="color:var(--accent);font-weight:700;margin-left:6px;">0px</span></div>
+                            <input type="range" class="setting-range" id="display-logo-x" min="-480" max="480" step="4"
+                                value="0" oninput="document.getElementById('logo-x-value').textContent=this.value+'px'"
+                                onchange="saveDisplaySettings()">
+                            <div
+                                style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
+                                <span>-480px</span><span>480px</span></div>
+                        </div>
+                        <div class="setting-card">
+                            <div class="setting-label"><i data-lucide="move"
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Logo Y Pozisyon <span
+                                    id="logo-y-value"
+                                    style="color:var(--accent);font-weight:700;margin-left:6px;">0px</span></div>
+                            <input type="range" class="setting-range" id="display-logo-y" min="-1200" max="1200"
+                                step="4" value="0"
+                                oninput="document.getElementById('logo-y-value').textContent=this.value+'px'"
+                                onchange="saveDisplaySettings()">
+                            <div
+                                style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
+                                <span>-1200px</span><span>1200px</span></div>
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="type"
-                                    style="width:14px;height:14px;vertical-align:middle;"></i> Başlık Ofseti <span id="header-offset-value" style="color:var(--accent);font-weight:700;margin-left:6px;">0px</span></div>
-                            <input type="range" class="setting-range" id="display-header-offset" min="-1200" max="1200" step="4" value="0" oninput="updateHeaderOffsetLabel(this.value)" onchange="saveDisplaySettings()">
-                            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;"><span>-1200px</span><span>1200px</span></div>
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Başlık Ofseti <span
+                                    id="header-offset-value"
+                                    style="color:var(--accent);font-weight:700;margin-left:6px;">0px</span></div>
+                            <input type="range" class="setting-range" id="display-header-offset" min="-1200" max="1200"
+                                step="4" value="0" oninput="updateHeaderOffsetLabel(this.value)"
+                                onchange="saveDisplaySettings()">
+                            <div
+                                style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
+                                <span>-1200px</span><span>1200px</span></div>
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="type"
-                                    style="width:14px;height:14px;vertical-align:middle;"></i> Başlık Boyutu <span id="header-scale-value" style="color:var(--accent);font-weight:700;margin-left:6px;">100%</span></div>
-                            <input type="range" class="setting-range" id="display-header-scale" min="60" max="160" step="2" value="100" oninput="updateHeaderScaleLabel(this.value)" onchange="saveDisplaySettings()">
-                            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;"><span>60%</span><span>160%</span></div>
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Başlık Boyutu <span
+                                    id="header-scale-value"
+                                    style="color:var(--accent);font-weight:700;margin-left:6px;">100%</span></div>
+                            <input type="range" class="setting-range" id="display-header-scale" min="60" max="160"
+                                step="2" value="100" oninput="updateHeaderScaleLabel(this.value)"
+                                onchange="saveDisplaySettings()">
+                            <div
+                                style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
+                                <span>60%</span><span>160%</span></div>
+                        </div>
+                        <div class="setting-card">
+                            <div class="setting-label"><i data-lucide="move"
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Başlık X Pozisyon <span
+                                    id="header-x-value"
+                                    style="color:var(--accent);font-weight:700;margin-left:6px;">0px</span></div>
+                            <input type="range" class="setting-range" id="display-header-x" min="-480" max="480"
+                                step="4" value="0"
+                                oninput="document.getElementById('header-x-value').textContent=this.value+'px'"
+                                onchange="saveDisplaySettings()">
+                            <div
+                                style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
+                                <span>-480px</span><span>480px</span></div>
+                        </div>
+                        <div class="setting-card">
+                            <div class="setting-label"><i data-lucide="move"
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Başlık Y Pozisyon <span
+                                    id="header-y-value"
+                                    style="color:var(--accent);font-weight:700;margin-left:6px;">0px</span></div>
+                            <input type="range" class="setting-range" id="display-header-y" min="-1200" max="1200"
+                                step="4" value="0"
+                                oninput="document.getElementById('header-y-value').textContent=this.value+'px'"
+                                onchange="saveDisplaySettings()">
+                            <div
+                                style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
+                                <span>-1200px</span><span>1200px</span></div>
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="sun"
@@ -416,9 +535,13 @@
             <!-- ── BEKLEYEN DİLEKLER ── -->
             <div class="tab-panel" id="tab-pending">
                 <div class="card">
-                    <div class="card-title"><i data-lucide="clock" style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Onay Bekleyen Dilekler</div>
+                    <div class="card-title"><i data-lucide="clock"
+                            style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Onay Bekleyen
+                        Dilekler</div>
                     <div style="display:flex; gap:10px; margin-bottom:16px;">
-                        <button type="button" class="btn btn-primary" onclick="approveAllPending()" id="btn-approve-all"><i data-lucide="check-circle" style="width:16px;height:16px;"></i> Tümünü Onayla</button>
+                        <button type="button" class="btn btn-primary" onclick="approveAllPending()"
+                            id="btn-approve-all"><i data-lucide="check-circle" style="width:16px;height:16px;"></i>
+                            Tümünü Onayla</button>
                     </div>
                     <div class="table-responsive">
                         <table class="data-table">
@@ -431,12 +554,15 @@
                                 </tr>
                             </thead>
                             <tbody id="pending-tbody">
-                                <tr><td colspan="4" style="text-align:center; color:var(--text3);">Yükleniyor...</td></tr>
+                                <tr>
+                                    <td colspan="4" style="text-align:center; color:var(--text3);">Yükleniyor...</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                     <div id="pending-empty" style="display:none; text-align:center; padding:40px; color:var(--text3);">
-                        <i data-lucide="check-circle-2" style="width:48px;height:48px;margin-bottom:12px;opacity:0.3;display:block;margin:0 auto 12px;"></i>
+                        <i data-lucide="check-circle-2"
+                            style="width:48px;height:48px;margin-bottom:12px;opacity:0.3;display:block;margin:0 auto 12px;"></i>
                         <p>Bekleyen dilek yok — tüm dilekler onaylanmış!</p>
                     </div>
                 </div>
@@ -455,8 +581,8 @@
                             <option value="30">30 saniye</option>
                             <option value="60">60 saniye</option>
                         </select>
-                        <button type="button" class="btn btn-primary" id="auto-start-btn" onclick="startAutoSpotlight()"><i
-                                data-lucide="play" style="width:16px;height:16px;"></i>
+                        <button type="button" class="btn btn-primary" id="auto-start-btn"
+                            onclick="startAutoSpotlight()"><i data-lucide="play" style="width:16px;height:16px;"></i>
                             Başlat</button>
                         <button type="button" class="btn btn-danger" id="auto-stop-btn" onclick="stopAutoSpotlight()"
                             style="display:none"><i data-lucide="square" style="width:16px;height:16px;"></i>
@@ -476,8 +602,8 @@
                             style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Arkaplan Teması
                     </div>
                     <div class="theme-grid" id="theme-grid">
-                        <button type="button" class="theme-option active" data-theme="turktelekom" onclick="setTheme('turktelekom')"><i
-                                data-lucide="radio-tower"
+                        <button type="button" class="theme-option active" data-theme="turktelekom"
+                            onclick="setTheme('turktelekom')"><i data-lucide="radio-tower"
                                 style="width:16px;height:16px;margin:auto;display:block;margin-bottom:6px;"></i> Türk
                             Telekom</button>
                     </div>
@@ -487,12 +613,12 @@
                             style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Gösterim Teması
                     </div>
                     <div class="theme-grid" id="display-mode-grid">
-                        <button type="button" class="display-mode-option theme-option active" data-mode="balloon" onclick="setDisplayMode('balloon')"><i
-                                data-lucide="circle"
+                        <button type="button" class="display-mode-option theme-option active" data-mode="balloon"
+                            onclick="setDisplayMode('balloon')"><i data-lucide="circle"
                                 style="width:16px;height:16px;margin:auto;display:block;margin-bottom:6px;"></i>
                             Balon</button>
-                        <button type="button" class="display-mode-option theme-option" data-mode="lantern" onclick="setDisplayMode('lantern')"><i
-                                data-lucide="flame"
+                        <button type="button" class="display-mode-option theme-option" data-mode="lantern"
+                            onclick="setDisplayMode('lantern')"><i data-lucide="flame"
                                 style="width:16px;height:16px;margin:auto;display:block;margin-bottom:6px;"></i>
                             Dilek Feneri</button>
                     </div>
@@ -618,7 +744,8 @@
                     </div>
 
                     <div class="bulk-actions" id="bulk-actions" style="display:none;">
-                        <button type="button" class="btn btn-danger" onclick="confirmDeleteSelected()" style="padding: 10px 14px;">
+                        <button type="button" class="btn btn-danger" onclick="confirmDeleteSelected()"
+                            style="padding: 10px 14px;">
                             <i data-lucide="trash-2" style="width:16px;height:16px;"></i> Seçilenleri Sil (<span
                                 id="selected-count">0</span>)
                         </button>
@@ -783,7 +910,8 @@
 
             <div class="modal-actions" style="margin-top: 0;">
                 <button type="button" class="btn btn-ghost" onclick="closeEditModal()">İptal</button>
-                <button type="button" class="btn btn-primary" id="edit-save-btn" onclick="saveEditedWish()">Kaydet</button>
+                <button type="button" class="btn btn-primary" id="edit-save-btn"
+                    onclick="saveEditedWish()">Kaydet</button>
             </div>
         </div>
     </div>
