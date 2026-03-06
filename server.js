@@ -283,6 +283,12 @@ let displaySettings = {
     headerOffsetPx: typeof savedDisplaySettings.headerOffsetPx === 'number' ? savedDisplaySettings.headerOffsetPx : 0,
     logoScale: typeof savedDisplaySettings.logoScale === 'number' ? savedDisplaySettings.logoScale : 1,
     headerScale: typeof savedDisplaySettings.headerScale === 'number' ? savedDisplaySettings.headerScale : 1,
+    bakanlikScale: typeof savedDisplaySettings.bakanlikScale === 'number' ? savedDisplaySettings.bakanlikScale : 1,
+    akmScale: typeof savedDisplaySettings.akmScale === 'number' ? savedDisplaySettings.akmScale : 1,
+    logoTopX: typeof savedDisplaySettings.logoTopX === 'number' ? savedDisplaySettings.logoTopX : 0,
+    logoTopY: typeof savedDisplaySettings.logoTopY === 'number' ? savedDisplaySettings.logoTopY : 0,
+    headerX: typeof savedDisplaySettings.headerX === 'number' ? savedDisplaySettings.headerX : 0,
+    headerY: typeof savedDisplaySettings.headerY === 'number' ? savedDisplaySettings.headerY : 0,
     dayMode: typeof savedDisplaySettings.dayMode === 'boolean' ? savedDisplaySettings.dayMode : false
 };
 
@@ -340,15 +346,21 @@ app.get('/api/display-settings', (req, res) => {
 
 // Ekran Ayarlarını Güncelle API'si
 app.post('/api/display-settings', (req, res) => {
-    const { speedMultiplier, scaleMultiplier, maxVisible, logoOffsetPx, headerOffsetPx, logoScale, headerScale, dayMode } = req.body;
+    const { speedMultiplier, scaleMultiplier, maxVisible, logoOffsetPx, headerOffsetPx, logoScale, headerScale, bakanlikScale, akmScale, logoTopX, logoTopY, headerX, headerY, dayMode } = req.body;
 
     if (typeof speedMultiplier === 'number') displaySettings.speedMultiplier = speedMultiplier;
     if (typeof scaleMultiplier === 'number') displaySettings.scaleMultiplier = scaleMultiplier;
     if (typeof maxVisible === 'number') displaySettings.maxVisible = Math.max(1, Math.min(100, maxVisible));
-    if (typeof logoOffsetPx === 'number') displaySettings.logoOffsetPx = Math.max(-1200, Math.min(1200, logoOffsetPx));
-    if (typeof headerOffsetPx === 'number') displaySettings.headerOffsetPx = Math.max(-1200, Math.min(1200, headerOffsetPx));
-    if (typeof logoScale === 'number') displaySettings.logoScale = Math.max(0.6, Math.min(1.6, logoScale));
-    if (typeof headerScale === 'number') displaySettings.headerScale = Math.max(0.6, Math.min(1.6, headerScale));
+    if (typeof logoOffsetPx === 'number') displaySettings.logoOffsetPx = Math.max(-2160, Math.min(2160, logoOffsetPx));
+    if (typeof headerOffsetPx === 'number') displaySettings.headerOffsetPx = Math.max(-2160, Math.min(2160, headerOffsetPx));
+    if (typeof logoScale === 'number') displaySettings.logoScale = Math.max(0.2, Math.min(3.0, logoScale));
+    if (typeof headerScale === 'number') displaySettings.headerScale = Math.max(0.2, Math.min(3.0, headerScale));
+    if (typeof bakanlikScale === 'number') displaySettings.bakanlikScale = Math.max(0.2, Math.min(3.0, bakanlikScale));
+    if (typeof akmScale === 'number') displaySettings.akmScale = Math.max(0.2, Math.min(3.0, akmScale));
+    if (typeof logoTopX === 'number') displaySettings.logoTopX = Math.max(-2160, Math.min(2160, logoTopX));
+    if (typeof logoTopY === 'number') displaySettings.logoTopY = Math.max(-2160, Math.min(2160, logoTopY));
+    if (typeof headerX === 'number') displaySettings.headerX = Math.max(-2160, Math.min(2160, headerX));
+    if (typeof headerY === 'number') displaySettings.headerY = Math.max(-2160, Math.min(2160, headerY));
     if (typeof dayMode === 'boolean') displaySettings.dayMode = dayMode;
 
     console.log(`

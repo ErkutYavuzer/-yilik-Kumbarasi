@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr" data-theme="dark">
 
 <head>
@@ -19,16 +19,16 @@
 
 <body>
 
-    <!-- ── AUTH OVERLAY ── -->
+    <!-- â”€â”€ AUTH OVERLAY â”€â”€ -->
     <div class="auth-overlay" id="auth-overlay">
         <div class="auth-card">
-            <h2 style="margin-bottom:5px">🔒 Admin Girişi</h2>
-            <p style="color:var(--text3); font-size:14px">Paneli görüntülemek için şifre girin.</p>
-            <input type="password" id="auth-pass" class="auth-input" placeholder="••••" autocomplete="off"
+            <h2 style="margin-bottom:5px">ğŸ”’ Admin GiriÅŸi</h2>
+            <p style="color:var(--text3); font-size:14px">Paneli gÃ¶rÃ¼ntÃ¼lemek iÃ§in ÅŸifre girin.</p>
+            <input type="password" id="auth-pass" class="auth-input" placeholder="â€¢â€¢â€¢â€¢" autocomplete="off"
                 onkeypress="if(event.key === 'Enter') checkAuth()">
             <button type="button" class="btn btn-primary" onclick="checkAuth()"
-                style="width:100%; justify-content:center; padding:12px;">Giriş Yap</button>
-            <p class="auth-error" id="auth-error">Hatalı şifre!</p>
+                style="width:100%; justify-content:center; padding:12px;">GiriÅŸ Yap</button>
+            <p class="auth-error" id="auth-error">HatalÄ± ÅŸifre!</p>
         </div>
     </div>
 
@@ -36,11 +36,11 @@
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
             <div class="logo-text">
-                <h1>🏺 İyilik<br>Kumbarası</h1>
-                <p>Yönetim Paneli</p>
+                <h1>ğŸº Ä°yilik<br>KumbarasÄ±</h1>
+                <p>YÃ¶netim Paneli</p>
             </div>
-            <button type="button" class="sidebar-toggle" id="sidebar-toggle" title="Menüyü Daralt/Aç">
-                <span class="toggle-icon">◀</span>
+            <button type="button" class="sidebar-toggle" id="sidebar-toggle" title="MenÃ¼yÃ¼ Daralt/AÃ§">
+                <span class="toggle-icon">â—€</span>
             </button>
             <div class="sidebar-badge">
                 <span class="dot"></span>
@@ -61,7 +61,7 @@
                     Kod</span>
             </button>
 
-            <div class="nav-label">Araçlar</div>
+            <div class="nav-label">AraÃ§lar</div>
 
             <button type="button" class="nav-item" onclick="switchTab('moderation', this)">
                 <span class="icon" title="Moderasyon"><i data-lucide="shield-check"></i></span> <span
@@ -75,25 +75,25 @@
             </button>
 
             <button type="button" class="nav-item" onclick="switchTab('slideshow', this)">
-                <span class="icon" title="Slayt Gösterisi"><i data-lucide="presentation"></i></span> <span
-                    class="nav-text">Slayt Gösterisi</span>
+                <span class="icon" title="Slayt GÃ¶sterisi"><i data-lucide="presentation"></i></span> <span
+                    class="nav-text">Slayt GÃ¶sterisi</span>
             </button>
 
             <button type="button" class="nav-item" onclick="switchTab('raffle', this)">
-                <span class="icon" title="Çekiliş"><i data-lucide="gift"></i></span> <span
-                    class="nav-text">Çekiliş</span>
+                <span class="icon" title="Ã‡ekiliÅŸ"><i data-lucide="gift"></i></span> <span
+                    class="nav-text">Ã‡ekiliÅŸ</span>
             </button>
 
             <button type="button" class="nav-item" onclick="switchTab('stats', this)">
-                <span class="icon" title="İstatistikler"><i data-lucide="bar-chart-3"></i></span> <span
-                    class="nav-text">İstatistikler</span>
+                <span class="icon" title="Ä°statistikler"><i data-lucide="bar-chart-3"></i></span> <span
+                    class="nav-text">Ä°statistikler</span>
             </button>
 
             <button type="button" class="nav-item" onclick="switchTab('theme', this)">
                 <span class="icon" title="Tema"><i data-lucide="palette"></i></span> <span class="nav-text">Tema</span>
             </button>
 
-            <div class="nav-label">İçerik</div>
+            <div class="nav-label">Ä°Ã§erik</div>
 
             <button type="button" class="nav-item" onclick="switchTab('upload', this)">
                 <span class="icon" title="Dilek Ekle"><i data-lucide="camera"></i></span> <span class="nav-text">Dilek
@@ -101,13 +101,13 @@
             </button>
 
             <button type="button" class="nav-item" onclick="switchTab('wishes', this)">
-                <span class="icon" title="Tüm Dilekler"><i data-lucide="database"></i></span> <span class="nav-text">Tüm
+                <span class="icon" title="TÃ¼m Dilekler"><i data-lucide="database"></i></span> <span class="nav-text">TÃ¼m
                     Dilekler</span>
             </button>
 
             <button type="button" class="nav-item" onclick="switchTab('archive', this)">
-                <span class="icon" title="Arşiv & Kurtarma"><i data-lucide="archive-restore"></i></span> <span
-                    class="nav-text">Arşiv & Kurtarma</span>
+                <span class="icon" title="ArÅŸiv & Kurtarma"><i data-lucide="archive-restore"></i></span> <span
+                    class="nav-text">ArÅŸiv & Kurtarma</span>
             </button>
         </nav>
 
@@ -116,13 +116,13 @@
                 <span class="nav-text">Tema</span>
                 <div class="mode-pills">
                     <button type="button" class="mode-pill active" id="pill-dark"
-                        onclick="setUIMode('dark')">🌙</button>
-                    <button type="button" class="mode-pill" id="pill-light" onclick="setUIMode('light')">☀️</button>
+                        onclick="setUIMode('dark')">ğŸŒ™</button>
+                    <button type="button" class="mode-pill" id="pill-light" onclick="setUIMode('light')">â˜€ï¸</button>
                 </div>
             </div>
             <a href="/display" class="nav-item" style="text-align:center; justify-content:center;">
-                <span class="icon" title="Gösterime Git"><i data-lucide="monitor-play"></i></span> <span
-                    class="nav-text">Gösterime Git</span>
+                <span class="icon" title="GÃ¶sterime Git"><i data-lucide="monitor-play"></i></span> <span
+                    class="nav-text">GÃ¶sterime Git</span>
             </a>
         </div>
     </aside>
@@ -136,37 +136,37 @@
                 <button type="button" class="btn btn-ghost" onclick="spotlightOff()"><i data-lucide="x-circle"
                         style="width:16px;height:16px;"></i> Spotlight Kapat</button>
                 <button type="button" class="btn btn-danger" onclick="confirmClearAll()"><i data-lucide="trash-2"
-                        style="width:16px;height:16px;"></i> Tümünü Sil</button>
+                        style="width:16px;height:16px;"></i> TÃ¼mÃ¼nÃ¼ Sil</button>
             </div>
         </div>
 
         <div class="content">
 
-            <!-- ── DASHBOARD ── -->
+            <!-- â”€â”€ DASHBOARD â”€â”€ -->
             <div class="tab-panel active" id="tab-dashboard">
 
                 <div class="card status-section"
                     style="margin-bottom: 24px; background: rgba(124, 92, 252, 0.05); border-color: rgba(124, 92, 252, 0.2);">
-                    <div class="card-title" style="margin-bottom: 12px; font-size: 12px;">📡 Canlı Sistem Durumu</div>
+                    <div class="card-title" style="margin-bottom: 12px; font-size: 12px;">ğŸ“¡ CanlÄ± Sistem Durumu</div>
                     <div class="status-grid">
                         <div class="status-item">
                             <span class="status-indicator" id="status-server"></span>
                             <div class="status-info">
                                 <div class="status-label">Sunucu</div>
-                                <div class="status-value" id="status-server-text">Bağlanıyor...</div>
+                                <div class="status-value" id="status-server-text">BaÄŸlanÄ±yor...</div>
                             </div>
                         </div>
                         <div class="status-item">
                             <span class="status-indicator" id="status-socket"></span>
                             <div class="status-info">
-                                <div class="status-label">Canlı Akış (Socket)</div>
-                                <div class="status-value" id="status-socket-text">Bağlanıyor...</div>
+                                <div class="status-label">CanlÄ± AkÄ±ÅŸ (Socket)</div>
+                                <div class="status-value" id="status-socket-text">BaÄŸlanÄ±yor...</div>
                             </div>
                         </div>
                         <div class="status-item">
                             <span class="status-indicator" id="status-display"></span>
                             <div class="status-info">
-                                <div class="status-label">Ekran Bağlantısı</div>
+                                <div class="status-label">Ekran BaÄŸlantÄ±sÄ±</div>
                                 <div class="status-value" id="status-display-text">Bilinmiyor</div>
                             </div>
                         </div>
@@ -174,7 +174,7 @@
                             <span class="status-indicator" id="status-slideshow"></span>
                             <div class="status-info">
                                 <div class="status-label">Otomatik Slayt</div>
-                                <div class="status-value" id="status-slideshow-text">Kapalı</div>
+                                <div class="status-value" id="status-slideshow-text">KapalÄ±</div>
                             </div>
                         </div>
                     </div>
@@ -192,27 +192,27 @@
                         <div class="stat-icon blue"><i data-lucide="calendar"></i></div>
                         <div class="stat-info">
                             <div class="stat-value" id="stat-today">0</div>
-                            <div class="stat-label">Bugün Eklenen</div>
+                            <div class="stat-label">BugÃ¼n Eklenen</div>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon gold"><i data-lucide="star"></i></div>
                         <div class="stat-info">
-                            <div class="stat-value" id="stat-spotlight" style="font-size:18px">—</div>
+                            <div class="stat-value" id="stat-spotlight" style="font-size:18px">â€”</div>
                             <div class="stat-label">Son Spotlight</div>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon green"><i data-lucide="shield-check"></i></div>
                         <div class="stat-info">
-                            <div class="stat-value" id="stat-mod" style="font-size:18px; color: var(--green)">AÇIK</div>
+                            <div class="stat-value" id="stat-mod" style="font-size:18px; color: var(--green)">AÃ‡IK</div>
                             <div class="stat-label">AI Moderasyon</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="card">
-                    <div class="card-title">⚡ Hızlı İşlemler</div>
+                    <div class="card-title">âš¡ HÄ±zlÄ± Ä°ÅŸlemler</div>
                     <div style="display:flex; gap:10px; flex-wrap:wrap;">
                         <button type="button" class="btn btn-primary"
                             onclick="switchTab('upload', document.querySelector('.nav-item:nth-child(10)'))"><i
@@ -221,58 +221,58 @@
                         <button type="button" class="btn btn-ghost"
                             onclick="switchTab('slideshow', document.querySelector('.nav-item:nth-child(5)'))"><i
                                 data-lucide="play" style="width:16px;height:16px;"></i> Slayt
-                            Başlat</button>
+                            BaÅŸlat</button>
                         <button type="button" class="btn btn-ghost"
                             onclick="switchTab('qr', document.querySelector('.nav-item:nth-child(2)'))"><i
                                 data-lucide="qr-code" style="width:16px;height:16px;"></i> QR Kod
-                            Göster</button>
+                            GÃ¶ster</button>
                         <button type="button" class="btn btn-ghost" onclick="spotlightOff()"><i data-lucide="x-circle"
                                 style="width:16px;height:16px;"></i> Spotlight Kapat</button>
                     </div>
                 </div>
 
                 <div class="card">
-                    <div class="card-title">🏺 Son Dilekler</div>
+                    <div class="card-title">ğŸº Son Dilekler</div>
                     <div id="recent-grid"
                         style="display:grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap:12px;">
                     </div>
                 </div>
             </div>
 
-            <!-- ── QR ── -->
+            <!-- â”€â”€ QR â”€â”€ -->
             <div class="tab-panel" id="tab-qr">
                 <div class="card">
                     <div class="card-title"><i data-lucide="qr-code"
-                            style="width:18px;height:18px;margin-right:8px;"></i> QR Kod ile Dilek Yükle</div>
+                            style="width:18px;height:18px;margin-right:8px;"></i> QR Kod ile Dilek YÃ¼kle</div>
                     <div class="qr-layout">
                         <div>
                             <div class="qr-box" id="qr-container"></div>
                         </div>
                         <div class="qr-info">
                             <div>
-                                <div class="card-title" style="margin-bottom:8px">Bağlantı Adresi</div>
+                                <div class="card-title" style="margin-bottom:8px">BaÄŸlantÄ± Adresi</div>
                                 <div class="qr-url-box" id="qr-url"></div>
                             </div>
-                            <p class="qr-hint">Çocuklar bu QR kodu okutarak dileklerini yükleyebilir. QR kodu projektöre
-                                göstermek için Gösterim sayfasındaki QR panelini kullanabilirsiniz.</p>
+                            <p class="qr-hint">Ã‡ocuklar bu QR kodu okutarak dileklerini yÃ¼kleyebilir. QR kodu projektÃ¶re
+                                gÃ¶stermek iÃ§in GÃ¶sterim sayfasÄ±ndaki QR panelini kullanabilirsiniz.</p>
                             <button type="button" class="btn btn-ghost"
                                 onclick="switchTab('dashboard', document.querySelector('.nav-item'))"><i
                                     data-lucide="arrow-left" style="width:16px;height:16px;"></i> Dashboard'a
-                                Dön</button>
+                                DÃ¶n</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- ── MODERASYON ── -->
+            <!-- â”€â”€ MODERASYON â”€â”€ -->
             <div class="tab-panel" id="tab-moderation">
                 <div class="card">
                     <div class="mod-header">
                         <div class="mod-title-group">
                             <div class="mod-title"><i data-lucide="bot"
                                     style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> AI
-                                İçerik Moderasyonu</div>
-                            <div class="mod-sub">Tüm dilekler yüklenmeden önce AI ile denetlenir</div>
+                                Ä°Ã§erik Moderasyonu</div>
+                            <div class="mod-sub">TÃ¼m dilekler yÃ¼klenmeden Ã¶nce AI ile denetlenir</div>
                         </div>
                         <div class="toggle-wrap">
                             <label class="toggle" id="mod-toggle-label">
@@ -280,65 +280,65 @@
                                 <div class="toggle-track"></div>
                                 <div class="toggle-thumb"></div>
                             </label>
-                            <span class="mod-status-pill on" id="mod-badge">✅ AÇIK</span>
+                            <span class="mod-status-pill on" id="mod-badge">âœ… AÃ‡IK</span>
                         </div>
                     </div>
 
                     <div class="divider"></div>
 
                     <div class="settings-grid">
-                        <!-- AI Modeli arka planda gemini-3-flash olarak otomatik ayarlanmıştır -->
+                        <!-- AI Modeli arka planda gemini-3-flash olarak otomatik ayarlanmÄ±ÅŸtÄ±r -->
 
                         <div class="setting-card">
-                            <div class="setting-label">🎯 Hassasiyet</div>
+                            <div class="setting-label">ğŸ¯ Hassasiyet</div>
                             <select class="setting-select" id="mod-strictness" onchange="saveModerationSettings()">
-                                <option value="lenient">🟢 Gevşek — Sadece açık küfür</option>
-                                <option value="normal" selected>🟡 Normal — Küfür + Negatif</option>
-                                <option value="strict">🔴 Sert — Sadece pozitif</option>
+                                <option value="lenient">ğŸŸ¢ GevÅŸek â€” Sadece aÃ§Ä±k kÃ¼fÃ¼r</option>
+                                <option value="normal" selected>ğŸŸ¡ Normal â€” KÃ¼fÃ¼r + Negatif</option>
+                                <option value="strict">ğŸ”´ Sert â€” Sadece pozitif</option>
                             </select>
                         </div>
 
                         <div class="setting-card">
-                            <div class="setting-label">📝 İsim / Metin Kontrolü</div>
+                            <div class="setting-label">ğŸ“ Ä°sim / Metin KontrolÃ¼</div>
                             <div class="toggle-sm-wrap" style="margin-top:8px">
                                 <label class="toggle-sm toggle">
                                     <input type="checkbox" id="mod-text" onchange="saveModerationSettings()" checked>
                                     <div class="toggle-track"></div>
                                     <div class="toggle-thumb"></div>
                                 </label>
-                                <span class="toggle-sm-label" id="mod-text-label">Açık</span>
+                                <span class="toggle-sm-label" id="mod-text-label">AÃ§Ä±k</span>
                             </div>
                         </div>
 
                         <div class="setting-card">
-                            <div class="setting-label">🖼️ Fotoğraf Kontrolü</div>
+                            <div class="setting-label">ğŸ–¼ï¸ FotoÄŸraf KontrolÃ¼</div>
                             <div class="toggle-sm-wrap" style="margin-top:8px">
                                 <label class="toggle-sm toggle">
                                     <input type="checkbox" id="mod-image" onchange="saveModerationSettings()" checked>
                                     <div class="toggle-track"></div>
                                     <div class="toggle-thumb"></div>
                                 </label>
-                                <span class="toggle-sm-label" id="mod-image-label">Açık</span>
+                                <span class="toggle-sm-label" id="mod-image-label">AÃ§Ä±k</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="card" style="margin-top: 20px;">
-                    <div class="card-title">📝 Moderasyon Logu (Reddedilenler)</div>
+                    <div class="card-title">ğŸ“ Moderasyon Logu (Reddedilenler)</div>
                     <div class="table-responsive">
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>Çocuk</th>
-                                    <th>İçerik</th>
+                                    <th>Ã‡ocuk</th>
+                                    <th>Ä°Ã§erik</th>
                                     <th>Neden</th>
                                     <th>Tarih</th>
                                 </tr>
                             </thead>
                             <tbody id="mod-log-tbody">
                                 <tr>
-                                    <td colspan="4" style="text-align:center; color:var(--text3);">Loglar yükleniyor...
+                                    <td colspan="4" style="text-align:center; color:var(--text3);">Loglar yÃ¼kleniyor...
                                     </td>
                                 </tr>
                             </tbody>
@@ -351,15 +351,15 @@
                         <div class="mod-title-group">
                             <div class="mod-title"><i data-lucide="monitor-cog"
                                     style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Ekran
-                                Ayarları</div>
-                            <div class="mod-sub">Fener animasyonlarının hızı, büyüklüğü ve sayısı</div>
+                                AyarlarÄ±</div>
+                            <div class="mod-sub">Fener animasyonlarÄ±nÄ±n hÄ±zÄ±, bÃ¼yÃ¼klÃ¼ÄŸÃ¼ ve sayÄ±sÄ±</div>
                         </div>
                     </div>
                     <div class="divider"></div>
                     <div class="settings-grid">
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="gauge"
-                                    style="width:14px;height:14px;vertical-align:middle;"></i> Animasyon Hızı <span
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Animasyon HÄ±zÄ± <span
                                     id="speed-value"
                                     style="color:var(--accent);font-weight:700;margin-left:6px;">1.0x</span></div>
                             <input type="range" class="setting-range" id="display-speed" min="0.1" max="5.0" step="0.1"
@@ -370,7 +370,7 @@
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="scaling"
-                                    style="width:14px;height:14px;vertical-align:middle;"></i> Fener Büyüklüğü <span
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Fener BÃ¼yÃ¼klÃ¼ÄŸÃ¼ <span
                                     id="scale-value"
                                     style="color:var(--accent);font-weight:700;margin-left:6px;">1.0x</span></div>
                             <input type="range" class="setting-range" id="display-scale" min="0.1" max="5.0" step="0.05"
@@ -381,7 +381,7 @@
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="layers"
-                                    style="width:14px;height:14px;vertical-align:middle;"></i> Maksimum Dilek Sayısı
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Maksimum Dilek SayÄ±sÄ±
                                 <span id="maxvisible-value"
                                     style="color:var(--accent);font-weight:700;margin-left:6px;">20</span></div>
                             <input type="range" class="setting-range" id="display-maxvisible" min="1" max="100" step="1"
@@ -392,15 +392,15 @@
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="image-down"
-                                    style="width:14px;height:14px;vertical-align:middle;"></i> Logo Üst Şerit Ofseti
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Logo Ãœst Åerit Ofseti
                                 <span id="logo-offset-value"
                                     style="color:var(--accent);font-weight:700;margin-left:6px;">0px</span></div>
-                            <input type="range" class="setting-range" id="display-logo-offset" min="-1200" max="1200"
+                            <input type="range" class="setting-range" id="display-logo-offset" min="-2160" max="2160"
                                 step="4" value="0" oninput="updateLogoOffsetLabel(this.value)"
                                 onchange="saveDisplaySettings()">
                             <div
                                 style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
-                                <span>-1200px</span><span>1200px</span></div>
+                                <span>-2160px</span><span>2160px</span></div>
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="maximize"
@@ -416,7 +416,7 @@
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="maximize"
-                                    style="width:14px;height:14px;vertical-align:middle;"></i> Bakanlık Logo Boyutu
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> BakanlÄ±k Logo Boyutu
                                 <span id="bakanlik-scale-value"
                                     style="color:var(--accent);font-weight:700;margin-left:6px;">100%</span></div>
                             <input type="range" class="setting-range" id="display-bakanlik-scale" min="20" max="300"
@@ -445,41 +445,41 @@
                                     style="width:14px;height:14px;vertical-align:middle;"></i> Logo X Pozisyon <span
                                     id="logo-x-value"
                                     style="color:var(--accent);font-weight:700;margin-left:6px;">0px</span></div>
-                            <input type="range" class="setting-range" id="display-logo-x" min="-480" max="480" step="4"
+                            <input type="range" class="setting-range" id="display-logo-x" min="-2160" max="2160" step="4"
                                 value="0" oninput="document.getElementById('logo-x-value').textContent=this.value+'px'"
                                 onchange="saveDisplaySettings()">
                             <div
                                 style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
-                                <span>-480px</span><span>480px</span></div>
+                                <span>-2160px</span><span>2160px</span></div>
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="move"
                                     style="width:14px;height:14px;vertical-align:middle;"></i> Logo Y Pozisyon <span
                                     id="logo-y-value"
                                     style="color:var(--accent);font-weight:700;margin-left:6px;">0px</span></div>
-                            <input type="range" class="setting-range" id="display-logo-y" min="-1200" max="1200"
+                            <input type="range" class="setting-range" id="display-logo-y" min="-2160" max="2160"
                                 step="4" value="0"
                                 oninput="document.getElementById('logo-y-value').textContent=this.value+'px'"
                                 onchange="saveDisplaySettings()">
                             <div
                                 style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
-                                <span>-1200px</span><span>1200px</span></div>
+                                <span>-2160px</span><span>2160px</span></div>
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="type"
-                                    style="width:14px;height:14px;vertical-align:middle;"></i> Başlık Ofseti <span
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> BaÅŸlÄ±k Ofseti <span
                                     id="header-offset-value"
                                     style="color:var(--accent);font-weight:700;margin-left:6px;">0px</span></div>
-                            <input type="range" class="setting-range" id="display-header-offset" min="-1200" max="1200"
+                            <input type="range" class="setting-range" id="display-header-offset" min="-2160" max="2160"
                                 step="4" value="0" oninput="updateHeaderOffsetLabel(this.value)"
                                 onchange="saveDisplaySettings()">
                             <div
                                 style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
-                                <span>-1200px</span><span>1200px</span></div>
+                                <span>-2160px</span><span>2160px</span></div>
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="type"
-                                    style="width:14px;height:14px;vertical-align:middle;"></i> Başlık Boyutu <span
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> BaÅŸlÄ±k Boyutu <span
                                     id="header-scale-value"
                                     style="color:var(--accent);font-weight:700;margin-left:6px;">100%</span></div>
                             <input type="range" class="setting-range" id="display-header-scale" min="60" max="160"
@@ -491,40 +491,40 @@
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="move"
-                                    style="width:14px;height:14px;vertical-align:middle;"></i> Başlık X Pozisyon <span
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> BaÅŸlÄ±k X Pozisyon <span
                                     id="header-x-value"
                                     style="color:var(--accent);font-weight:700;margin-left:6px;">0px</span></div>
-                            <input type="range" class="setting-range" id="display-header-x" min="-480" max="480"
+                            <input type="range" class="setting-range" id="display-header-x" min="-2160" max="2160"
                                 step="4" value="0"
                                 oninput="document.getElementById('header-x-value').textContent=this.value+'px'"
                                 onchange="saveDisplaySettings()">
                             <div
                                 style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
-                                <span>-480px</span><span>480px</span></div>
+                                <span>-2160px</span><span>2160px</span></div>
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="move"
-                                    style="width:14px;height:14px;vertical-align:middle;"></i> Başlık Y Pozisyon <span
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> BaÅŸlÄ±k Y Pozisyon <span
                                     id="header-y-value"
                                     style="color:var(--accent);font-weight:700;margin-left:6px;">0px</span></div>
-                            <input type="range" class="setting-range" id="display-header-y" min="-1200" max="1200"
+                            <input type="range" class="setting-range" id="display-header-y" min="-2160" max="2160"
                                 step="4" value="0"
                                 oninput="document.getElementById('header-y-value').textContent=this.value+'px'"
                                 onchange="saveDisplaySettings()">
                             <div
                                 style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
-                                <span>-1200px</span><span>1200px</span></div>
+                                <span>-2160px</span><span>2160px</span></div>
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="sun"
-                                    style="width:14px;height:14px;vertical-align:middle;"></i> Gündüz Modu</div>
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> GÃ¼ndÃ¼z Modu</div>
                             <div class="toggle-sm-wrap" style="margin-top:8px">
                                 <label class="toggle-sm toggle">
                                     <input type="checkbox" id="display-daymode" onchange="saveDisplaySettings()">
                                     <div class="toggle-track"></div>
                                     <div class="toggle-thumb"></div>
                                 </label>
-                                <span class="toggle-sm-label" id="display-daymode-label">Kapalı</span>
+                                <span class="toggle-sm-label" id="display-daymode-label">KapalÄ±</span>
                             </div>
                         </div>
                     </div>
@@ -532,7 +532,7 @@
             </div>
 
 
-            <!-- ── BEKLEYEN DİLEKLER ── -->
+            <!-- â”€â”€ BEKLEYEN DÄ°LEKLER â”€â”€ -->
             <div class="tab-panel" id="tab-pending">
                 <div class="card">
                     <div class="card-title"><i data-lucide="clock"
@@ -541,21 +541,21 @@
                     <div style="display:flex; gap:10px; margin-bottom:16px;">
                         <button type="button" class="btn btn-primary" onclick="approveAllPending()"
                             id="btn-approve-all"><i data-lucide="check-circle" style="width:16px;height:16px;"></i>
-                            Tümünü Onayla</button>
+                            TÃ¼mÃ¼nÃ¼ Onayla</button>
                     </div>
                     <div class="table-responsive">
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>İsim</th>
+                                    <th>Ä°sim</th>
                                     <th>Dilek</th>
                                     <th>Tarih</th>
-                                    <th>İşlem</th>
+                                    <th>Ä°ÅŸlem</th>
                                 </tr>
                             </thead>
                             <tbody id="pending-tbody">
                                 <tr>
-                                    <td colspan="4" style="text-align:center; color:var(--text3);">Yükleniyor...</td>
+                                    <td colspan="4" style="text-align:center; color:var(--text3);">YÃ¼kleniyor...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -563,16 +563,16 @@
                     <div id="pending-empty" style="display:none; text-align:center; padding:40px; color:var(--text3);">
                         <i data-lucide="check-circle-2"
                             style="width:48px;height:48px;margin-bottom:12px;opacity:0.3;display:block;margin:0 auto 12px;"></i>
-                        <p>Bekleyen dilek yok — tüm dilekler onaylanmış!</p>
+                        <p>Bekleyen dilek yok â€” tÃ¼m dilekler onaylanmÄ±ÅŸ!</p>
                     </div>
                 </div>
             </div>
-            <!-- ── SLAYT GÖSTERİSİ ── -->
+            <!-- â”€â”€ SLAYT GÃ–STERÄ°SÄ° â”€â”€ -->
             <div class="tab-panel" id="tab-slideshow">
                 <div class="card">
                     <div class="card-title"><i data-lucide="refresh-cw"
                             style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Otomatik Slayt
-                        Gösterisi</div>
+                        GÃ¶sterisi</div>
                     <div class="slideshow-controls">
                         <select class="slideshow-select" id="auto-delay">
                             <option value="5">5 saniye</option>
@@ -583,34 +583,34 @@
                         </select>
                         <button type="button" class="btn btn-primary" id="auto-start-btn"
                             onclick="startAutoSpotlight()"><i data-lucide="play" style="width:16px;height:16px;"></i>
-                            Başlat</button>
+                            BaÅŸlat</button>
                         <button type="button" class="btn btn-danger" id="auto-stop-btn" onclick="stopAutoSpotlight()"
                             style="display:none"><i data-lucide="square" style="width:16px;height:16px;"></i>
                             Durdur</button>
                     </div>
                     <div class="slideshow-status" id="auto-status">
                         <i data-lucide="loader-2" style="width:16px;height:16px;" class="lucide-spin"></i> Otomatik
-                        spotlight çalışıyor...
+                        spotlight Ã§alÄ±ÅŸÄ±yor...
                     </div>
                 </div>
             </div>
 
-            <!-- ── TEMA ── -->
+            <!-- â”€â”€ TEMA â”€â”€ -->
             <div class="tab-panel" id="tab-theme">
                 <div class="card">
                     <div class="card-title"><i data-lucide="image"
-                            style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Arkaplan Teması
+                            style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Arkaplan TemasÄ±
                     </div>
                     <div class="theme-grid" id="theme-grid">
                         <button type="button" class="theme-option active" data-theme="turktelekom"
                             onclick="setTheme('turktelekom')"><i data-lucide="radio-tower"
-                                style="width:16px;height:16px;margin:auto;display:block;margin-bottom:6px;"></i> Türk
+                                style="width:16px;height:16px;margin:auto;display:block;margin-bottom:6px;"></i> TÃ¼rk
                             Telekom</button>
                     </div>
                 </div>
                 <div class="card" style="margin-top:20px;">
                     <div class="card-title"><i data-lucide="eye"
-                            style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Gösterim Teması
+                            style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> GÃ¶sterim TemasÄ±
                     </div>
                     <div class="theme-grid" id="display-mode-grid">
                         <button type="button" class="display-mode-option theme-option active" data-mode="balloon"
@@ -625,12 +625,12 @@
                 </div>
             </div>
 
-            <!-- ── İSTATİSTİKLER (STATS) ── -->
+            <!-- â”€â”€ Ä°STATÄ°STÄ°KLER (STATS) â”€â”€ -->
             <div class="tab-panel" id="tab-stats">
                 <div class="stats-grid"
                     style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:20px; margin-bottom:30px;">
                     <div class="card" style="text-align:center;">
-                        <div style="font-size:14px; color:var(--text3); margin-bottom:10px;">Bugün Gelen</div>
+                        <div style="font-size:14px; color:var(--text3); margin-bottom:10px;">BugÃ¼n Gelen</div>
                         <div id="stat-today-2" style="font-size:36px; font-weight:800; color:var(--accent);">0</div>
                     </div>
                     <div class="card" style="text-align:center;">
@@ -645,19 +645,19 @@
 
                 <div style="display:grid; grid-template-columns:1fr; gap:20px;">
                     <div class="card">
-                        <div class="card-title">📅 Geçmiş Günlerin Dökümü</div>
+                        <div class="card-title">ğŸ“… GeÃ§miÅŸ GÃ¼nlerin DÃ¶kÃ¼mÃ¼</div>
                         <div class="table-responsive">
                             <table class="data-table">
                                 <thead>
                                     <tr>
                                         <th>Tarih</th>
-                                        <th>Gönderilen Dilek</th>
+                                        <th>GÃ¶nderilen Dilek</th>
                                     </tr>
                                 </thead>
                                 <tbody id="stats-tbody">
                                     <tr>
                                         <td colspan="2" style="text-align:center;color:var(--text3)">Veriler
-                                            Yükleniyor...</td>
+                                            YÃ¼kleniyor...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -666,25 +666,25 @@
                 </div>
             </div>
 
-            <!-- ── ÇEKİLİŞ (RAFFLE) ── -->
+            <!-- â”€â”€ Ã‡EKÄ°LÄ°Å (RAFFLE) â”€â”€ -->
             <div class="tab-panel" id="tab-raffle">
                 <div class="card">
                     <div class="card-title"><i data-lucide="gift"
-                            style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Çekiliş Yönetimi
+                            style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Ã‡ekiliÅŸ YÃ¶netimi
                     </div>
                     <p style="color:var(--text3); font-size:14px; margin-bottom: 20px;">
-                        Etkinliğe dilek yollayan (benzersiz) çocuklar arasından rastgele şanslı talihlileri belirleyin.
-                        Çekiliş doğrudan büyük ekranda animasyonlu olarak gösterilecektir.
+                        EtkinliÄŸe dilek yollayan (benzersiz) Ã§ocuklar arasÄ±ndan rastgele ÅŸanslÄ± talihlileri belirleyin.
+                        Ã‡ekiliÅŸ doÄŸrudan bÃ¼yÃ¼k ekranda animasyonlu olarak gÃ¶sterilecektir.
                     </p>
 
                     <div style="display: flex; flex-direction: column; gap: 15px; max-width: 400px;">
                         <button type="button" class="btn btn-primary" id="btn-raffle-start" onclick="startRaffle()"
                             style="padding:14px; font-size:16px; justify-content:center; background: linear-gradient(135deg, #FF6B6B, #FF8E8E);">
-                            <i data-lucide="party-popper" style="width:20px;height:20px;"></i> Sıradaki Talihliyi Çek
+                            <i data-lucide="party-popper" style="width:20px;height:20px;"></i> SÄ±radaki Talihliyi Ã‡ek
                         </button>
                         <button type="button" class="btn btn-ghost" id="btn-raffle-reset" onclick="resetRaffleMemory()"
                             style="padding:14px; font-size:16px; justify-content:center;">
-                            <i data-lucide="rotate-ccw" style="width:20px;height:20px;"></i> Çekiliş Hafızasını Sıfırla
+                            <i data-lucide="rotate-ccw" style="width:20px;height:20px;"></i> Ã‡ekiliÅŸ HafÄ±zasÄ±nÄ± SÄ±fÄ±rla
                         </button>
                         <button type="button" class="btn btn-ghost" id="btn-raffle-close" onclick="closeRaffleDisplay()"
                             style="padding:14px; font-size:16px; justify-content:center; display:none;">
@@ -692,12 +692,12 @@
                         </button>
                     </div>
 
-                    <!-- Çekiliş Sonuçları (Admin İçin Log) -->
+                    <!-- Ã‡ekiliÅŸ SonuÃ§larÄ± (Admin Ä°Ã§in Log) -->
                     <div id="raffle-results-container"
                         style="display:none; margin-top:30px; padding-top:20px; border-top:1px solid var(--card-border);">
                         <div class="card-title" style="color:var(--accent);"><i data-lucide="trophy"
-                                style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Çekiliş
-                            Sonuçları</div>
+                                style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Ã‡ekiliÅŸ
+                            SonuÃ§larÄ±</div>
                         <ul id="raffle-results-list"
                             style="list-style:none; padding:0; margin:10px 0 0 0; display:flex; flex-direction:column; gap:10px;">
                         </ul>
@@ -705,20 +705,20 @@
                 </div>
             </div>
 
-            <!-- ── DİLEK EKLE ── -->
+            <!-- â”€â”€ DÄ°LEK EKLE â”€â”€ -->
             <div class="tab-panel" id="tab-upload">
                 <div class="card">
                     <div class="card-title"><i data-lucide="camera"
-                            style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Hızlı Dilek Ekle
+                            style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> HÄ±zlÄ± Dilek Ekle
                     </div>
                     <div class="upload-form">
                         <div class="field">
-                            <label>Fotoğraf</label>
+                            <label>FotoÄŸraf</label>
                             <input type="file" id="admin-photo" accept="image/*">
                         </div>
                         <div class="field">
-                            <label>Çocuğun Adı</label>
-                            <input type="text" id="admin-name" placeholder="İsim gir...">
+                            <label>Ã‡ocuÄŸun AdÄ±</label>
+                            <input type="text" id="admin-name" placeholder="Ä°sim gir...">
                         </div>
                         <button type="button" class="btn btn-primary" onclick="adminUpload()" id="admin-upload-btn"
                             style="height:42px"><i data-lucide="sparkles" style="width:16px;height:16px;"></i>
@@ -727,39 +727,39 @@
                 </div>
             </div>
 
-            <!-- ── TÜM DİLEKLER ── -->
+            <!-- â”€â”€ TÃœM DÄ°LEKLER â”€â”€ -->
             <div class="tab-panel" id="tab-wishes">
                 <div class="search-bar-row" style="display:flex; gap:12px; margin-bottom:18px; align-items:center;">
                     <div class="search-box" style="flex:1; margin-bottom:0;">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" placeholder="İsim, metin veya tarih ara..." oninput="filterWishes()">
+                        <span class="search-icon">ğŸ”</span>
+                        <input type="text" placeholder="Ä°sim, metin veya tarih ara..." oninput="filterWishes()">
                     </div>
 
                     <div class="view-toggles"
                         style="display:flex; background:var(--bg2); padding:4px; border-radius:10px; border:1px solid var(--card-border);">
                         <button type="button" class="view-btn active" id="view-table-btn" onclick="setViewMode('table')"
-                            title="Tablo Görünümü"><i data-lucide="table"></i></button>
+                            title="Tablo GÃ¶rÃ¼nÃ¼mÃ¼"><i data-lucide="table"></i></button>
                         <button type="button" class="view-btn" id="view-grid-btn" onclick="setViewMode('grid')"
-                            title="Galeri Görünümü"><i data-lucide="layout-grid"></i></button>
+                            title="Galeri GÃ¶rÃ¼nÃ¼mÃ¼"><i data-lucide="layout-grid"></i></button>
                     </div>
 
                     <div class="bulk-actions" id="bulk-actions" style="display:none;">
                         <button type="button" class="btn btn-danger" onclick="confirmDeleteSelected()"
                             style="padding: 10px 14px;">
-                            <i data-lucide="trash-2" style="width:16px;height:16px;"></i> Seçilenleri Sil (<span
+                            <i data-lucide="trash-2" style="width:16px;height:16px;"></i> SeÃ§ilenleri Sil (<span
                                 id="selected-count">0</span>)
                         </button>
                     </div>
                 </div>
 
-                <!-- ── FILTER CHIPS ── -->
+                <!-- â”€â”€ FILTER CHIPS â”€â”€ -->
                 <div class="filter-chips" style="display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;">
                     <button type="button" class="btn btn-ghost active" onclick="applyQuickFilter('all', this)"
-                        style="border-radius:20px; font-size:12px; padding:6px 14px;">Tümü</button>
+                        style="border-radius:20px; font-size:12px; padding:6px 14px;">TÃ¼mÃ¼</button>
                     <button type="button" class="btn btn-ghost" onclick="applyQuickFilter('today', this)"
-                        style="border-radius:20px; font-size:12px; padding:6px 14px;">Bugünün Dilekleri</button>
+                        style="border-radius:20px; font-size:12px; padding:6px 14px;">BugÃ¼nÃ¼n Dilekleri</button>
                     <button type="button" class="btn btn-ghost" onclick="applyQuickFilter('photo', this)"
-                        style="border-radius:20px; font-size:12px; padding:6px 14px;">Sadece Fotoğraflı</button>
+                        style="border-radius:20px; font-size:12px; padding:6px 14px;">Sadece FotoÄŸraflÄ±</button>
                     <button type="button" class="btn btn-ghost" onclick="applyQuickFilter('text', this)"
                         style="border-radius:20px; font-size:12px; padding:6px 14px;">Sadece Metin</button>
                     <button type="button" class="btn btn-ghost" onclick="applyQuickFilter('spotlight', this)"
@@ -772,11 +772,11 @@
                             <tr>
                                 <th style="width:40px;"><input type="checkbox" id="select-all-wishes"
                                         onchange="toggleSelectAll(this)"></th>
-                                <th>Görsel</th>
-                                <th>Çocuk Adı</th>
+                                <th>GÃ¶rsel</th>
+                                <th>Ã‡ocuk AdÄ±</th>
                                 <th>Okunan Metin (OCR)</th>
                                 <th>Tarih</th>
-                                <th>İşlemler</th>
+                                <th>Ä°ÅŸlemler</th>
                             </tr>
                         </thead>
                         <tbody id="wishes-tbody"></tbody>
@@ -790,20 +790,20 @@
                 <div class="empty" id="empty-state">
                     <div class="emoji"><i data-lucide="database"
                             style="width:48px;height:48px;color:inherit;opacity:0.5;"></i></div>
-                    <p>Henüz dilek eklenmemiş veya aramayla eşleşen sonuç yok.</p>
+                    <p>HenÃ¼z dilek eklenmemiÅŸ veya aramayla eÅŸleÅŸen sonuÃ§ yok.</p>
                 </div>
             </div>
 
-            <!-- ── ARŞİV & KURTARMA ── -->
+            <!-- â”€â”€ ARÅÄ°V & KURTARMA â”€â”€ -->
             <div class="tab-panel" id="tab-archive">
                 <div class="card">
-                    <!-- ÜST KISIM: OTURUMLAR (SESSIONS) -->
+                    <!-- ÃœST KISIM: OTURUMLAR (SESSIONS) -->
                     <div class="card-title" style="color:var(--accent);"><i data-lucide="package-search"
-                            style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Arşivlenmiş
+                            style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> ArÅŸivlenmiÅŸ
                         Oturumlar (Toplu Silmeler)
                     </div>
                     <p style="color:var(--text3); font-size:14px; margin-bottom: 20px;">
-                        "Tümünü Sil" eylemi ile kaydedilen eski oturumların içindeki tüm dilekleri tek seferde aktif
+                        "TÃ¼mÃ¼nÃ¼ Sil" eylemi ile kaydedilen eski oturumlarÄ±n iÃ§indeki tÃ¼m dilekleri tek seferde aktif
                         listeye geri alabilirsiniz.
                     </p>
 
@@ -811,16 +811,16 @@
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>Oturum/Dosya Adı</th>
+                                    <th>Oturum/Dosya AdÄ±</th>
                                     <th>Silinme Tarihi</th>
-                                    <th>İçerik</th>
-                                    <th>İşlemler</th>
+                                    <th>Ä°Ã§erik</th>
+                                    <th>Ä°ÅŸlemler</th>
                                 </tr>
                             </thead>
                             <tbody id="sessions-tbody">
                                 <tr>
                                     <td colspan="4" style="text-align:center; color:var(--text3);">Oturum bilgileri
-                                        yükleniyor...</td>
+                                        yÃ¼kleniyor...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -829,39 +829,39 @@
                     <div class="empty" id="sessions-empty-state" style="display:none; padding-top:40px;">
                         <div class="emoji"><i data-lucide="inbox"
                                 style="width:48px;height:48px;color:inherit;opacity:0.5;"></i></div>
-                        <p>Arşivde kayıtlı oturum (session) bulunmuyor.</p>
+                        <p>ArÅŸivde kayÄ±tlÄ± oturum (session) bulunmuyor.</p>
                     </div>
 
-                    <!-- ALT KISIM: TEKİL DİLEKLER (ACCORDION İÇİNDE) -->
+                    <!-- ALT KISIM: TEKÄ°L DÄ°LEKLER (ACCORDION Ä°Ã‡Ä°NDE) -->
                     <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--card-border);">
                         <details style="cursor: default;">
                             <summary
                                 style="cursor: pointer; outline: none; font-weight: bold; color: var(--text2); display: flex; align-items: center; gap: 8px; padding: 10px; background: var(--bg2); border-radius: 8px; border: 1px solid var(--card-border);">
                                 <i data-lucide="list" style="width:18px;height:18px;"></i> Tek Tek Silinen Dilekleri
-                                Göster
+                                GÃ¶ster
                             </summary>
 
                             <div style="margin-top: 20px;">
                                 <p style="color:var(--text3); font-size:14px; margin-bottom: 20px;">
-                                    Bireysel olarak çöp kutusu ikonuyla veya arşive kaldırdığınız tekil dilekleri
-                                    buradan geri yükleyebilirsiniz.
+                                    Bireysel olarak Ã§Ã¶p kutusu ikonuyla veya arÅŸive kaldÄ±rdÄ±ÄŸÄ±nÄ±z tekil dilekleri
+                                    buradan geri yÃ¼kleyebilirsiniz.
                                 </p>
 
                                 <div class="table-responsive" id="archive-table-container">
                                     <table class="data-table">
                                         <thead>
                                             <tr>
-                                                <th>Görsel</th>
-                                                <th>Çocuk Adı</th>
+                                                <th>GÃ¶rsel</th>
+                                                <th>Ã‡ocuk AdÄ±</th>
                                                 <th>Silinme Tarihi</th>
-                                                <th>İşlemler</th>
+                                                <th>Ä°ÅŸlemler</th>
                                             </tr>
                                         </thead>
                                         <tbody id="archive-tbody">
                                             <tr>
                                                 <td colspan="4" style="text-align:center; color:var(--text3);">
-                                                    Arşivlenmiş dilekler
-                                                    yükleniyor...</td>
+                                                    ArÅŸivlenmiÅŸ dilekler
+                                                    yÃ¼kleniyor...</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -870,7 +870,7 @@
                                 <div class="empty" id="archive-empty-state" style="display:none; padding-top:40px;">
                                     <div class="emoji"><i data-lucide="inbox"
                                             style="width:48px;height:48px;color:inherit;opacity:0.5;"></i></div>
-                                    <p>Arşivde silinmiş tekil dilek bulunmuyor.</p>
+                                    <p>ArÅŸivde silinmiÅŸ tekil dilek bulunmuyor.</p>
                                 </div>
                             </div>
                         </details>
@@ -888,28 +888,28 @@
     <div class="modal-overlay" id="edit-modal">
         <div class="modal" style="text-align: left; max-width: 500px; width: 90%;">
             <h3 style="margin-bottom: 20px; display:flex; align-items:center; gap:8px;"><i data-lucide="pencil"
-                    style="width:20px;height:20px;"></i> Dileği Düzenle</h3>
+                    style="width:20px;height:20px;"></i> DileÄŸi DÃ¼zenle</h3>
 
             <div class="field" style="margin-bottom: 15px;">
                 <label
-                    style="display:block; margin-bottom:8px; font-weight:600; font-size:14px; color:var(--text2)">Çocuğun
-                    Adı</label>
+                    style="display:block; margin-bottom:8px; font-weight:600; font-size:14px; color:var(--text2)">Ã‡ocuÄŸun
+                    AdÄ±</label>
                 <input type="text" id="edit-name"
                     style="width:100%; padding:12px; background:var(--bg2); border:1px solid var(--card-border); border-radius:8px; color:inherit; outline:none;"
-                    placeholder="Örn: Ayşe">
+                    placeholder="Ã–rn: AyÅŸe">
             </div>
 
             <div class="field" style="margin-bottom: 25px;">
                 <label
                     style="display:block; margin-bottom:8px; font-weight:600; font-size:14px; color:var(--text2)">Dilek
-                    Metni (Fotoğraftan Okunan/Yazılan)</label>
+                    Metni (FotoÄŸraftan Okunan/YazÄ±lan)</label>
                 <textarea id="edit-text" rows="5"
                     style="width:100%; padding:12px; background:var(--bg2); border:1px solid var(--card-border); border-radius:8px; color:inherit; outline:none; resize:vertical;"
-                    placeholder="Dilek metnini buraya yazın veya OCR hatasını düzeltin..."></textarea>
+                    placeholder="Dilek metnini buraya yazÄ±n veya OCR hatasÄ±nÄ± dÃ¼zeltin..."></textarea>
             </div>
 
             <div class="modal-actions" style="margin-top: 0;">
-                <button type="button" class="btn btn-ghost" onclick="closeEditModal()">İptal</button>
+                <button type="button" class="btn btn-ghost" onclick="closeEditModal()">Ä°ptal</button>
                 <button type="button" class="btn btn-primary" id="edit-save-btn"
                     onclick="saveEditedWish()">Kaydet</button>
             </div>
@@ -922,9 +922,9 @@
             <div class="modal-icon"><i data-lucide="alert-triangle"
                     style="width:40px;height:40px;color:var(--gold);"></i></div>
             <h3>Emin misin?</h3>
-            <p id="modal-text">Bu işlem geri alınamaz.</p>
+            <p id="modal-text">Bu iÅŸlem geri alÄ±namaz.</p>
             <div class="modal-actions">
-                <button type="button" class="btn btn-ghost" onclick="closeModal()">İptal</button>
+                <button type="button" class="btn btn-ghost" onclick="closeModal()">Ä°ptal</button>
                 <button type="button" class="btn btn-danger" id="modal-confirm-btn">Sil</button>
             </div>
         </div>
