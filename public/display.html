@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=960, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>__DISPLAY_TITLE__</title>
   <meta property="og:title" content="__DISPLAY_TITLE__" />
   <meta property="og:site_name" content="__DISPLAY_SITE__" />
@@ -27,8 +27,8 @@
       margin: 0;
       padding: 0;
       overflow: hidden;
-      width: 960px;
-      height: 2160px;
+      width: 100vw;
+      height: 100vh;
       font-family: "Nunito", sans-serif;
     }
 
@@ -1328,8 +1328,8 @@
       const lanternPx = Math.round(Math.max(120, Math.min(260, 240 * (DESIGN_HEIGHT / 2160))));
       document.documentElement.style.setProperty('--lantern-size', lanternPx + 'px');
 
-      // Scale 1:1 — LED panel zaten 960x2160 fiziksel, ölçekleme yok
-      const scale = 1;
+      // Uniform scale — BM Player hangi viewport verirse versin içerik ekranı doldursun
+      const scale = Math.max(w / DESIGN_WIDTH, h / DESIGN_HEIGHT);
       const scaleRoot = document.getElementById('scale-root');
       if (scaleRoot) {
         scaleRoot.style.transform = `translate(-50%, -50%) scale(${scale})`;
