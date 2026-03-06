@@ -1,1185 +1,1200 @@
 <!doctype html>
 <html lang="tr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>__DISPLAY_TITLE__</title>
-    <meta property="og:title" content="__DISPLAY_TITLE__" />
-    <meta property="og:site_name" content="__DISPLAY_SITE__" />
-    <meta property="og:type" content="website" />
-    <meta property="twitter:title" content="__DISPLAY_TITLE__" />
-    <link rel="stylesheet" href="/css/themes.css?v=18.4.5" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
 
-      /* Match bars to TT deep navy */
-      html {
-        background: #030810;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=960, initial-scale=1.0" />
+  <title>__DISPLAY_TITLE__</title>
+  <meta property="og:title" content="__DISPLAY_TITLE__" />
+  <meta property="og:site_name" content="__DISPLAY_SITE__" />
+  <meta property="og:type" content="website" />
+  <meta property="twitter:title" content="__DISPLAY_TITLE__" />
+  <link rel="stylesheet" href="/css/themes.css?v=18.4.5" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-      body {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        width: 1920px;
-        height: 4320px;
-        font-family: "Nunito", sans-serif;
-        /* Scale to fit actual screen */
-        transform-origin: top left;
-      }
+    /* Match bars to TT deep navy */
+    html {
+      background: #030810;
+    }
 
-      /* Main container */
-      .display-container {
-        width: 1920px;
-        height: 4320px;
-        position: relative;
-        /* Arkaplan themes.css tarafindan yonetiliyor */
-      }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 960px;
+      height: 2160px;
+      font-family: "Nunito", sans-serif;
+      transform-origin: top left;
+    }
 
-      /* Background image covers entire viewport - no animation needed */
+    /* Main container */
+    .display-container {
+      width: 960px;
+      height: 2160px;
+      position: relative;
+      /* Arkaplan themes.css tarafindan yonetiliyor */
+    }
 
-      /* Floating decorations removed - background image has lanterns and lights */
-      .decorations,
-      .shapes {
-        display: none;
-      }
+    /* Background image covers entire viewport - no animation needed */
 
-      /* Header — themes.css tarafından stilize ediliyor */
-      .display-header {
-        display: flex;
-      }
+    /* Floating decorations removed - background image has lanterns and lights */
+    .decorations,
+    .shapes {
+      display: none;
+    }
 
-      /* Wishes container - full screen, balloons float freely under header */
-      #wishes-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 10;
-      }
+    /* Header — themes.css tarafından stilize ediliyor */
+    .display-header {
+      display: flex;
+    }
 
-      #wishes-container.spotlight-mode .wish-card {
-        opacity: 0.3;
-        transition:
-          opacity 0.5s,
-          transform 0.5s;
-      }
+    /* Wishes container - full screen, balloons float freely under header */
+    #wishes-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+    }
 
-      #wishes-container.spotlight-mode .wish-card.spotlight-active {
-        opacity: 1;
-        position: absolute !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) scale(1.2) !important;
-        z-index: 600 !important;
+    #wishes-container.spotlight-mode .wish-card {
+      opacity: 0.3;
+      transition:
+        opacity 0.5s,
+        transform 0.5s;
+    }
+
+    #wishes-container.spotlight-mode .wish-card.spotlight-active {
+      opacity: 1;
+      position: absolute !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) scale(1.2) !important;
+      z-index: 600 !important;
+      filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.6));
+      animation: spotlightPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes spotlightPulse {
+
+      0%,
+      100% {
         filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.6));
-        animation: spotlightPulse 2s ease-in-out infinite;
       }
 
-      @keyframes spotlightPulse {
-        0%,
-        100% {
-          filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.6));
-        }
-
-        50% {
-          filter: drop-shadow(0 0 60px rgba(255, 215, 0, 0.9));
-        }
+      50% {
+        filter: drop-shadow(0 0 60px rgba(255, 215, 0, 0.9));
       }
+    }
 
-      /* Balloon wish card */
-      .wish-card {
-        position: absolute;
-        width: 320px;
-        cursor: pointer;
-        will-change: transform;
-        /* Optimized GPU rendering */
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
+    /* Balloon wish card */
+    .wish-card {
+      position: absolute;
+      width: 320px;
+      cursor: pointer;
+      will-change: transform;
+      /* Optimized GPU rendering */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-      .balloon-body {
-        position: relative;
-        width: 320px;
-        height: 380px;
-        background:
-          radial-gradient(
-            circle at 35% 25%,
-            rgba(255, 255, 255, 0.35) 0%,
-            transparent 50%
-          ),
-          radial-gradient(
-            circle at 65% 75%,
-            rgba(0, 0, 0, 0.15) 0%,
-            transparent 50%
-          ),
-          linear-gradient(
-            160deg,
-            var(--balloon-color) 0%,
-            var(--balloon-color-dark, var(--balloon-color)) 100%
-          );
-        border-radius: 50% 50% 45% 45%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        /* Optimized for speed */
-        overflow: hidden;
-        transition:
-          box-shadow 0.3s,
-          transform 0.3s;
-      }
+    .balloon-body {
+      position: relative;
+      width: 320px;
+      height: 380px;
+      background:
+        radial-gradient(circle at 35% 25%,
+          rgba(255, 255, 255, 0.35) 0%,
+          transparent 50%),
+        radial-gradient(circle at 65% 75%,
+          rgba(0, 0, 0, 0.15) 0%,
+          transparent 50%),
+        linear-gradient(160deg,
+          var(--balloon-color) 0%,
+          var(--balloon-color-dark, var(--balloon-color)) 100%);
+      border-radius: 50% 50% 45% 45%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      /* Optimized for speed */
+      overflow: hidden;
+      transition:
+        box-shadow 0.3s,
+        transform 0.3s;
+    }
 
-      /* Primary glossy shine - bright reflection */
-      .balloon-body::before {
-        content: "";
-        position: absolute;
-        top: 8%;
-        left: 15%;
-        width: 40%;
-        height: 35%;
-        background: radial-gradient(
-          ellipse,
+    /* Primary glossy shine - bright reflection */
+    .balloon-body::before {
+      content: "";
+      position: absolute;
+      top: 8%;
+      left: 15%;
+      width: 40%;
+      height: 35%;
+      background: radial-gradient(ellipse,
           rgba(255, 255, 255, 0.55) 0%,
           rgba(255, 255, 255, 0.1) 40%,
-          transparent 70%
-        );
-        border-radius: 50%;
-        transform: rotate(-20deg);
-        pointer-events: none;
-      }
+          transparent 70%);
+      border-radius: 50%;
+      transform: rotate(-20deg);
+      pointer-events: none;
+    }
 
-      /* Balloon knot */
-      .balloon-body::after {
-        content: "";
-        position: absolute;
-        bottom: -16px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 32px;
-        height: 32px;
-        background: var(--balloon-color, #ff6b6b);
-        clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
-        filter: brightness(0.85);
-      }
+    /* Balloon knot */
+    .balloon-body::after {
+      content: "";
+      position: absolute;
+      bottom: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 32px;
+      height: 32px;
+      background: var(--balloon-color, #ff6b6b);
+      clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+      filter: brightness(0.85);
+    }
 
-      /* Balloon string - wavy */
-      .balloon-string {
-        width: 3px;
-        height: 80px;
-        background: linear-gradient(
-          to bottom,
+    /* Balloon string - wavy */
+    .balloon-string {
+      width: 3px;
+      height: 80px;
+      background: linear-gradient(to bottom,
           rgba(0, 0, 0, 0.25),
-          rgba(0, 0, 0, 0.05)
-        );
-        margin-top: -1px;
-        position: relative;
-        animation: stringWave 3s ease-in-out infinite;
-        transform-origin: top center;
+          rgba(0, 0, 0, 0.05));
+      margin-top: -1px;
+      position: relative;
+      animation: stringWave 3s ease-in-out infinite;
+      transform-origin: top center;
+    }
+
+    @keyframes stringWave {
+
+      0%,
+      100% {
+        transform: rotate(0deg);
       }
 
-      @keyframes stringWave {
-        0%,
-        100% {
-          transform: rotate(0deg);
-        }
-
-        25% {
-          transform: rotate(2deg);
-        }
-
-        75% {
-          transform: rotate(-2deg);
-        }
+      25% {
+        transform: rotate(2deg);
       }
 
-      .balloon-string::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 10px;
-        height: 10px;
-        background: rgba(0, 0, 0, 0.15);
-        border-radius: 50%;
+      75% {
+        transform: rotate(-2deg);
       }
+    }
 
-      .wish-card:hover {
-        z-index: 100;
-      }
+    .balloon-string::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 10px;
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 50%;
+    }
 
-      .wish-card:hover .balloon-body {
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-        /* Optimized for speed */
-        transform: scale(1.05);
-      }
+    .wish-card:hover {
+      z-index: 100;
+    }
 
-      /* ═══ DİLEK FENERİ (SKY LANTERN) MODE ═══ */
-      /* Gerçekçi gökyüzü feneri — yarı saydam kağıt, iç alev, sıcak glow */
+    .wish-card:hover .balloon-body {
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+      /* Optimized for speed */
+      transform: scale(1.05);
+    }
 
-      .wish-card.lantern-mode {
-        width: 320px;
-      }
+    /* ═══ DİLEK FENERİ (SKY LANTERN) MODE ═══ */
+    /* Gerçekçi gökyüzü feneri — yarı saydam kağıt, iç alev, sıcak glow */
 
-      /* Fener gövdesi — yuvarlak kağıt balon şekli */
-      .lantern-body {
-        position: relative;
-        width: var(--lantern-size, 240px);
-        height: var(--lantern-size, 240px);
-        margin: 0 auto;
-        background: url("/images/lantern.png?v=10.0.0") center/contain no-repeat;
-        overflow: visible;
-        transition: filter 0.4s ease, width 0.3s ease, height 0.3s ease;
-      }
+    .wish-card.lantern-mode {
+      width: 320px;
+    }
 
-      /* İç parıltı + kağıt grain efekti */
-      /* Warm ambient glow behind the lantern SVG */
-      .lantern-body::before {
-        content: "";
-        position: absolute;
-        top: 5%;
-        left: 5%;
-        width: 90%;
-        height: 90%;
-        background: radial-gradient(
-          ellipse at 50% 55%,
+    /* Fener gövdesi — yuvarlak kağıt balon şekli */
+    .lantern-body {
+      position: relative;
+      width: var(--lantern-size, 240px);
+      height: var(--lantern-size, 240px);
+      margin: 0 auto;
+      background: url("/images/lantern.png?v=10.0.0") center/contain no-repeat;
+      overflow: visible;
+      transition: filter 0.4s ease, width 0.3s ease, height 0.3s ease;
+    }
+
+    /* İç parıltı + kağıt grain efekti */
+    /* Warm ambient glow behind the lantern SVG */
+    .lantern-body::before {
+      content: "";
+      position: absolute;
+      top: 5%;
+      left: 5%;
+      width: 90%;
+      height: 90%;
+      background: radial-gradient(ellipse at 50% 55%,
           rgba(255, 150, 120, 0.1) 0%,
-          transparent 60%
-        );
-        border-radius: 50%;
-        animation: lanternGlow 3s ease-in-out infinite;
-        pointer-events: none;
-        z-index: -1;
-      }
+          transparent 60%);
+      border-radius: 50%;
+      animation: lanternGlow 3s ease-in-out infinite;
+      pointer-events: none;
+      z-index: -1;
+    }
 
-      /* Alt ağız — tel çerçeve (wire frame) */
-      /* Light spilling from lantern bottom opening */
-      .lantern-body::after {
-        content: "";
-        position: absolute;
-        bottom: -3px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 40%;
-        height: 12px;
-        background: radial-gradient(
-          ellipse at 50% 0%,
+    /* Alt ağız — tel çerçeve (wire frame) */
+    /* Light spilling from lantern bottom opening */
+    .lantern-body::after {
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40%;
+      height: 12px;
+      background: radial-gradient(ellipse at 50% 0%,
           rgba(255, 150, 120, 0.2) 0%,
-          transparent 70%
-        );
-        z-index: 5;
-        pointer-events: none;
-      }
+          transparent 70%);
+      z-index: 5;
+      pointer-events: none;
+    }
 
-      /* Alev — fenerin alt açıklığında */
-      .lantern-flame {
-        position: absolute;
-        bottom: 31%;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 18px;
-        height: 26px;
-        background: radial-gradient(
-          ellipse at 50% 80%,
+    /* Alev — fenerin alt açıklığında */
+    .lantern-flame {
+      position: absolute;
+      bottom: 31%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 18px;
+      height: 26px;
+      background: radial-gradient(ellipse at 50% 80%,
           rgba(255, 255, 200, 1) 0%,
           rgba(255, 200, 50, 0.95) 25%,
           rgba(255, 140, 20, 0.7) 50%,
           rgba(255, 80, 0, 0.3) 75%,
-          transparent 100%
-        );
-        border-radius: 50% 50% 35% 35%;
-        animation: flameFlicker 0.8s ease-in-out infinite;
-        z-index: 10;
-        pointer-events: none;
-      }
+          transparent 100%);
+      border-radius: 50% 50% 35% 35%;
+      animation: flameFlicker 0.8s ease-in-out infinite;
+      z-index: 10;
+      pointer-events: none;
+    }
 
-      /* Alev dış glow halkası */
-      .lantern-flame::after {
-        content: "";
-        position: absolute;
-        top: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 46px;
-        height: 46px;
-        background: radial-gradient(
-          circle,
+    /* Alev dış glow halkası */
+    .lantern-flame::after {
+      content: "";
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 46px;
+      height: 46px;
+      background: radial-gradient(circle,
           rgba(255, 180, 60, 0.35) 0%,
           rgba(255, 120, 20, 0.12) 40%,
-          transparent 70%
-        );
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 9;
-      }
+          transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9;
+    }
 
-      /* İp — fenerin altından sarkan kısa iplik */
-      .lantern-string {
-        width: 2px;
-        height: 0px;
-        margin: 0 auto;
-        position: relative;
-      }
+    /* İp — fenerin altından sarkan kısa iplik */
+    .lantern-string {
+      width: 2px;
+      height: 0px;
+      margin: 0 auto;
+      position: relative;
+    }
 
-      /* Fener altı metin alanı — düz beyaz yazı */
-      .lantern-text {
-        width: 140px;
-        margin: 0 auto;
-        text-align: center;
-        pointer-events: none;
-        overflow: hidden;
-        word-break: break-word;
-        overflow-wrap: break-word;
-      }
+    /* Fener altı metin alanı — düz beyaz yazı */
+    .lantern-text {
+      width: 140px;
+      margin: 0 auto;
+      text-align: center;
+      pointer-events: none;
+      overflow: hidden;
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
 
-      /* Fener metin stilleri — beyaz düz yazı */
-      .wish-card.lantern-mode .wish-text {
-        position: relative;
-        top: auto;
-        left: auto;
-        transform: none;
-        width: auto;
-        max-height: none;
-        padding: 0;
-        font-size: 15px;
-        font-weight: 600;
-        color: rgba(255, 255, 255, 0.9);
-        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
-        font-style: normal;
-        font-family: "Centrale Sans", "Nunito", sans-serif;
-        line-height: 1.3;
-        text-align: center;
-        overflow: visible;
-      }
+    /* Fener metin stilleri — beyaz düz yazı */
+    .wish-card.lantern-mode .wish-text {
+      position: relative;
+      top: auto;
+      left: auto;
+      transform: none;
+      width: auto;
+      max-height: none;
+      padding: 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
+      font-style: normal;
+      font-family: "Centrale Sans", "Nunito", sans-serif;
+      line-height: 1.3;
+      text-align: center;
+      overflow: visible;
+    }
 
-      .wish-card.lantern-mode .child-name {
-        position: relative;
-        bottom: auto;
-        left: auto;
-        transform: none;
-        width: auto;
-        max-width: 100%;
-        display: block;
-        font-size: 14px;
-        font-weight: 800;
-        color: #FFD700;
-        text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
-        margin-top: 4px;
-        text-align: center;
-        font-family: "Centrale Sans", "Nunito", sans-serif;
-        z-index: 2;
-      }
+    .wish-card.lantern-mode .child-name {
+      position: relative;
+      bottom: auto;
+      left: auto;
+      transform: none;
+      width: auto;
+      max-width: 100%;
+      display: block;
+      font-size: 14px;
+      font-weight: 800;
+      color: #FFD700;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+      margin-top: 4px;
+      text-align: center;
+      font-family: "Centrale Sans", "Nunito", sans-serif;
+      z-index: 2;
+    }
 
-      .wish-card.lantern-mode .child-name::before {
-        display: none;
-      }
+    .wish-card.lantern-mode .child-name::before {
+      display: none;
+    }
 
-      @keyframes lanternGlow {
-        0%,
-        100% {
-          opacity: 0.5;
-        }
-        30% {
-          opacity: 0.95;
-        }
-        50% {
-          opacity: 0.7;
-        }
-        70% {
-          opacity: 1;
-        }
-      }
+    @keyframes lanternGlow {
 
-      @keyframes flameFlicker {
-        0% {
-          transform: translateX(-50%) scaleY(1) scaleX(1);
-          opacity: 0.85;
-        }
-        15% {
-          transform: translateX(-50%) scaleY(1.12) scaleX(0.88);
-          opacity: 1;
-        }
-        30% {
-          transform: translateX(-50%) scaleY(0.92) scaleX(1.08);
-          opacity: 0.9;
-        }
-        50% {
-          transform: translateX(-50%) scaleY(1.08) scaleX(0.92);
-          opacity: 0.95;
-        }
-        70% {
-          transform: translateX(-50%) scaleY(0.95) scaleX(1.04);
-          opacity: 0.88;
-        }
-        85% {
-          transform: translateX(-50%) scaleY(1.06) scaleX(0.94);
-          opacity: 1;
-        }
-        100% {
-          transform: translateX(-50%) scaleY(1) scaleX(1);
-          opacity: 0.85;
-        }
-      }
-
-      /* Fener giriş animasyonu JS tarafından yönetiliyor (fade-in + sinüs salınımı) */
-      .wish-card.lantern-mode.entering {
-        /* CSS animasyonu yok — JS opacity ve transform ile hallediliyor */
-        animation: none !important;
-      }
-
-      .wish-card.lantern-mode:hover .lantern-body {
-        filter: brightness(1.12);
-      }
-
-      /* ═══ YENİ DİLEK GİRİŞ EFEKTİ — 5sn altın parıltı ═══ */
-      /* Sadece socket 'new-wish' tetikler, DOM recycling tetiklemez */
-      .wish-card.lantern-mode.new-wish-highlight .lantern-body::before {
-        background: radial-gradient(
-          ellipse at 50% 55%,
-          rgba(255, 220, 80, 0.7) 0%,
-          rgba(255, 180, 40, 0.45) 30%,
-          rgba(255, 120, 0, 0.2) 55%,
-          transparent 80%
-        );
-        animation: newWishGlow 5s ease-out forwards;
-      }
-
-      /* Eski parşömen highlight kaldırıldı — metin artık düz beyaz */
-
-      @keyframes newWishGlow {
-        0% {
-          opacity: 1;
-          transform: scale(1.3);
-        }
-        20% {
-          opacity: 1;
-          transform: scale(1.15);
-        }
-        60% {
-          opacity: 0.85;
-          transform: scale(1.05);
-        }
-        100% {
-          opacity: 0.5;
-          transform: scale(1);
-        }
-      }
-
-      /* ═══ AY — sağ üst köşede parlayan ay ═══ */
-      .moon {
-        position: absolute;
-        top: 200px;
-        right: 180px;
-        width: 160px;
-        height: 160px;
-        border-radius: 50%;
-        background: radial-gradient(
-          circle at 35% 35%,
-          #fffff0 0%,
-          #fff8d0 25%,
-          #ffe8a0 50%,
-          #e0c070 80%
-        );
-        box-shadow:
-          0 0 40px rgba(255, 230, 150, 0.4),
-          0 0 100px rgba(255, 200, 100, 0.25),
-          0 0 200px rgba(255, 180, 80, 0.12);
-        z-index: 2;
-        pointer-events: none;
-        opacity: 0.85;
-      }
-
-      /* ═══ KOR PARÇACIKLARI — yükselen sıcak noktalar ═══ */
-      .ember {
-        position: absolute;
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 3;
-        opacity: 0;
-        animation: emberRise linear infinite;
-      }
-
-      @keyframes emberRise {
-        0% {
-          opacity: 0;
-          transform: translateY(0) scale(1);
-        }
-        8% {
-          opacity: 0.8;
-        }
-        60% {
-          opacity: 0.5;
-        }
-        100% {
-          opacity: 0;
-          transform: translateY(-3000px) translateX(var(--drift, 30px))
-            scale(0.2);
-        }
-      }
-
-      /* ═══ ÇAPRAZ YILDIZ PARILTISI — ✦ şekli ═══ */
-      .sparkle-star {
-        position: absolute;
-        width: 4px;
-        height: 4px;
-        background: rgba(255, 255, 255, 0.9);
-        pointer-events: none;
-        z-index: 2;
-        animation: sparkleGlint 4s ease-in-out infinite;
-      }
-
-      .sparkle-star::before,
-      .sparkle-star::after {
-        content: "";
-        position: absolute;
-      }
-
-      .sparkle-star::before {
-        width: 2px;
-        height: 24px;
-        top: -10px;
-        left: 1px;
-        background: linear-gradient(
-          to bottom,
-          transparent,
-          rgba(255, 255, 255, 0.8),
-          transparent
-        );
-      }
-
-      .sparkle-star::after {
-        width: 24px;
-        height: 2px;
-        left: -10px;
-        top: 1px;
-        background: linear-gradient(
-          to right,
-          transparent,
-          rgba(255, 255, 255, 0.8),
-          transparent
-        );
-      }
-
-      @keyframes sparkleGlint {
-        0%,
-        100% {
-          opacity: 0.2;
-          transform: scale(0.7);
-        }
-        50% {
-          opacity: 1;
-          transform: scale(1.3);
-        }
-      }
-      /* Collision bounce animation removed */
-
-      /* The exaggerated margin-top floating bob animation was removed for performance */
-
-      .wish-card.entering {
-        animation: balloonPop 1s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-
-      @keyframes balloonPop {
-        0% {
-          opacity: 0;
-          transform: translateY(100px) scale(0);
-        }
-
-        60% {
-          transform: translateY(-20px) scale(1.1);
-        }
-
-        80% {
-          transform: translateY(5px) scale(0.95);
-        }
-
-        100% {
-          opacity: 1;
-          transform: translateY(0) scale(1);
-        }
-      }
-
-      .wish-card .wish-text {
-        text-align: center;
-        font-size: 20px;
-        font-weight: 800;
-        color: #ffffff;
-        text-shadow:
-          0 2px 4px rgba(0, 0, 0, 0.4),
-          0 4px 10px rgba(0, 0, 0, 0.3);
-        line-height: 1.3;
-        word-break: break-word;
-        overflow-wrap: break-word;
-        width: 240px;
-        max-height: 200px;
-        overflow: visible;
-        position: absolute;
-        top: 38%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 10;
-        padding: 0 10px;
-      }
-
-      .wish-card .child-name {
-        text-align: center;
-        padding: 0 15px;
-        font-size: 18px;
-        font-weight: 800;
-        color: #FFD700;
-        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
-        position: absolute;
-        bottom: 45px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 12;
-        line-height: 1.2;
-        width: 75%;
-        max-width: 250px;
-
-        display: block;
-        overflow: visible;
-        word-break: break-word;
-      }
-
-      /* Empty state */
-      #empty-state {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-        z-index: 50;
-      }
-
-      .empty-icon {
-        font-size: 140px;
-        animation: emptyPulse 3s ease-in-out infinite;
-      }
-
-      @keyframes emptyPulse {
-        0%,
-        100% {
-          transform: scale(1) rotate(0);
-        }
-
-        25% {
-          transform: scale(1.1) rotate(-5deg);
-        }
-
-        75% {
-          transform: scale(1.1) rotate(5deg);
-        }
-      }
-
-      .empty-text {
-        font-size: 48px;
-        font-weight: 900;
-        color: rgba(255, 255, 255, 0.7);
-        margin-top: 16px;
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      }
-
-      .empty-sub {
-        font-size: 24px;
-        font-weight: 600;
-        color: rgba(255, 255, 255, 0.5);
-        margin-top: 8px;
-        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
-      }
-
-
-      /* Spotlight overlay - arka plan hafif karanlik */
-      #spotlight-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 1920px;
-        height: 4320px;
-        background: rgba(0, 0, 0, 0.3);
-        z-index: 500;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.5s;
-      }
-
-      #spotlight-overlay.active {
-        opacity: 1;
-        pointer-events: auto;
-      }
-
-      /* Spotlight isim etiketi */
-      #spotlight-label {
-        position: absolute;
-        bottom: 80px;
-        left: 50%;
-        transform: translateX(-50%) translateY(50px);
-        z-index: 700;
-        background: linear-gradient(135deg, #ffd700, #ffa500);
-        color: #1a1a35;
-        padding: 20px 50px;
-        border-radius: 30px;
-        font-size: 36px;
-        font-weight: 900;
-        box-shadow: 0 6px 25px rgba(255, 165, 0, 0.4);
-        opacity: 0;
-        pointer-events: none;
-        transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-
-      #spotlight-label.active {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-      }
-
-      /* New wish notification */
-      .new-wish-toast {
-        position: absolute;
-        top: 30px;
-        left: 50%;
-        transform: translateX(-50%) translateY(-200px);
-        background: white;
-        border-radius: 20px;
-        padding: 16px 32px;
-        box-shadow: 0 12px 50px rgba(0, 0, 0, 0.15);
-        z-index: 300;
-        font-size: 28px;
-        font-weight: 800;
-        color: #333;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-
-      .new-wish-toast.show {
-        transform: translateX(-50%) translateY(0);
-      }
-
-      /* Fullscreen button */
-      .fullscreen-btn {
-        position: absolute;
-        bottom: 170px;
-        left: 20px;
-        z-index: 9999;
-        width: 52px;
-        height: 52px;
-        background: rgba(10, 22, 40, 0.85);
-        border: 1px solid rgba(0, 100, 200, 0.4);
-        border-radius: 14px;
-        cursor: pointer;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-        font-size: 24px;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-      }
-
-      .fullscreen-btn:hover {
-        transform: scale(1.1);
-        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
-      }
-
-      /* Mute button */
-      .mute-btn {
-        position: absolute;
-        bottom: 110px;
-        left: 20px;
-        z-index: 9999;
-        width: 52px;
-        height: 52px;
-        background: rgba(10, 22, 40, 0.85);
-        border: 1px solid rgba(0, 100, 200, 0.4);
-        border-radius: 14px;
-        cursor: pointer;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-        font-size: 24px;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-      }
-
-      .mute-btn:hover {
-        transform: scale(1.1);
-      }
-
-      .mute-btn.muted {
+      0%,
+      100% {
         opacity: 0.5;
       }
 
-      /* Display confetti */
-      .display-confetti {
-        position: absolute;
-        z-index: 10002;
-        pointer-events: none;
-        animation: displayConfettiFall 3.5s ease-out forwards;
+      30% {
+        opacity: 0.95;
       }
 
-      .display-confetti.side-left {
-        animation: confettiFromLeft 3s ease-out forwards;
-      }
-      .display-confetti.side-right {
-        animation: confettiFromRight 3s ease-out forwards;
+      50% {
+        opacity: 0.7;
       }
 
-      @keyframes displayConfettiFall {
-        0% {
-          transform: translateY(-40px) rotate(0) scale(1);
-          opacity: 1;
-        }
-        80% {
-          opacity: 1;
-        }
-        100% {
-          transform: translateY(4500px) rotate(1080deg) scale(0.5);
-          opacity: 0;
-        }
-      }
-
-      @keyframes confettiFromLeft {
-        0% {
-          transform: translate(-100px, 2160px) rotate(0) scale(1);
-          opacity: 1;
-        }
-        80% {
-          opacity: 1;
-        }
-        100% {
-          transform: translate(1200px, 1300px) rotate(720deg) scale(0.3);
-          opacity: 0;
-        }
-      }
-
-      @keyframes confettiFromRight {
-        0% {
-          transform: translate(100px, 2160px) rotate(0) scale(1);
-          opacity: 1;
-        }
-        80% {
-          opacity: 1;
-        }
-        100% {
-          transform: translate(-1200px, 1300px) rotate(-720deg) scale(0.3);
-          opacity: 0;
-        }
-      }
-
-      @keyframes sparkleExplode {
-        0% {
-          opacity: 0;
-          transform: scale(0) translate(0, 0);
-        }
-        20% {
-          opacity: 1;
-          transform: scale(1.5);
-        }
-        100% {
-          opacity: 0;
-          transform: scale(0.5)
-            translate(
-              calc((var(--rx, 0.5) - 0.5) * 600px),
-              calc((var(--ry, 0.5) - 0.5) * 1400px)
-            );
-        }
-      }
-
-      /* Emoji rain */
-      .celebration-emoji {
-        position: absolute;
-        z-index: 10002;
-        pointer-events: none;
-        font-size: 60px;
-        animation: emojiFloat 4s ease-out forwards;
-      }
-
-      @keyframes emojiFloat {
-        0% {
-          transform: translateY(-80px) rotate(0) scale(0.5);
-          opacity: 0;
-        }
-        10% {
-          opacity: 1;
-          transform: translateY(0) rotate(10deg) scale(1);
-        }
-        50% {
-          transform: translateY(1700px) rotate(-15deg) scale(1.1);
-          opacity: 1;
-        }
-        100% {
-          transform: translateY(4500px) rotate(30deg) scale(0.6);
-          opacity: 0;
-        }
-      }
-
-      /* Firework starburst */
-      .firework-ray {
-        position: absolute;
-        z-index: 10002;
-        pointer-events: none;
-        width: 4px;
-        border-radius: 2px;
-        animation: fireworkRay 1.5s ease-out forwards;
-        transform-origin: bottom center;
-      }
-
-      @keyframes fireworkRay {
-        0% {
-          height: 0;
-          opacity: 1;
-        }
-        40% {
-          height: 120px;
-          opacity: 1;
-        }
-        100% {
-          height: 120px;
-          opacity: 0;
-          transform: translateY(-60px) scaleY(0.3);
-        }
-      }
-
-      /* Winner reveal flash */
-      .reveal-flash {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: white;
-        z-index: 10003;
-        pointer-events: none;
-        animation: flashBang 0.6s ease-out forwards;
-      }
-
-      @keyframes flashBang {
-        0% {
-          opacity: 0.9;
-        }
-        100% {
-          opacity: 0;
-        }
-      }
-
-      /* Raffle box golden pulse on reveal */
-      #raffle-overlay.show .raffle-box.celebrating {
-        animation: borderPulseGold 1s ease-in-out 3;
-      }
-
-      @keyframes borderPulseGold {
-        0%,
-        100% {
-          box-shadow:
-            0 30px 100px rgba(0, 0, 0, 0.5),
-            inset 0 0 50px rgba(255, 255, 255, 0.1),
-            0 0 40px rgba(255, 215, 0, 0.3);
-          border-color: rgba(255, 255, 255, 0.2);
-        }
-        50% {
-          box-shadow:
-            0 30px 100px rgba(0, 0, 0, 0.5),
-            inset 0 0 50px rgba(255, 255, 255, 0.1),
-            0 0 100px rgba(255, 215, 0, 0.8),
-            0 0 200px rgba(255, 165, 0, 0.4);
-          border-color: rgba(255, 215, 0, 0.8);
-        }
-      }
-
-      #raffle-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.85);
-        backdrop-filter: blur(15px);
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.8s ease;
-      }
-
-      #raffle-overlay.show {
+      70% {
         opacity: 1;
-        pointer-events: auto;
+      }
+    }
+
+    @keyframes flameFlicker {
+      0% {
+        transform: translateX(-50%) scaleY(1) scaleX(1);
+        opacity: 0.85;
       }
 
-      .raffle-box {
-        background: linear-gradient(
-          135deg,
-          rgba(255, 255, 255, 0.1),
-          rgba(255, 255, 255, 0.05)
-        );
-        border: 2px solid rgba(255, 255, 255, 0.2);
-        border-radius: 30px;
-        padding: 40px 60px;
-        text-align: center;
+      15% {
+        transform: translateX(-50%) scaleY(1.12) scaleX(0.88);
+        opacity: 1;
+      }
+
+      30% {
+        transform: translateX(-50%) scaleY(0.92) scaleX(1.08);
+        opacity: 0.9;
+      }
+
+      50% {
+        transform: translateX(-50%) scaleY(1.08) scaleX(0.92);
+        opacity: 0.95;
+      }
+
+      70% {
+        transform: translateX(-50%) scaleY(0.95) scaleX(1.04);
+        opacity: 0.88;
+      }
+
+      85% {
+        transform: translateX(-50%) scaleY(1.06) scaleX(0.94);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateX(-50%) scaleY(1) scaleX(1);
+        opacity: 0.85;
+      }
+    }
+
+    /* Fener giriş animasyonu JS tarafından yönetiliyor (fade-in + sinüs salınımı) */
+    .wish-card.lantern-mode.entering {
+      /* CSS animasyonu yok — JS opacity ve transform ile hallediliyor */
+      animation: none !important;
+    }
+
+    .wish-card.lantern-mode:hover .lantern-body {
+      filter: brightness(1.12);
+    }
+
+    /* ═══ YENİ DİLEK GİRİŞ EFEKTİ — 5sn altın parıltı ═══ */
+    /* Sadece socket 'new-wish' tetikler, DOM recycling tetiklemez */
+    .wish-card.lantern-mode.new-wish-highlight .lantern-body::before {
+      background: radial-gradient(ellipse at 50% 55%,
+          rgba(255, 220, 80, 0.7) 0%,
+          rgba(255, 180, 40, 0.45) 30%,
+          rgba(255, 120, 0, 0.2) 55%,
+          transparent 80%);
+      animation: newWishGlow 5s ease-out forwards;
+    }
+
+    /* Eski parşömen highlight kaldırıldı — metin artık düz beyaz */
+
+    @keyframes newWishGlow {
+      0% {
+        opacity: 1;
+        transform: scale(1.3);
+      }
+
+      20% {
+        opacity: 1;
+        transform: scale(1.15);
+      }
+
+      60% {
+        opacity: 0.85;
+        transform: scale(1.05);
+      }
+
+      100% {
+        opacity: 0.5;
+        transform: scale(1);
+      }
+    }
+
+    /* ═══ AY — sağ üst köşede parlayan ay ═══ */
+    .moon {
+      position: absolute;
+      top: 200px;
+      right: 180px;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%,
+          #fffff0 0%,
+          #fff8d0 25%,
+          #ffe8a0 50%,
+          #e0c070 80%);
+      box-shadow:
+        0 0 40px rgba(255, 230, 150, 0.4),
+        0 0 100px rgba(255, 200, 100, 0.25),
+        0 0 200px rgba(255, 180, 80, 0.12);
+      z-index: 2;
+      pointer-events: none;
+      opacity: 0.85;
+    }
+
+    /* ═══ KOR PARÇACIKLARI — yükselen sıcak noktalar ═══ */
+    .ember {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 3;
+      opacity: 0;
+      animation: emberRise linear infinite;
+    }
+
+    @keyframes emberRise {
+      0% {
+        opacity: 0;
+        transform: translateY(0) scale(1);
+      }
+
+      8% {
+        opacity: 0.8;
+      }
+
+      60% {
+        opacity: 0.5;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-3000px) translateX(var(--drift, 30px)) scale(0.2);
+      }
+    }
+
+    /* ═══ ÇAPRAZ YILDIZ PARILTISI — ✦ şekli ═══ */
+    .sparkle-star {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.9);
+      pointer-events: none;
+      z-index: 2;
+      animation: sparkleGlint 4s ease-in-out infinite;
+    }
+
+    .sparkle-star::before,
+    .sparkle-star::after {
+      content: "";
+      position: absolute;
+    }
+
+    .sparkle-star::before {
+      width: 2px;
+      height: 24px;
+      top: -10px;
+      left: 1px;
+      background: linear-gradient(to bottom,
+          transparent,
+          rgba(255, 255, 255, 0.8),
+          transparent);
+    }
+
+    .sparkle-star::after {
+      width: 24px;
+      height: 2px;
+      left: -10px;
+      top: 1px;
+      background: linear-gradient(to right,
+          transparent,
+          rgba(255, 255, 255, 0.8),
+          transparent);
+    }
+
+    @keyframes sparkleGlint {
+
+      0%,
+      100% {
+        opacity: 0.2;
+        transform: scale(0.7);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.3);
+      }
+    }
+
+    /* Collision bounce animation removed */
+
+    /* The exaggerated margin-top floating bob animation was removed for performance */
+
+    .wish-card.entering {
+      animation: balloonPop 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes balloonPop {
+      0% {
+        opacity: 0;
+        transform: translateY(100px) scale(0);
+      }
+
+      60% {
+        transform: translateY(-20px) scale(1.1);
+      }
+
+      80% {
+        transform: translateY(5px) scale(0.95);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .wish-card .wish-text {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 800;
+      color: #ffffff;
+      text-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.4),
+        0 4px 10px rgba(0, 0, 0, 0.3);
+      line-height: 1.3;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      width: 240px;
+      max-height: 200px;
+      overflow: visible;
+      position: absolute;
+      top: 38%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      padding: 0 10px;
+    }
+
+    .wish-card .child-name {
+      text-align: center;
+      padding: 0 15px;
+      font-size: 18px;
+      font-weight: 800;
+      color: #FFD700;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+      position: absolute;
+      bottom: 45px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 12;
+      line-height: 1.2;
+      width: 75%;
+      max-width: 250px;
+
+      display: block;
+      overflow: visible;
+      word-break: break-word;
+    }
+
+    /* Empty state */
+    #empty-state {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 50;
+    }
+
+    .empty-icon {
+      font-size: 140px;
+      animation: emptyPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes emptyPulse {
+
+      0%,
+      100% {
+        transform: scale(1) rotate(0);
+      }
+
+      25% {
+        transform: scale(1.1) rotate(-5deg);
+      }
+
+      75% {
+        transform: scale(1.1) rotate(5deg);
+      }
+    }
+
+    .empty-text {
+      font-size: 48px;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.7);
+      margin-top: 16px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .empty-sub {
+      font-size: 24px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.5);
+      margin-top: 8px;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+    }
+
+
+    /* Spotlight overlay - arka plan hafif karanlik */
+    #spotlight-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1920px;
+      height: 4320px;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s;
+    }
+
+    #spotlight-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Spotlight isim etiketi */
+    #spotlight-label {
+      position: absolute;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(50px);
+      z-index: 700;
+      background: linear-gradient(135deg, #ffd700, #ffa500);
+      color: #1a1a35;
+      padding: 20px 50px;
+      border-radius: 30px;
+      font-size: 36px;
+      font-weight: 900;
+      box-shadow: 0 6px 25px rgba(255, 165, 0, 0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    #spotlight-label.active {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* New wish notification */
+    .new-wish-toast {
+      position: absolute;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-200px);
+      background: white;
+      border-radius: 20px;
+      padding: 16px 32px;
+      box-shadow: 0 12px 50px rgba(0, 0, 0, 0.15);
+      z-index: 300;
+      font-size: 28px;
+      font-weight: 800;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .new-wish-toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Fullscreen button */
+    .fullscreen-btn {
+      position: absolute;
+      bottom: 170px;
+      left: 20px;
+      z-index: 9999;
+      width: 52px;
+      height: 52px;
+      background: rgba(10, 22, 40, 0.85);
+      border: 1px solid rgba(0, 100, 200, 0.4);
+      border-radius: 14px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      font-size: 24px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .fullscreen-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Mute button */
+    .mute-btn {
+      position: absolute;
+      bottom: 110px;
+      left: 20px;
+      z-index: 9999;
+      width: 52px;
+      height: 52px;
+      background: rgba(10, 22, 40, 0.85);
+      border: 1px solid rgba(0, 100, 200, 0.4);
+      border-radius: 14px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      font-size: 24px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .mute-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .mute-btn.muted {
+      opacity: 0.5;
+    }
+
+    /* Display confetti */
+    .display-confetti {
+      position: absolute;
+      z-index: 10002;
+      pointer-events: none;
+      animation: displayConfettiFall 3.5s ease-out forwards;
+    }
+
+    .display-confetti.side-left {
+      animation: confettiFromLeft 3s ease-out forwards;
+    }
+
+    .display-confetti.side-right {
+      animation: confettiFromRight 3s ease-out forwards;
+    }
+
+    @keyframes displayConfettiFall {
+      0% {
+        transform: translateY(-40px) rotate(0) scale(1);
+        opacity: 1;
+      }
+
+      80% {
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(4500px) rotate(1080deg) scale(0.5);
+        opacity: 0;
+      }
+    }
+
+    @keyframes confettiFromLeft {
+      0% {
+        transform: translate(-100px, 2160px) rotate(0) scale(1);
+        opacity: 1;
+      }
+
+      80% {
+        opacity: 1;
+      }
+
+      100% {
+        transform: translate(1200px, 1300px) rotate(720deg) scale(0.3);
+        opacity: 0;
+      }
+    }
+
+    @keyframes confettiFromRight {
+      0% {
+        transform: translate(100px, 2160px) rotate(0) scale(1);
+        opacity: 1;
+      }
+
+      80% {
+        opacity: 1;
+      }
+
+      100% {
+        transform: translate(-1200px, 1300px) rotate(-720deg) scale(0.3);
+        opacity: 0;
+      }
+    }
+
+    @keyframes sparkleExplode {
+      0% {
+        opacity: 0;
+        transform: scale(0) translate(0, 0);
+      }
+
+      20% {
+        opacity: 1;
+        transform: scale(1.5);
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(0.5) translate(calc((var(--rx, 0.5) - 0.5) * 600px),
+            calc((var(--ry, 0.5) - 0.5) * 1400px));
+      }
+    }
+
+    /* Emoji rain */
+    .celebration-emoji {
+      position: absolute;
+      z-index: 10002;
+      pointer-events: none;
+      font-size: 60px;
+      animation: emojiFloat 4s ease-out forwards;
+    }
+
+    @keyframes emojiFloat {
+      0% {
+        transform: translateY(-80px) rotate(0) scale(0.5);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 1;
+        transform: translateY(0) rotate(10deg) scale(1);
+      }
+
+      50% {
+        transform: translateY(1700px) rotate(-15deg) scale(1.1);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(4500px) rotate(30deg) scale(0.6);
+        opacity: 0;
+      }
+    }
+
+    /* Firework starburst */
+    .firework-ray {
+      position: absolute;
+      z-index: 10002;
+      pointer-events: none;
+      width: 4px;
+      border-radius: 2px;
+      animation: fireworkRay 1.5s ease-out forwards;
+      transform-origin: bottom center;
+    }
+
+    @keyframes fireworkRay {
+      0% {
+        height: 0;
+        opacity: 1;
+      }
+
+      40% {
+        height: 120px;
+        opacity: 1;
+      }
+
+      100% {
+        height: 120px;
+        opacity: 0;
+        transform: translateY(-60px) scaleY(0.3);
+      }
+    }
+
+    /* Winner reveal flash */
+    .reveal-flash {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: white;
+      z-index: 10003;
+      pointer-events: none;
+      animation: flashBang 0.6s ease-out forwards;
+    }
+
+    @keyframes flashBang {
+      0% {
+        opacity: 0.9;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
+
+    /* Raffle box golden pulse on reveal */
+    #raffle-overlay.show .raffle-box.celebrating {
+      animation: borderPulseGold 1s ease-in-out 3;
+    }
+
+    @keyframes borderPulseGold {
+
+      0%,
+      100% {
         box-shadow:
           0 30px 100px rgba(0, 0, 0, 0.5),
-          inset 0 0 50px rgba(255, 255, 255, 0.1);
-        transform: scale(0.8) translateY(100px);
-        transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-        max-width: 80%;
+          inset 0 0 50px rgba(255, 255, 255, 0.1),
+          0 0 40px rgba(255, 215, 0, 0.3);
+        border-color: rgba(255, 255, 255, 0.2);
       }
 
-      #raffle-overlay.show .raffle-box {
-        transform: scale(1) translateY(0);
+      50% {
+        box-shadow:
+          0 30px 100px rgba(0, 0, 0, 0.5),
+          inset 0 0 50px rgba(255, 255, 255, 0.1),
+          0 0 100px rgba(255, 215, 0, 0.8),
+          0 0 200px rgba(255, 165, 0, 0.4);
+        border-color: rgba(255, 215, 0, 0.8);
       }
+    }
 
-      .raffle-title {
-        font-size: 56px;
-        font-weight: 900;
-        color: #ffd700;
-        text-transform: uppercase;
-        letter-spacing: 5px;
-        margin-bottom: 50px;
+    #raffle-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(15px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.8s ease;
+    }
+
+    #raffle-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .raffle-box {
+      background: linear-gradient(135deg,
+          rgba(255, 255, 255, 0.1),
+          rgba(255, 255, 255, 0.05));
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 30px;
+      padding: 40px 60px;
+      text-align: center;
+      box-shadow:
+        0 30px 100px rgba(0, 0, 0, 0.5),
+        inset 0 0 50px rgba(255, 255, 255, 0.1);
+      transform: scale(0.8) translateY(100px);
+      transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-width: 80%;
+    }
+
+    #raffle-overlay.show .raffle-box {
+      transform: scale(1) translateY(0);
+    }
+
+    .raffle-title {
+      font-size: 56px;
+      font-weight: 900;
+      color: #ffd700;
+      text-transform: uppercase;
+      letter-spacing: 5px;
+      margin-bottom: 50px;
+      text-shadow:
+        0 10px 30px rgba(255, 215, 0, 0.4),
+        0 2px 5px rgba(0, 0, 0, 0.8);
+      animation: pulseGlow 2s infinite;
+    }
+
+    @keyframes pulseGlow {
+
+      0%,
+      100% {
         text-shadow:
           0 10px 30px rgba(255, 215, 0, 0.4),
           0 2px 5px rgba(0, 0, 0, 0.8);
-        animation: pulseGlow 2s infinite;
       }
 
-      @keyframes pulseGlow {
-        0%,
-        100% {
-          text-shadow:
-            0 10px 30px rgba(255, 215, 0, 0.4),
-            0 2px 5px rgba(0, 0, 0, 0.8);
-        }
-
-        50% {
-          text-shadow:
-            0 10px 60px rgba(255, 215, 0, 0.8),
-            0 2px 5px rgba(0, 0, 0, 0.8);
-        }
-      }
-
-      .raffle-winners-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 40px;
-        justify-content: center;
-      }
-
-      .raffle-item {
-        background: rgba(255, 255, 255, 0.15);
-        border: 3px solid rgba(255, 255, 255, 0.3);
-        border-radius: 16px;
-        padding: 20px 36px;
-        font-size: 36px;
-        font-weight: 800;
-        color: white;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-        opacity: 0;
-        transform: scale(0.5);
-        transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-
-      .raffle-item.reveal {
-        opacity: 1;
-        transform: scale(1);
-      }
-
-      /* Raffle Countdown Animation */
-      .raffle-countdown {
-        font-size: 180px;
-        font-weight: 900;
-        color: #ffd700;
+      50% {
         text-shadow:
-          0 0 60px rgba(255, 215, 0, 0.6),
-          0 0 120px rgba(255, 165, 0, 0.3);
-        animation: countdownPulse 1s ease-in-out;
-        text-align: center;
-        line-height: 1;
-        padding: 40px;
+          0 10px 60px rgba(255, 215, 0, 0.8),
+          0 2px 5px rgba(0, 0, 0, 0.8);
+      }
+    }
+
+    .raffle-winners-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      justify-content: center;
+    }
+
+    .raffle-item {
+      background: rgba(255, 255, 255, 0.15);
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 16px;
+      padding: 20px 36px;
+      font-size: 36px;
+      font-weight: 800;
+      color: white;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .raffle-item.reveal {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Raffle Countdown Animation */
+    .raffle-countdown {
+      font-size: 180px;
+      font-weight: 900;
+      color: #ffd700;
+      text-shadow:
+        0 0 60px rgba(255, 215, 0, 0.6),
+        0 0 120px rgba(255, 165, 0, 0.3);
+      animation: countdownPulse 1s ease-in-out;
+      text-align: center;
+      line-height: 1;
+      padding: 40px;
+    }
+
+    .raffle-countdown.countdown-pop {
+      animation: countdownPulse 1s ease-in-out;
+    }
+
+    @keyframes countdownPulse {
+      0% {
+        transform: scale(0.3);
+        opacity: 0;
       }
 
-      .raffle-countdown.countdown-pop {
-        animation: countdownPulse 1s ease-in-out;
+      40% {
+        transform: scale(1.3);
+        opacity: 1;
       }
 
-      @keyframes countdownPulse {
-        0% {
-          transform: scale(0.3);
-          opacity: 0;
-        }
-        40% {
-          transform: scale(1.3);
-          opacity: 1;
-        }
-        70% {
-          transform: scale(0.95);
-        }
-        100% {
-          transform: scale(1);
-          opacity: 1;
-        }
+      70% {
+        transform: scale(0.95);
       }
 
-      /* logo-layer tüm temalarda devre dışı —
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* logo-layer tüm temalarda devre dışı —
            fenerler/balonlar display-header (z:200) altında kalır, PNG temalarda logo baked-in */
-      .logo-layer {
-        display: none;
-      }
+    .logo-layer {
+      display: none;
+    }
 
 
-      @keyframes mobileCardEnter {
-        0% {
-          opacity: 0;
-          transform: translateY(30px) scale(0.9);
-        }
-        100% {
-          opacity: 1;
-          transform: translateY(0) scale(1);
-        }
-      }
-      /* #scaled-app — scale edilen ana uygulama katmanı */
-      #scaled-app {
-        position: absolute;
-        top: 0; left: 0;
-        transform-origin: top left;
-        overflow: hidden;
+    @keyframes mobileCardEnter {
+      0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.9);
       }
 
-      /* #ui-overlay — scale'den bağımsız, viewport'a sabit UI katmanı */
-      #ui-overlay {
-        position: fixed;
-        inset: 0;
-        z-index: 9999;
-        pointer-events: none;
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
       }
+    }
 
-      /* Overlay içindeki etkileşimli elemanlar tıklanabilir */
-      #ui-overlay .logo-box,
-      #ui-overlay .header-title-box,
-      #ui-overlay .fullscreen-btn,
-      #ui-overlay .mute-btn {
-        pointer-events: auto;
-      }
-    </style>
-  </head>
+    /* #scaled-app — scale edilen ana uygulama katmanı */
+    #scaled-app {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: top left;
+      overflow: hidden;
+    }
 
-  <body>
-    <div id="scaled-app"><div class="display-container">
+    /* #ui-overlay — scaled-app icinde, 960x2160 sabit */
+    #ui-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 960px;
+      height: 2160px;
+      z-index: 9999;
+      pointer-events: none;
+    }
+
+    /* Overlay içindeki etkileşimli elemanlar tıklanabilir */
+    #ui-overlay .logo-box,
+    #ui-overlay .header-title-box,
+    #ui-overlay .fullscreen-btn,
+    #ui-overlay .mute-btn {
+      pointer-events: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="scaled-app">
+    <div class="display-container">
       <!-- Floating shapes -->
       <div class="shapes" id="shapes"></div>
 
@@ -1190,46 +1205,16 @@
       <div class="moon"></div>
 
       <!-- Çapraz yıldız parıltıları -->
-      <div
-        class="sparkle-star"
-        style="left: 300px; top: 350px; animation-delay: 0s"
-      ></div>
-      <div
-        class="sparkle-star"
-        style="left: 1500px; top: 700px; animation-delay: 1.5s"
-      ></div>
-      <div
-        class="sparkle-star"
-        style="left: 750px; top: 1500px; animation-delay: 0.8s"
-      ></div>
-      <div
-        class="sparkle-star"
-        style="left: 1650px; top: 2100px; animation-delay: 2.2s"
-      ></div>
-      <div
-        class="sparkle-star"
-        style="left: 180px; top: 2700px; animation-delay: 3.1s"
-      ></div>
-      <div
-        class="sparkle-star"
-        style="left: 1100px; top: 3300px; animation-delay: 1.2s"
-      ></div>
-      <div
-        class="sparkle-star"
-        style="left: 500px; top: 3800px; animation-delay: 2.8s"
-      ></div>
-      <div
-        class="sparkle-star"
-        style="left: 1400px; top: 1100px; animation-delay: 0.4s"
-      ></div>
-      <div
-        class="sparkle-star"
-        style="left: 900px; top: 600px; animation-delay: 1.9s"
-      ></div>
-      <div
-        class="sparkle-star"
-        style="left: 350px; top: 4100px; animation-delay: 3.5s"
-      ></div>
+      <div class="sparkle-star" style="left: 300px; top: 350px; animation-delay: 0s"></div>
+      <div class="sparkle-star" style="left: 1500px; top: 700px; animation-delay: 1.5s"></div>
+      <div class="sparkle-star" style="left: 750px; top: 1500px; animation-delay: 0.8s"></div>
+      <div class="sparkle-star" style="left: 1650px; top: 2100px; animation-delay: 2.2s"></div>
+      <div class="sparkle-star" style="left: 180px; top: 2700px; animation-delay: 3.1s"></div>
+      <div class="sparkle-star" style="left: 1100px; top: 3300px; animation-delay: 1.2s"></div>
+      <div class="sparkle-star" style="left: 500px; top: 3800px; animation-delay: 2.8s"></div>
+      <div class="sparkle-star" style="left: 1400px; top: 1100px; animation-delay: 0.4s"></div>
+      <div class="sparkle-star" style="left: 900px; top: 600px; animation-delay: 1.9s"></div>
+      <div class="sparkle-star" style="left: 350px; top: 4100px; animation-delay: 3.5s"></div>
 
       <!-- Kor parçacıkları container -->
       <!-- Kor parçacıkları container — ui-overlay'e taşındı -->
@@ -1281,13 +1266,14 @@
           </div>
         </div>
       </div>
-    </div></div><!-- /.display-container /.scaled-app -->
+    </div>
 
-    <!-- Spotlight + Controls + Logos — scale'den bağımsız UI overlay -->
+    <!-- ui-overlay — scaled-app ICINDE, 960x2160 sabit -->
     <div id="ui-overlay">
       <!-- Logolar — ust bolum -->
       <div class="logos-top-bar">
-        <img class="logos-top-image" src="/images/logolar.png?v=1" alt="T.C. Kültür ve Turizm Bakanlığı, AKM ve Türk Telekom" />
+        <img class="logos-top-image" src="/images/logolar.png?v=1"
+          alt="T.C. Kültür ve Turizm Bakanlığı, AKM ve Türk Telekom" />
       </div>
 
       <!-- Header Title -->
@@ -1301,10 +1287,10 @@
       <!-- Spotlight -->
       <div id="spotlight-overlay"></div>
       <div id="spotlight-label">🌟 <span id="spotlight-name"></span></div>
-
-      <!-- Controls kaldırıldı — admin panelinden yönetilecek -->
     </div>
 
+  </div>
+  </div><!-- /.display-container /.scaled-app -->
 
 
 
@@ -1313,101 +1299,91 @@
 
 
 
-    <!-- New wish toast -->
-    <div class="new-wish-toast" id="new-wish-toast">
-      &#x1F389; Yeni Dilek Geldi!
-    </div>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-      // Auto-scale canvas to cover actual screen — aspect ratio auto-detected
-      const DESIGN_WIDTH = 1920;
-      let DESIGN_HEIGHT = Math.round(DESIGN_WIDTH * ((window.innerHeight || 1080) / (window.innerWidth || 1920)));
+  <!-- New wish toast -->
+  <div class="new-wish-toast" id="new-wish-toast">
+    &#x1F389; Yeni Dilek Geldi!
+  </div>
 
-      function scaleToFit() {
-        const w = window.innerWidth || 1;
-        const h = window.innerHeight || 1;
-        // Recalculate height for current aspect ratio
-        DESIGN_HEIGHT = Math.round(DESIGN_WIDTH * (h / w));
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // Sabit 960x2160 — LED panel icin 1:1 render
+    const DESIGN_WIDTH = 960;
+    const DESIGN_HEIGHT = 2160;
 
-        // Aspect-ratio-aware lantern size:
-        // Tall screens (LED 960x2160, ratio>2) → big lanterns (240px)
-        // Wide screens (1920x1080, ratio≈0.56) → small lanterns (~120px)
-        // Formula: clamp(120, 240 * (DESIGN_HEIGHT / 2160), 260)
-        const lanternPx = Math.round(Math.max(120, Math.min(260, 240 * (DESIGN_HEIGHT / 2160))));
-        document.documentElement.style.setProperty('--lantern-size', lanternPx + 'px');
+    function scaleToFit() {
+      // LED panel 960x2160 — olcek yok, 1:1
+      document.documentElement.style.setProperty('--lantern-size', '240px');
 
-        // Uniform scale — no distortion
-        const scale = w / DESIGN_WIDTH;
-        // Scale'i #scaled-app'e uygula (body transform-free → fixed overlay çalışır)
-        const scaledApp = document.getElementById('scaled-app');
-        if (scaledApp) {
-          scaledApp.style.transform = `scale(${scale})`;
-          scaledApp.style.transformOrigin = 'top left';
-          scaledApp.style.width = DESIGN_WIDTH + 'px';
-          scaledApp.style.height = DESIGN_HEIGHT + 'px';
-        }
-
-
-
-
-
-        document.body.style.overflow = 'hidden';
-        document.body.style.margin = '0';
-        document.body.style.padding = '0';
-
-        const container = document.querySelector(".display-container");
-        if (container) {
-            container.style.width = DESIGN_WIDTH + "px";
-            container.style.height = DESIGN_HEIGHT + "px";
-        }
-
-        // Portrait mod tespiti — logos-bottom-bar column layout için
-        const bar = document.querySelector('.logos-bottom-bar');
-        if (bar) {
-          if (h > w || w < 800) {
-            bar.classList.add('portrait-mode');
-          } else {
-            bar.classList.remove('portrait-mode');
-          }
-        }
+      const scaledApp = document.getElementById('scaled-app');
+      if (scaledApp) {
+        scaledApp.style.transform = 'scale(1)';
+        scaledApp.style.transformOrigin = 'top left';
+        scaledApp.style.width = DESIGN_WIDTH + 'px';
+        scaledApp.style.height = DESIGN_HEIGHT + 'px';
       }
 
 
-      scaleToFit();
-      // resize — recalculate scale + dimensions
-      window.addEventListener("resize", scaleToFit);
 
-      // Kor parçacıkları oluştur
-      (function () {
-        const ec = document.getElementById("embers-container");
-        if (!ec) return;
-        const colors = [
-          "#FFD700",
-          "#FFA500",
-          "#FF6600",
-          "#FF4500",
-          "#FF8C00",
-          "#FFB347",
-        ];
-        for (let i = 0; i < 18; i++) {
-          const e = document.createElement("div");
-          e.className = "ember";
-          const size = 2 + Math.random() * 4;
-          e.style.left = 5 + Math.random() * 90 + "%";
-          e.style.bottom = "-2%";
-          e.style.width = size + "px";
-          e.style.height = size + "px";
-          e.style.background =
-            colors[Math.floor(Math.random() * colors.length)];
-          e.style.boxShadow = "0 0 " + size * 2 + "px " + e.style.background;
-          e.style.animationDuration = 10 + Math.random() * 15 + "s";
-          e.style.animationDelay = Math.random() * 20 + "s";
-          e.style.setProperty("--drift", Math.random() * 120 - 60 + "px");
-          ec.appendChild(e);
+
+
+      document.body.style.overflow = 'hidden';
+      document.body.style.margin = '0';
+      document.body.style.padding = '0';
+
+      const container = document.querySelector(".display-container");
+      if (container) {
+        container.style.width = DESIGN_WIDTH + "px";
+        container.style.height = DESIGN_HEIGHT + "px";
+      }
+
+      // Portrait mod tespiti — logos-bottom-bar column layout için
+      const bar = document.querySelector('.logos-bottom-bar');
+      if (bar) {
+        if (h > w || w < 800) {
+          bar.classList.add('portrait-mode');
+        } else {
+          bar.classList.remove('portrait-mode');
         }
-      })();
-    </script>
-    <script src="js/display.js?v=18.4.5"></script>
-  </body>
+      }
+    }
+
+
+    scaleToFit();
+    // resize — recalculate scale + dimensions
+    window.addEventListener("resize", scaleToFit);
+
+    // Kor parçacıkları oluştur
+    (function () {
+      const ec = document.getElementById("embers-container");
+      if (!ec) return;
+      const colors = [
+        "#FFD700",
+        "#FFA500",
+        "#FF6600",
+        "#FF4500",
+        "#FF8C00",
+        "#FFB347",
+      ];
+      for (let i = 0; i < 18; i++) {
+        const e = document.createElement("div");
+        e.className = "ember";
+        const size = 2 + Math.random() * 4;
+        e.style.left = 5 + Math.random() * 90 + "%";
+        e.style.bottom = "-2%";
+        e.style.width = size + "px";
+        e.style.height = size + "px";
+        e.style.background =
+          colors[Math.floor(Math.random() * colors.length)];
+        e.style.boxShadow = "0 0 " + size * 2 + "px " + e.style.background;
+        e.style.animationDuration = 10 + Math.random() * 15 + "s";
+        e.style.animationDelay = Math.random() * 20 + "s";
+        e.style.setProperty("--drift", Math.random() * 120 - 60 + "px");
+        ec.appendChild(e);
+      }
+    })();
+  </script>
+  <script src="js/display.js?v=18.4.5"></script>
+</body>
+
 </html>

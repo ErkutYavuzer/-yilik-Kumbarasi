@@ -281,7 +281,8 @@ let displaySettings = {
     maxVisible: savedDisplaySettings.maxVisible || 20,
     logoOffsetPx: typeof savedDisplaySettings.logoOffsetPx === 'number' ? savedDisplaySettings.logoOffsetPx : 0,
     headerOffsetPx: typeof savedDisplaySettings.headerOffsetPx === 'number' ? savedDisplaySettings.headerOffsetPx : 0,
-    screenMode: savedDisplaySettings.screenMode || 'led',
+    logoScale: typeof savedDisplaySettings.logoScale === 'number' ? savedDisplaySettings.logoScale : 1,
+    headerScale: typeof savedDisplaySettings.headerScale === 'number' ? savedDisplaySettings.headerScale : 1,
     dayMode: typeof savedDisplaySettings.dayMode === 'boolean' ? savedDisplaySettings.dayMode : false
 };
 
@@ -339,14 +340,15 @@ app.get('/api/display-settings', (req, res) => {
 
 // Ekran Ayarlarını Güncelle API'si
 app.post('/api/display-settings', (req, res) => {
-    const { speedMultiplier, scaleMultiplier, maxVisible, logoOffsetPx, headerOffsetPx, screenMode, dayMode } = req.body;
+    const { speedMultiplier, scaleMultiplier, maxVisible, logoOffsetPx, headerOffsetPx, logoScale, headerScale, dayMode } = req.body;
 
     if (typeof speedMultiplier === 'number') displaySettings.speedMultiplier = speedMultiplier;
     if (typeof scaleMultiplier === 'number') displaySettings.scaleMultiplier = scaleMultiplier;
     if (typeof maxVisible === 'number') displaySettings.maxVisible = Math.max(1, Math.min(100, maxVisible));
     if (typeof logoOffsetPx === 'number') displaySettings.logoOffsetPx = Math.max(-1200, Math.min(1200, logoOffsetPx));
     if (typeof headerOffsetPx === 'number') displaySettings.headerOffsetPx = Math.max(-1200, Math.min(1200, headerOffsetPx));
-    if (['led', 'normal'].includes(screenMode)) displaySettings.screenMode = screenMode;
+    if (typeof logoScale === 'number') displaySettings.logoScale = Math.max(0.6, Math.min(1.6, logoScale));
+    if (typeof headerScale === 'number') displaySettings.headerScale = Math.max(0.6, Math.min(1.6, headerScale));
     if (typeof dayMode === 'boolean') displaySettings.dayMode = dayMode;
 
     console.log(`

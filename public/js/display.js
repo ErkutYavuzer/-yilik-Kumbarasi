@@ -18,7 +18,7 @@ class WishDisplay {
         this.socket = null;
         this.isMuted = false;
         this.audioCtx = null;
-        this.displaySettings = { speedMultiplier: 1.0, scaleMultiplier: 1.0, maxVisible: 20, logoOffsetPx: 0, headerOffsetPx: 0, screenMode: 'led', dayMode: false }; // Global ekran ayarları
+        this.displaySettings = { speedMultiplier: 1.0, scaleMultiplier: 1.0, maxVisible: 20, logoOffsetPx: 0, headerOffsetPx: 0, logoScale: 1, headerScale: 1, dayMode: false }; // Global ekran ayarları
         this.displayMode = 'balloon'; // 'balloon' veya 'lantern'
         this._raffleAnimating = false; // Çekiliş animasyonu aktif mi
 
@@ -31,6 +31,7 @@ class WishDisplay {
             await this.loadDisplaySettings();
             this.connectSocket();
             this.bindEvents();
+            this.initHeaderLogoObservers();
             this.startFloatingAnimation();
             this.setupAudio();
             this.loadTheme();
@@ -441,6 +442,8 @@ class WishDisplay {
         const maxVisible = this.displayMode === 'lantern' ? this.getAdaptiveMaxVisible() : ((this.displaySettings && this.displaySettings.maxVisible) || 20);
         const logoOffsetPx = typeof this.displaySettings.logoOffsetPx === 'number' ? this.displaySettings.logoOffsetPx : 0;
         const headerOffsetPx = typeof this.displaySettings.headerOffsetPx === 'number' ? this.displaySettings.headerOffsetPx : 0;
+        const logoScale = typeof this.displaySettings.logoScale === 'number' ? this.displaySettings.logoScale : 1;
+        const headerScale = typeof this.displaySettings.headerScale === 'number' ? this.displaySettings.headerScale : 1;
         console.log(`📺 Ayarlar uygulanıyor: Hız=${speed}x, Ölçek=${scale}x, Max=${maxVisible}`);
 
         // screenMode artık otomatik — her ekran kendi aspect ratio'suna göre ayarlanıyor
@@ -449,6 +452,8 @@ class WishDisplay {
         document.documentElement.style.setProperty('--card-scale', scale);
         document.documentElement.style.setProperty('--logo-offset', `${logoOffsetPx}px`);
         document.documentElement.style.setProperty('--header-offset', `${headerOffsetPx}px`);
+        document.documentElement.style.setProperty('--logo-scale', logoScale.toString());
+        document.documentElement.style.setProperty('--header-scale', headerScale.toString());
 
         // Gündüz modu sınıfı
         document.documentElement.classList.toggle('day-mode', !!this.displaySettings.dayMode);
@@ -500,6 +505,38 @@ class WishDisplay {
         const safeOffset = overlap > 0 ? -Math.ceil(overlap) : 0;
 
         document.documentElement.style.setProperty('--header-safe-offset', `${safeOffset}px`);
+    }
+
+    initHeaderLogoObservers() {
+        const logoBar = document.querySelector('.logos-top-bar');
+        const headerBox = document.querySelector('.header-title-box');
+        if (!logoBar || !headerBox) return;
+
+        const schedule = () => {
+            this.updateHeaderLogoSpacing();
+            requestAnimationFrame(() => this.updateHeaderLogoSpacing());
+        };
+
+        if (this._headerLogoObserver) {
+            this._headerLogoObserver.disconnect();
+        }
+
+        if (typeof ResizeObserver !== 'undefined') {
+            this._headerLogoObserver = new ResizeObserver(() => schedule());
+            this._headerLogoObserver.observe(logoBar);
+            this._headerLogoObserver.observe(headerBox);
+        }
+
+        const logoImg = logoBar.querySelector('img');
+        if (logoImg && !logoImg.complete) {
+            logoImg.addEventListener('load', schedule, { once: true });
+        }
+
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(schedule).catch(() => {});
+        }
+
+        window.addEventListener('load', schedule, { once: true });
     }
 
     // === EVENTS ===

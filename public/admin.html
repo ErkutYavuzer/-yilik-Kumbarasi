@@ -349,21 +349,10 @@
                             <div class="mod-title"><i data-lucide="monitor-cog"
                                     style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Ekran
                                 Ayarları</div>
-                            <div class="mod-sub">Ekran modu, fener animasyonlarının hızı, büyüklüğü ve sayısı</div>
+                            <div class="mod-sub">Fener animasyonlarının hızı, büyüklüğü ve sayısı</div>
                         </div>
                     </div>
                     <div class="divider"></div>
-                    <div style="margin-bottom:16px;">
-                        <div class="setting-label" style="margin-bottom:8px;"><i data-lucide="monitor" style="width:14px;height:14px;vertical-align:middle;"></i> Ekran Modu</div>
-                        <div style="display:flex;gap:8px;">
-                            <button type="button" class="screen-mode-btn active" data-mode="led" onclick="setScreenMode('led')" style="flex:1;padding:10px 16px;border-radius:10px;border:2px solid var(--accent);background:var(--accent);color:white;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;text-align:center;">
-                                LED Panel<br><span style="font-weight:400;font-size:11px;opacity:0.8;">1920 × 4320</span>
-                            </button>
-                            <button type="button" class="screen-mode-btn" data-mode="normal" onclick="setScreenMode('normal')" style="flex:1;padding:10px 16px;border-radius:10px;border:2px solid var(--card-border);background:var(--bg2);color:var(--text2);font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;text-align:center;">
-                                Normal Ekran<br><span style="font-weight:400;font-size:11px;opacity:0.8;">1920 × 1080</span>
-                            </button>
-                        </div>
-                    </div>
                     <div class="settings-grid">
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="gauge"
@@ -390,10 +379,22 @@
                             <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;"><span>-1200px</span><span>1200px</span></div>
                         </div>
                         <div class="setting-card">
+                            <div class="setting-label"><i data-lucide="maximize"
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Logo Boyutu <span id="logo-scale-value" style="color:var(--accent);font-weight:700;margin-left:6px;">100%</span></div>
+                            <input type="range" class="setting-range" id="display-logo-scale" min="60" max="160" step="2" value="100" oninput="updateLogoScaleLabel(this.value)" onchange="saveDisplaySettings()">
+                            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;"><span>60%</span><span>160%</span></div>
+                        </div>
+                        <div class="setting-card">
                             <div class="setting-label"><i data-lucide="type"
                                     style="width:14px;height:14px;vertical-align:middle;"></i> Başlık Ofseti <span id="header-offset-value" style="color:var(--accent);font-weight:700;margin-left:6px;">0px</span></div>
                             <input type="range" class="setting-range" id="display-header-offset" min="-1200" max="1200" step="4" value="0" oninput="updateHeaderOffsetLabel(this.value)" onchange="saveDisplaySettings()">
                             <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;"><span>-1200px</span><span>1200px</span></div>
+                        </div>
+                        <div class="setting-card">
+                            <div class="setting-label"><i data-lucide="type"
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Başlık Boyutu <span id="header-scale-value" style="color:var(--accent);font-weight:700;margin-left:6px;">100%</span></div>
+                            <input type="range" class="setting-range" id="display-header-scale" min="60" max="160" step="2" value="100" oninput="updateHeaderScaleLabel(this.value)" onchange="saveDisplaySettings()">
+                            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;"><span>60%</span><span>160%</span></div>
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="sun"
@@ -802,7 +803,7 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/admin.js?v=2.0.1"></script>
+    <script src="/js/admin.js?v=2.0.2"></script>
     <script>
         // Init Lucide Icons
         document.addEventListener('DOMContentLoaded', () => {

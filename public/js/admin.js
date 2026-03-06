@@ -923,7 +923,8 @@ async function saveDisplaySettings() {
         maxVisible: parseInt(document.getElementById('display-maxvisible').value),
         logoOffsetPx: parseInt(document.getElementById('display-logo-offset').value),
         headerOffsetPx: parseInt(document.getElementById('display-header-offset').value),
-        screenMode: document.querySelector('.screen-mode-btn.active')?.dataset.mode || 'led',
+        logoScale: parseInt(document.getElementById('display-logo-scale').value) / 100,
+        headerScale: parseInt(document.getElementById('display-header-scale').value) / 100,
         dayMode: !!document.getElementById('display-daymode')?.checked
     };
     try {
@@ -959,10 +960,22 @@ function setDisplaySettingsUI(data) {
         if (el) el.value = data.logoOffsetPx;
         updateLogoOffsetLabel(data.logoOffsetPx);
     }
+    if (data.logoScale !== undefined) {
+        const el = document.getElementById('display-logo-scale');
+        const scaleValue = Math.round(data.logoScale * 100);
+        if (el) el.value = scaleValue;
+        updateLogoScaleLabel(scaleValue);
+    }
     if (data.headerOffsetPx !== undefined) {
         const el = document.getElementById('display-header-offset');
         if (el) el.value = data.headerOffsetPx;
         updateHeaderOffsetLabel(data.headerOffsetPx);
+    }
+    if (data.headerScale !== undefined) {
+        const el = document.getElementById('display-header-scale');
+        const scaleValue = Math.round(data.headerScale * 100);
+        if (el) el.value = scaleValue;
+        updateHeaderScaleLabel(scaleValue);
     }
     if (data.dayMode !== undefined) {
         const dayToggle = document.getElementById('display-daymode');
@@ -1001,9 +1014,19 @@ function updateLogoOffsetLabel(val) {
     if (el) el.textContent = `${parseInt(val)}px`;
 }
 
+function updateLogoScaleLabel(val) {
+    const el = document.getElementById('logo-scale-value');
+    if (el) el.textContent = `${parseInt(val)}%`;
+}
+
 function updateHeaderOffsetLabel(val) {
     const el = document.getElementById('header-offset-value');
     if (el) el.textContent = `${parseInt(val)}px`;
+}
+
+function updateHeaderScaleLabel(val) {
+    const el = document.getElementById('header-scale-value');
+    if (el) el.textContent = `${parseInt(val)}%`;
 }
 
 function setScreenMode(mode) {
