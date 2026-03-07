@@ -452,6 +452,60 @@
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="move"
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Bakanlık X <span
+                                    id="bakanlik-x-value"
+                                    style="color:var(--accent);font-weight:700;margin-left:6px;">0px</span></div>
+                            <input type="range" class="setting-range" id="display-bakanlik-x" min="-2160" max="2160"
+                                step="4" value="0"
+                                oninput="document.getElementById('bakanlik-x-value').textContent=this.value+'px'"
+                                onchange="saveDisplaySettings()">
+                            <div
+                                style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
+                                <span>-2160px</span><span>2160px</span>
+                            </div>
+                        </div>
+                        <div class="setting-card">
+                            <div class="setting-label"><i data-lucide="move"
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Bakanlık Y <span
+                                    id="bakanlik-y-value"
+                                    style="color:var(--accent);font-weight:700;margin-left:6px;">0px</span></div>
+                            <input type="range" class="setting-range" id="display-bakanlik-y" min="-2160" max="2160"
+                                step="4" value="0"
+                                oninput="document.getElementById('bakanlik-y-value').textContent=this.value+'px'"
+                                onchange="saveDisplaySettings()">
+                            <div
+                                style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
+                                <span>-2160px</span><span>2160px</span>
+                            </div>
+                        </div>
+                        <div class="setting-card">
+                            <div class="setting-label"><i data-lucide="move"
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> AKM X <span
+                                    id="akm-x-value"
+                                    style="color:var(--accent);font-weight:700;margin-left:6px;">0px</span></div>
+                            <input type="range" class="setting-range" id="display-akm-x" min="-2160" max="2160" step="4"
+                                value="0" oninput="document.getElementById('akm-x-value').textContent=this.value+'px'"
+                                onchange="saveDisplaySettings()">
+                            <div
+                                style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
+                                <span>-2160px</span><span>2160px</span>
+                            </div>
+                        </div>
+                        <div class="setting-card">
+                            <div class="setting-label"><i data-lucide="move"
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> AKM Y <span
+                                    id="akm-y-value"
+                                    style="color:var(--accent);font-weight:700;margin-left:6px;">0px</span></div>
+                            <input type="range" class="setting-range" id="display-akm-y" min="-2160" max="2160" step="4"
+                                value="0" oninput="document.getElementById('akm-y-value').textContent=this.value+'px'"
+                                onchange="saveDisplaySettings()">
+                            <div
+                                style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
+                                <span>-2160px</span><span>2160px</span>
+                            </div>
+                        </div>
+                        <div class="setting-card">
+                            <div class="setting-label"><i data-lucide="move"
                                     style="width:14px;height:14px;vertical-align:middle;"></i> Logo X Pozisyon <span
                                     id="logo-x-value"
                                     style="color:var(--accent);font-weight:700;margin-left:6px;">0px</span></div>

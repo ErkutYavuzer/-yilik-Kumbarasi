@@ -285,6 +285,10 @@ let displaySettings = {
     headerScale: typeof savedDisplaySettings.headerScale === 'number' ? savedDisplaySettings.headerScale : 1,
     bakanlikScale: typeof savedDisplaySettings.bakanlikScale === 'number' ? savedDisplaySettings.bakanlikScale : 1,
     akmScale: typeof savedDisplaySettings.akmScale === 'number' ? savedDisplaySettings.akmScale : 1,
+    bakanlikX: typeof savedDisplaySettings.bakanlikX === 'number' ? savedDisplaySettings.bakanlikX : 0,
+    bakanlikY: typeof savedDisplaySettings.bakanlikY === 'number' ? savedDisplaySettings.bakanlikY : 0,
+    akmX: typeof savedDisplaySettings.akmX === 'number' ? savedDisplaySettings.akmX : 0,
+    akmY: typeof savedDisplaySettings.akmY === 'number' ? savedDisplaySettings.akmY : 0,
     logoTopX: typeof savedDisplaySettings.logoTopX === 'number' ? savedDisplaySettings.logoTopX : 0,
     logoTopY: typeof savedDisplaySettings.logoTopY === 'number' ? savedDisplaySettings.logoTopY : 0,
     headerX: typeof savedDisplaySettings.headerX === 'number' ? savedDisplaySettings.headerX : 0,
@@ -346,7 +350,7 @@ app.get('/api/display-settings', (req, res) => {
 
 // Ekran Ayarlarını Güncelle API'si
 app.post('/api/display-settings', (req, res) => {
-    const { speedMultiplier, scaleMultiplier, maxVisible, logoOffsetPx, headerOffsetPx, logoScale, headerScale, bakanlikScale, akmScale, logoTopX, logoTopY, headerX, headerY, dayMode } = req.body;
+    const { speedMultiplier, scaleMultiplier, maxVisible, logoOffsetPx, headerOffsetPx, logoScale, headerScale, bakanlikScale, akmScale, bakanlikX, bakanlikY, akmX, akmY, logoTopX, logoTopY, headerX, headerY, dayMode } = req.body;
 
     if (typeof speedMultiplier === 'number') displaySettings.speedMultiplier = speedMultiplier;
     if (typeof scaleMultiplier === 'number') displaySettings.scaleMultiplier = scaleMultiplier;
@@ -357,6 +361,10 @@ app.post('/api/display-settings', (req, res) => {
     if (typeof headerScale === 'number') displaySettings.headerScale = Math.max(0.2, Math.min(3.0, headerScale));
     if (typeof bakanlikScale === 'number') displaySettings.bakanlikScale = Math.max(0.2, Math.min(3.0, bakanlikScale));
     if (typeof akmScale === 'number') displaySettings.akmScale = Math.max(0.2, Math.min(3.0, akmScale));
+    if (typeof bakanlikX === 'number') displaySettings.bakanlikX = Math.max(-2160, Math.min(2160, bakanlikX));
+    if (typeof bakanlikY === 'number') displaySettings.bakanlikY = Math.max(-2160, Math.min(2160, bakanlikY));
+    if (typeof akmX === 'number') displaySettings.akmX = Math.max(-2160, Math.min(2160, akmX));
+    if (typeof akmY === 'number') displaySettings.akmY = Math.max(-2160, Math.min(2160, akmY));
     if (typeof logoTopX === 'number') displaySettings.logoTopX = Math.max(-2160, Math.min(2160, logoTopX));
     if (typeof logoTopY === 'number') displaySettings.logoTopY = Math.max(-2160, Math.min(2160, logoTopY));
     if (typeof headerX === 'number') displaySettings.headerX = Math.max(-2160, Math.min(2160, headerX));

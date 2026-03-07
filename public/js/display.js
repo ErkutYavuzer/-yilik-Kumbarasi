@@ -461,6 +461,16 @@ class WishDisplay {
         document.documentElement.style.setProperty('--bakanlik-scale', bakanlikScale.toString());
         document.documentElement.style.setProperty('--akm-scale', akmScale.toString());
 
+        // Ayrı logo X/Y pozisyon (piksel)
+        const bakanlikX = typeof this.displaySettings.bakanlikX === 'number' ? this.displaySettings.bakanlikX : 0;
+        const bakanlikY = typeof this.displaySettings.bakanlikY === 'number' ? this.displaySettings.bakanlikY : 0;
+        const akmX = typeof this.displaySettings.akmX === 'number' ? this.displaySettings.akmX : 0;
+        const akmY = typeof this.displaySettings.akmY === 'number' ? this.displaySettings.akmY : 0;
+        document.documentElement.style.setProperty('--bakanlik-x', `${bakanlikX}px`);
+        document.documentElement.style.setProperty('--bakanlik-y', `${bakanlikY}px`);
+        document.documentElement.style.setProperty('--akm-x', `${akmX}px`);
+        document.documentElement.style.setProperty('--akm-y', `${akmY}px`);
+
         // Logo X/Y pozisyon (piksel)
         const logoTopX = typeof this.displaySettings.logoTopX === 'number' ? this.displaySettings.logoTopX : 0;
         const logoTopY = typeof this.displaySettings.logoTopY === 'number' ? this.displaySettings.logoTopY : 0;

@@ -927,6 +927,10 @@ async function saveDisplaySettings() {
         headerScale: parseInt(document.getElementById('display-header-scale').value) / 100,
         bakanlikScale: parseInt(document.getElementById('display-bakanlik-scale').value) / 100,
         akmScale: parseInt(document.getElementById('display-akm-scale').value) / 100,
+        bakanlikX: parseInt(document.getElementById('display-bakanlik-x').value),
+        bakanlikY: parseInt(document.getElementById('display-bakanlik-y').value),
+        akmX: parseInt(document.getElementById('display-akm-x').value),
+        akmY: parseInt(document.getElementById('display-akm-y').value),
         logoTopX: parseInt(document.getElementById('display-logo-x').value),
         logoTopY: parseInt(document.getElementById('display-logo-y').value),
         headerX: parseInt(document.getElementById('display-header-x').value),
@@ -1026,6 +1030,30 @@ function setDisplaySettingsUI(data) {
         if (el) el.value = data.headerY;
         const lbl = document.getElementById('header-y-value');
         if (lbl) lbl.textContent = data.headerY + 'px';
+    }
+    if (data.bakanlikX !== undefined) {
+        const el = document.getElementById('display-bakanlik-x');
+        if (el) el.value = data.bakanlikX;
+        const lbl = document.getElementById('bakanlik-x-value');
+        if (lbl) lbl.textContent = data.bakanlikX + 'px';
+    }
+    if (data.bakanlikY !== undefined) {
+        const el = document.getElementById('display-bakanlik-y');
+        if (el) el.value = data.bakanlikY;
+        const lbl = document.getElementById('bakanlik-y-value');
+        if (lbl) lbl.textContent = data.bakanlikY + 'px';
+    }
+    if (data.akmX !== undefined) {
+        const el = document.getElementById('display-akm-x');
+        if (el) el.value = data.akmX;
+        const lbl = document.getElementById('akm-x-value');
+        if (lbl) lbl.textContent = data.akmX + 'px';
+    }
+    if (data.akmY !== undefined) {
+        const el = document.getElementById('display-akm-y');
+        if (el) el.value = data.akmY;
+        const lbl = document.getElementById('akm-y-value');
+        if (lbl) lbl.textContent = data.akmY + 'px';
     }
     if (data.screenMode) {
         document.querySelectorAll('.screen-mode-btn').forEach(btn => {
