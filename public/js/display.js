@@ -645,17 +645,32 @@ class WishDisplay {
             this.updateHeaderLogoSpacing();
         });
 
+        const resyncFullscreenLayout = () => {
+            if (typeof scaleToFit === 'function') {
+                scaleToFit();
+                requestAnimationFrame(() => scaleToFit());
+                window.setTimeout(() => scaleToFit(), 80);
+                window.setTimeout(() => scaleToFit(), 220);
+            }
+            this.updateHeaderLogoSpacing();
+        };
+
         // Fullscreen
         const fsBtn = document.getElementById('fullscreen-btn');
         if (fsBtn) {
-            fsBtn.addEventListener('click', () => {
+            fsBtn.addEventListener('click', async () => {
                 if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().catch(() => { });
-                    fsBtn.innerHTML = '&#x2716;';
+                    try {
+                        await document.documentElement.requestFullscreen({ navigationUI: 'hide' });
+                    } catch (_) {
+                        try {
+                            await document.documentElement.requestFullscreen();
+                        } catch (_) { }
+                    }
                 } else {
-                    document.exitFullscreen();
-                    fsBtn.innerHTML = '&#x26F6;';
+                    document.exitFullscreen().catch(() => { });
                 }
+                resyncFullscreenLayout();
             });
         }
 
@@ -664,6 +679,8 @@ class WishDisplay {
             if (fsBtn) {
                 fsBtn.innerHTML = document.fullscreenElement ? '&#x2716;' : '&#x26F6;';
             }
+            document.documentElement.classList.toggle('display-fullscreen', !!document.fullscreenElement);
+            resyncFullscreenLayout();
         });
 
         // Mute toggle
