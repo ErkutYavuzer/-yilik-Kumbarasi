@@ -1386,6 +1386,7 @@
       const viewportHeight = window.innerHeight || DESIGN_HEIGHT;
       const isHorizontalCanvas = DESIGN_WIDTH >= DESIGN_HEIGHT;
       const shouldCoverViewport = isHorizontalCanvas && viewportWidth >= viewportHeight;
+      const isMessageWallMode = document.documentElement.classList.contains('display-mode-messagewall');
       let scale = 1;
 
       document.documentElement.style.setProperty('--lantern-size', isHorizontalCanvas ? '260px' : '240px');
@@ -1400,8 +1401,15 @@
         scale = 1;
       }
 
-      const offsetX = (viewportWidth - (DESIGN_WIDTH * scale)) / 2;
-      const offsetY = (viewportHeight - (DESIGN_HEIGHT * scale)) / 2;
+      let offsetX = (viewportWidth - (DESIGN_WIDTH * scale)) / 2;
+      let offsetY = (viewportHeight - (DESIGN_HEIGHT * scale)) / 2;
+
+      if (isMessageWallMode && shouldCoverViewport && offsetY < 0) {
+        const totalVerticalCrop = (DESIGN_HEIGHT * scale) - viewportHeight;
+        const maxTopCrop = 18 * scale;
+        offsetY = -Math.min(totalVerticalCrop, maxTopCrop);
+      }
+
       const scaledApp = document.getElementById('scaled-app');
       if (scaledApp) {
         scaledApp.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
