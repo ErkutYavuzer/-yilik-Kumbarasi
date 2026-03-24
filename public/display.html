@@ -3,19 +3,26 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=960, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>__DISPLAY_TITLE__</title>
   <meta property="og:title" content="__DISPLAY_TITLE__" />
   <meta property="og:site_name" content="__DISPLAY_SITE__" />
   <meta property="og:type" content="website" />
   <meta property="twitter:title" content="__DISPLAY_TITLE__" />
-  <link rel="stylesheet" href="/css/themes.css?v=18.4.5" />
+  <link rel="stylesheet" href="/css/themes.css?v=18.7.0" />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+    }
+
+    :root {
+      --design-width: 960px;
+      --design-height: 2160px;
+      --design-width-num: 960;
+      --design-height-num: 2160;
     }
 
     /* Match bars to TT deep navy */
@@ -27,16 +34,16 @@
       margin: 0;
       padding: 0;
       overflow: hidden;
-      width: 960px;
-      height: 2160px;
+      width: 100vw;
+      height: 100vh;
       font-family: "Nunito", sans-serif;
-      transform-origin: top left;
+      position: relative;
     }
 
     /* Main container */
     .display-container {
-      width: 960px;
-      height: 2160px;
+      width: var(--design-width);
+      height: var(--design-height);
       position: relative;
       /* Arkaplan themes.css tarafindan yonetiliyor */
     }
@@ -1169,15 +1176,17 @@
       left: 0;
       transform-origin: top left;
       overflow: hidden;
+      width: var(--design-width);
+      height: var(--design-height);
     }
 
-    /* #ui-overlay — scaled-app icinde, 960x2160 sabit */
+    /* #ui-overlay — scaled-app icinde, aktif canvas boyutunda */
     #ui-overlay {
       position: absolute;
       top: 0;
       left: 0;
-      width: 960px;
-      height: 2160px;
+      width: var(--design-width);
+      height: var(--design-height);
       z-index: 9999;
       pointer-events: none;
     }
@@ -1255,7 +1264,7 @@
       <div id="empty-state">
         <div class="empty-icon">&#x2728;</div>
         <div class="empty-text">Dilekler Bekleniyor...</div>
-        <div class="empty-sub">Ilk dilek yazildiginda burada gorunecek</div>
+        <div class="empty-sub">Ilk dilek paylasildiginda burada gorunecek</div>
       </div>
       <!-- Raffle (Çekiliş) Overlay -->
       <div id="raffle-overlay">
@@ -1286,6 +1295,23 @@
         </div>
       </div>
 
+      <div class="message-stage" aria-hidden="true">
+        <img class="message-stage__top-logo" src="/images/messagewall-top-logo.png?v=1"
+          alt="Uluslararasi Ankara Marka Bulusmalari - Braind Conference" />
+
+        <div class="message-stage__headline">
+          <span class="message-stage__headline-prefix">DILEKLER MARKALARIN GELECEGI ICIN</span>
+          <h1 class="message-stage__headline-text">PEKI SENIN MARKAN ICIN DILEGIN NE?</h1>
+        </div>
+
+        <img class="message-stage__bottom-logo" src="/images/messagewall-bottom-logo.png?v=1"
+          alt="ATO Ankara Ticaret Odasi" />
+      </div>
+
+      <button type="button" class="fullscreen-btn" id="fullscreen-btn" title="Tam ekran" aria-label="Tam ekran">
+        &#x26F6;
+      </button>
+
       <!-- Spotlight -->
       <div id="spotlight-overlay"></div>
       <div id="spotlight-label">🌟 <span id="spotlight-name"></span></div>
@@ -1310,8 +1336,8 @@
   <script src="/socket.io/socket.io.js"></script>
   <script>
     // Sabit 960x2160 — LED panel icin 1:1 render
-    const DESIGN_WIDTH = 960;
-    const DESIGN_HEIGHT = 2160;
+    let DESIGN_WIDTH = 960;
+    let DESIGN_HEIGHT = 2160;
 
     function scaleToFit() {
       // LED panel 960x2160 — olcek yok, 1:1
@@ -1355,7 +1381,63 @@
     // resize — recalculate scale + dimensions
     window.addEventListener("resize", scaleToFit);
 
+    scaleToFit = function () {
+      const viewportWidth = window.innerWidth || DESIGN_WIDTH;
+      const viewportHeight = window.innerHeight || DESIGN_HEIGHT;
+      const isHorizontalCanvas = DESIGN_WIDTH >= DESIGN_HEIGHT;
+      const shouldCoverViewport = isHorizontalCanvas && viewportWidth >= viewportHeight;
+      let scale = 1;
+
+      document.documentElement.style.setProperty('--lantern-size', isHorizontalCanvas ? '260px' : '240px');
+
+      if (shouldCoverViewport) {
+        scale = Math.max(viewportWidth / DESIGN_WIDTH, viewportHeight / DESIGN_HEIGHT);
+      } else if (viewportWidth < DESIGN_WIDTH || viewportHeight < DESIGN_HEIGHT) {
+        scale = Math.min(viewportWidth / DESIGN_WIDTH, viewportHeight / DESIGN_HEIGHT);
+      }
+
+      if (!Number.isFinite(scale) || scale <= 0) {
+        scale = 1;
+      }
+
+      const offsetX = (viewportWidth - (DESIGN_WIDTH * scale)) / 2;
+      const offsetY = (viewportHeight - (DESIGN_HEIGHT * scale)) / 2;
+      const scaledApp = document.getElementById('scaled-app');
+      if (scaledApp) {
+        scaledApp.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+        scaledApp.style.transformOrigin = 'top left';
+        scaledApp.style.width = DESIGN_WIDTH + 'px';
+        scaledApp.style.height = DESIGN_HEIGHT + 'px';
+      }
+
+      const container = document.querySelector('.display-container');
+      if (container) {
+        container.style.width = DESIGN_WIDTH + 'px';
+        container.style.height = DESIGN_HEIGHT + 'px';
+      }
+
+      document.body.style.overflow = 'hidden';
+      document.body.style.margin = '0';
+      document.body.style.padding = '0';
+    };
+
+    window.setDisplayCanvasSize = function (width, height) {
+      DESIGN_WIDTH = width;
+      DESIGN_HEIGHT = height;
+      document.documentElement.style.setProperty('--design-width', width + 'px');
+      document.documentElement.style.setProperty('--design-height', height + 'px');
+      document.documentElement.style.setProperty('--design-width-num', String(width));
+      document.documentElement.style.setProperty('--design-height-num', String(height));
+      const viewportMeta = document.querySelector('meta[name="viewport"]');
+      if (viewportMeta) {
+        viewportMeta.setAttribute('content', `width=${width}, initial-scale=1.0`);
+      }
+      scaleToFit();
+    };
+
     // Kor parçacıkları oluştur
+    window.setDisplayCanvasSize(DESIGN_WIDTH, DESIGN_HEIGHT);
+
     (function () {
       const ec = document.getElementById("embers-container");
       if (!ec) return;
@@ -1385,7 +1467,7 @@
       }
     })();
   </script>
-  <script src="js/display.js?v=18.4.5"></script>
+  <script src="js/display.js?v=18.7.0"></script>
 </body>
 
 </html>

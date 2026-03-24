@@ -3,6 +3,7 @@ let wishes = [];
 let modalAction = null;
 let autoTimer = null;
 let autoIndex = 0;
+let currentDisplayMode = 'balloon';
 
 // ─── AUTHENTICATION ───
 if (sessionStorage.getItem('adminAuth') === 'true') {
@@ -732,6 +733,81 @@ async function loadCurrentTheme() {
 }
 
 // ─── DISPLAY MODE ───
+function setSettingCardVisibility(inputId, visible) {
+    const card = document.getElementById(inputId)?.closest('.setting-card');
+    if (card) {
+        card.style.display = visible ? '' : 'none';
+    }
+}
+
+function syncDisplaySettingsModeUI(mode) {
+    currentDisplayMode = mode || 'balloon';
+    const isMessageWall = currentDisplayMode === 'messagewall';
+    const titleEl = document.getElementById('display-settings-title');
+    const subEl = document.getElementById('display-settings-sub');
+    const legacySubEl = document.querySelector('.mod-title-group .mod-sub');
+    const noteEl = document.getElementById('display-settings-note');
+    const speedValue = document.getElementById('speed-value')?.textContent || '1.0x';
+    const scaleValue = document.getElementById('scale-value')?.textContent || '1.0x';
+    const maxVisibleValue = document.getElementById('maxvisible-value')?.textContent || '20';
+    const speedLabel = document.getElementById('display-speed-label');
+    const scaleLabel = document.getElementById('display-scale-label');
+    const maxVisibleLabel = document.getElementById('display-maxvisible-label');
+
+    if (titleEl) {
+        titleEl.innerHTML = `<i data-lucide="monitor-cog" style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> ${isMessageWall ? 'Marka Sahnesi Ayarlari' : 'Ekran Ayarlari'}`;
+    }
+    if (subEl) {
+        subEl.textContent = isMessageWall
+            ? 'Marka Sahnesi icin sadece calisan kontroller gosterilir'
+            : 'Aktif gosterim modu icin gecerli ayarlar';
+    }
+    if (legacySubEl) {
+        legacySubEl.style.display = 'none';
+    }
+    if (noteEl) {
+        noteEl.style.display = isMessageWall ? 'block' : 'none';
+    }
+    if (speedLabel) {
+        speedLabel.innerHTML = `<i data-lucide="gauge" style="width:14px;height:14px;vertical-align:middle;"></i> ${isMessageWall ? 'Gecis Hizi' : 'Animasyon Hizi'} <span id="speed-value" style="color:var(--accent);font-weight:700;margin-left:6px;">${speedValue}</span>`;
+    }
+    if (scaleLabel) {
+        scaleLabel.innerHTML = `<i data-lucide="scaling" style="width:14px;height:14px;vertical-align:middle;"></i> ${isMessageWall ? 'Kart Olcegi' : 'Fener Buyuklugu'} <span id="scale-value" style="color:var(--accent);font-weight:700;margin-left:6px;">${scaleValue}</span>`;
+    }
+    if (maxVisibleLabel) {
+        maxVisibleLabel.innerHTML = `<i data-lucide="layers" style="width:14px;height:14px;vertical-align:middle;"></i> Maksimum Dilek Sayisi <span id="maxvisible-value" style="color:var(--accent);font-weight:700;margin-left:6px;">${maxVisibleValue}</span>`;
+    }
+
+    [
+        'display-maxvisible',
+        'display-logo-offset',
+        'display-logo-scale',
+        'display-bakanlik-scale',
+        'display-akm-scale',
+        'display-bakanlik-x',
+        'display-bakanlik-y',
+        'display-akm-x',
+        'display-akm-y',
+        'display-logo-x',
+        'display-logo-y',
+        'display-header-offset',
+        'display-header-scale',
+        'display-header-x',
+        'display-header-y',
+        'display-daymode'
+    ].forEach((id) => setSettingCardVisibility(id, !isMessageWall));
+
+    setSettingCardVisibility('display-speed', true);
+    setSettingCardVisibility('display-scale', true);
+
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+    updateSpeedLabel(document.getElementById('display-speed')?.value || 1);
+    updateScaleLabel(document.getElementById('display-scale')?.value || 1);
+    updateMaxVisibleLabel(document.getElementById('display-maxvisible')?.value || 20);
+}
+
 async function setDisplayMode(mode) {
     await fetch('/api/display-mode', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ displayMode: mode }) });
     document.querySelectorAll('.display-mode-option').forEach(b => {
@@ -1373,3 +1449,29 @@ loadPendingWishes();
 loadCurrentTheme();
 loadModerationState();
 loadDisplaySettings();
+
+async function setDisplayMode(mode) {
+    await fetch('/api/display-mode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ displayMode: mode })
+    });
+    document.querySelectorAll('.display-mode-option').forEach((button) => {
+        button.classList.toggle('active', button.dataset.mode === mode);
+    });
+    syncDisplaySettingsModeUI(mode);
+    showToast('Gosterim modu degistirildi!');
+}
+
+async function loadCurrentDisplayMode() {
+    try {
+        const res = await fetch('/api/display-mode');
+        const data = await res.json();
+        document.querySelectorAll('.display-mode-option').forEach((button) => {
+            button.classList.toggle('active', button.dataset.mode === data.displayMode);
+        });
+        syncDisplaySettingsModeUI(data.displayMode);
+    } catch (e) { }
+}
+
+loadCurrentDisplayMode();

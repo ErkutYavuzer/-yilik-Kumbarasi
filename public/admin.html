@@ -349,16 +349,21 @@
                 <div class="card" style="margin-top: 20px;">
                     <div class="mod-header">
                         <div class="mod-title-group">
-                            <div class="mod-title"><i data-lucide="monitor-cog"
+                            <div class="mod-title" id="display-settings-title"><i data-lucide="monitor-cog"
                                     style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Ekran
                                 Ayarları</div>
                             <div class="mod-sub">Fener animasyonlarının hızı, büyüklüğü ve sayısı</div>
                         </div>
                     </div>
                     <div class="divider"></div>
+                    <div class="mod-sub" id="display-settings-sub">Aktif gosterim modu icin gecerli ayarlar</div>
+                    <div id="display-settings-note"
+                        style="display:none; margin:16px 0; padding:12px 14px; border-radius:12px; background:rgba(255,184,77,0.12); border:1px solid rgba(255,184,77,0.22); color:var(--text2); font-size:13px;">
+                        Marka Sahnesi sabit kompozisyon kullaniyor. Bu modda sadece kart gecis hizi ve kart olcegi ayarlanabilir.
+                    </div>
                     <div class="settings-grid">
                         <div class="setting-card">
-                            <div class="setting-label"><i data-lucide="gauge"
+                            <div class="setting-label" id="display-speed-label"><i data-lucide="gauge"
                                     style="width:14px;height:14px;vertical-align:middle;"></i> Animasyon Hızı <span
                                     id="speed-value"
                                     style="color:var(--accent);font-weight:700;margin-left:6px;">1.0x</span></div>
@@ -370,7 +375,7 @@
                             </div>
                         </div>
                         <div class="setting-card">
-                            <div class="setting-label"><i data-lucide="scaling"
+                            <div class="setting-label" id="display-scale-label"><i data-lucide="scaling"
                                     style="width:14px;height:14px;vertical-align:middle;"></i> Fener Büyüklüğü <span
                                     id="scale-value"
                                     style="color:var(--accent);font-weight:700;margin-left:6px;">1.0x</span></div>
@@ -382,7 +387,7 @@
                             </div>
                         </div>
                         <div class="setting-card">
-                            <div class="setting-label"><i data-lucide="layers"
+                            <div class="setting-label" id="display-maxvisible-label"><i data-lucide="layers"
                                     style="width:14px;height:14px;vertical-align:middle;"></i> Maksimum Dilek Sayısı
                                 <span id="maxvisible-value"
                                     style="color:var(--accent);font-weight:700;margin-left:6px;">20</span>
@@ -692,6 +697,10 @@
                             onclick="setDisplayMode('lantern')"><i data-lucide="flame"
                                 style="width:16px;height:16px;margin:auto;display:block;margin-bottom:6px;"></i>
                             Dilek Feneri</button>
+                        <button type="button" class="display-mode-option theme-option" data-mode="messagewall"
+                            onclick="setDisplayMode('messagewall')"><i data-lucide="panel-top"
+                                style="width:16px;height:16px;margin:auto;display:block;margin-bottom:6px;"></i>
+                            Marka Sahnesi</button>
                     </div>
                 </div>
             </div>
@@ -1002,7 +1011,7 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/admin.js?v=2.0.2"></script>
+    <script src="/js/admin.js?v=2.0.3"></script>
     <script>
         // Init Lucide Icons
         document.addEventListener('DOMContentLoaded', () => {

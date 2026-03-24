@@ -659,11 +659,11 @@
 
         <!-- STEP 1: Photo -->
         <div class="step active" id="step1">
-            <div class="page-title">Kadınlar günü için dileklerinizi yazınız.</div>
+            <div class="page-title">Markalarin gelecegi icin dilegini paylas.</div>
 
             <!-- YAZI ALANI -->
             <div class="text-area-wrapper" id="text-area-wrapper">
-                <textarea class="dilek-textarea" id="dilekInput" placeholder="Dileğini klavyeden buraya yazabilirsin"
+                <textarea class="dilek-textarea" id="dilekInput" placeholder="Dilegini klavyeden buraya yazabilirsin"
                     maxlength="140"></textarea>
             </div>
             <div class="char-counter" id="charCounter">0 / 140</div>
@@ -698,7 +698,7 @@
                 <div class="progress-text" id="progressText">Yükleniyor</div>
             </div>
             <button type="button" class="throw-btn" id="throwBtn" onclick="submitWish()">
-                &#x1F3EE; Gökyüzüne Gönder &#x1F3EE;
+                &#x1F3EE; Dilegini Gonder &#x1F3EE;
             </button>
             <button type="button" class="back-link" onclick="goStep(2)">&#x2B05;&#xFE0F; Geri Don</button>
         </div>
@@ -771,7 +771,7 @@
         }
 
         function submitWish() {
-            if (textInput.value.trim().length < 5) return alert('Dilek metni en az 5 karakter olmalı!');
+            if (textInput.value.trim().length < 5) return alert('Dilek metni en az 5 karakter olmali!');
             if (textInput.value.trim().length > 140) return alert('Dilek metni en fazla 140 karakter olabilir!');
 
             var btn = document.getElementById('throwBtn');

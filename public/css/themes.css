@@ -34,6 +34,14 @@
     font-display: swap;
 }
 
+@font-face {
+    font-family: 'Arame';
+    src: url('/fonts/Arame-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
 
 /* === İYİLİK KUMBARASI — TEMA SİSTEMİ ===
    Sadece Türk Telekom teması — varsayılan olarak uygulanır.
@@ -605,3 +613,1000 @@ html.day-mode .display-container {
 .logos-bottom-bar.portrait-mode .logo-box--left   { flex: 1 1 38% !important; max-width: 200px !important; height: 52px !important; padding: 8px 10px !important; border-radius: 8px !important; }
 .logos-bottom-bar.portrait-mode .logo-box--center { flex: 0 1 24% !important; max-width: 120px !important; height: 52px !important; padding: 8px 10px !important; border-radius: 8px !important; }
 .logos-bottom-bar.portrait-mode .logo-box--right  { flex: 1 1 30% !important; max-width: 160px !important; height: 52px !important; padding: 8px 10px !important; border-radius: 8px !important; }
+
+.message-stage {
+    display: none;
+}
+
+html.display-mode-messagewall {
+    background:
+        radial-gradient(circle at 20% 82%, rgba(255, 118, 160, 0.26) 0%, transparent 24%),
+        radial-gradient(circle at 82% 8%, rgba(188, 108, 255, 0.22) 0%, transparent 18%),
+        linear-gradient(180deg, #050714 0%, #090d1e 52%, #070b18 100%);
+}
+
+html.display-mode-messagewall .display-container {
+    background:
+        radial-gradient(circle at 20% 82%, rgba(255, 118, 160, 0.18) 0%, transparent 18%),
+        radial-gradient(circle at 82% 8%, rgba(188, 108, 255, 0.14) 0%, transparent 14%),
+        linear-gradient(135deg, #060814 0%, #090d1d 48%, #050915 100%);
+    overflow: hidden;
+}
+
+html.display-mode-messagewall .display-container::before {
+    display: block;
+    content: "";
+    position: absolute;
+    inset: auto auto 32px 28px;
+    width: 540px;
+    height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 118, 160, 0.24) 0%, rgba(255, 118, 160, 0.06) 38%, transparent 70%);
+    filter: blur(16px);
+    opacity: 0.9;
+}
+
+html.display-mode-messagewall .display-container::after {
+    display: block;
+    content: "";
+    position: absolute;
+    inset: 58px 160px auto auto;
+    width: 360px;
+    height: 150px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(216, 110, 255, 0.24) 0%, rgba(216, 110, 255, 0.08) 48%, transparent 70%);
+    filter: blur(18px);
+    opacity: 0.8;
+}
+
+html.display-mode-messagewall .moon,
+html.display-mode-messagewall .sparkle-star,
+html.display-mode-messagewall #embers-container,
+html.display-mode-messagewall .logos-top-bar,
+html.display-mode-messagewall .header-title-box {
+    display: none !important;
+}
+
+html.display-mode-messagewall #wishes-container {
+    z-index: 30;
+}
+
+html.display-mode-messagewall #wishes-container.stage-layout .wish-card {
+    opacity: 1;
+    transition: opacity 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+html.display-mode-messagewall #wishes-container.spotlight-mode .wish-card {
+    opacity: 0.3;
+}
+
+html.display-mode-messagewall #wishes-container.spotlight-mode .wish-card.spotlight-active {
+    opacity: 1;
+    z-index: 80 !important;
+    top: 0 !important;
+    left: 0 !important;
+    transform: translate3d(var(--slot-x, 0px), var(--slot-y, 0px), 0) scale(1.04) !important;
+    filter: drop-shadow(0 0 28px rgba(255, 180, 138, 0.42));
+}
+
+html.display-mode-messagewall .message-stage {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 35;
+}
+
+html.display-mode-messagewall .message-stage__brand-row {
+    position: absolute;
+    top: 42px;
+    left: 54px;
+    display: flex;
+    align-items: flex-start;
+    gap: 22px;
+    color: #f7f3ef;
+}
+
+html.display-mode-messagewall .message-stage__brand-stack {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+}
+
+html.display-mode-messagewall .message-stage__brand-mark {
+    position: relative;
+    width: 74px;
+    height: 74px;
+}
+
+html.display-mode-messagewall .brand-mark__outer,
+html.display-mode-messagewall .brand-mark__inner {
+    position: absolute;
+    display: block;
+    border: 5px solid #fff7f2;
+}
+
+html.display-mode-messagewall .brand-mark__outer {
+    inset: 0 16px 20px 0;
+    border-right: none;
+    border-bottom: none;
+}
+
+html.display-mode-messagewall .brand-mark__inner {
+    inset: 25px 0 0 18px;
+    border-top: none;
+    border-right: none;
+}
+
+html.display-mode-messagewall .message-stage__brand-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 14px;
+    line-height: 1;
+    letter-spacing: 1px;
+}
+
+html.display-mode-messagewall .message-stage__brand-copy strong {
+    font-size: 30px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+}
+
+html.display-mode-messagewall .message-stage__brand-divider {
+    width: 1px;
+    height: 92px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.1));
+}
+
+html.display-mode-messagewall .message-stage__conference-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-transform: uppercase;
+    line-height: 0.9;
+    margin-top: 4px;
+}
+
+html.display-mode-messagewall .message-stage__conference-kicker {
+    font-size: 34px;
+    font-weight: 900;
+    letter-spacing: 1.2px;
+}
+
+html.display-mode-messagewall .message-stage__conference-title {
+    font-size: 44px;
+    font-weight: 900;
+    letter-spacing: 1.4px;
+}
+
+html.display-mode-messagewall .message-stage__headline {
+    position: absolute;
+    top: 210px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1480px;
+    text-align: center;
+    color: #fff8f2;
+}
+
+html.display-mode-messagewall .message-stage__headline-prefix {
+    display: inline-block;
+    margin-bottom: 14px;
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: 8px;
+}
+
+html.display-mode-messagewall .message-stage__headline-text {
+    font-size: 76px;
+    line-height: 1.02;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
+
+html.display-mode-messagewall .message-stage__sponsor {
+    position: absolute;
+    left: 62px;
+    bottom: 46px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: #fff6f2;
+}
+
+html.display-mode-messagewall .message-stage__sponsor-mark {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 78px;
+    font-style: italic;
+    line-height: 0.9;
+    color: #fff7f2;
+}
+
+html.display-mode-messagewall .message-stage__sponsor-text {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+}
+
+html.display-mode-messagewall .message-stage__crystal {
+    position: absolute;
+    right: 52px;
+    bottom: -10px;
+    width: 440px;
+    height: 470px;
+    filter: drop-shadow(0 18px 60px rgba(255, 97, 132, 0.34));
+}
+
+html.display-mode-messagewall .message-stage__shard {
+    position: absolute;
+    display: block;
+    background: linear-gradient(180deg, rgba(255, 168, 132, 0.98) 0%, rgba(255, 104, 142, 0.9) 46%, rgba(157, 78, 255, 0.7) 100%);
+    border: 1px solid rgba(255, 213, 198, 0.45);
+    box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.15);
+}
+
+html.display-mode-messagewall .message-stage__shard::after {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0%, transparent 62%);
+    opacity: 0.55;
+}
+
+html.display-mode-messagewall .message-stage__shard.shard-1 {
+    width: 102px;
+    height: 236px;
+    bottom: 8px;
+    right: 18px;
+    clip-path: polygon(24% 0, 84% 10%, 100% 34%, 70% 100%, 0 82%, 8% 28%);
+    transform: rotate(14deg);
+}
+
+html.display-mode-messagewall .message-stage__shard.shard-2 {
+    width: 120px;
+    height: 220px;
+    bottom: 48px;
+    right: 122px;
+    clip-path: polygon(18% 0, 78% 8%, 100% 42%, 68% 100%, 4% 88%, 0 24%);
+    transform: rotate(-12deg);
+}
+
+html.display-mode-messagewall .message-stage__shard.shard-3 {
+    width: 96px;
+    height: 196px;
+    bottom: 10px;
+    right: 210px;
+    clip-path: polygon(16% 0, 88% 6%, 100% 46%, 58% 100%, 0 82%, 0 22%);
+    transform: rotate(-24deg);
+}
+
+html.display-mode-messagewall .message-stage__shard.shard-4 {
+    width: 132px;
+    height: 156px;
+    bottom: 142px;
+    right: 70px;
+    clip-path: polygon(24% 0, 92% 16%, 100% 56%, 66% 100%, 0 78%, 8% 18%);
+    transform: rotate(9deg);
+}
+
+html.display-mode-messagewall .message-stage__shard.shard-5 {
+    width: 170px;
+    height: 110px;
+    bottom: 68px;
+    right: 198px;
+    clip-path: polygon(18% 0, 86% 8%, 100% 48%, 80% 100%, 4% 82%, 0 26%);
+    transform: rotate(18deg);
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode {
+    width: var(--slot-width, 260px);
+    min-height: var(--slot-height, 250px);
+    pointer-events: auto;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .message-card-shell {
+    position: relative;
+    width: 100%;
+    min-height: var(--slot-height, 250px);
+    padding: 28px 26px 74px;
+    background: rgba(6, 10, 24, 0.82);
+    border: 12px solid rgba(255, 255, 255, 0.96);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .message-card-shell::after {
+    content: "";
+    position: absolute;
+    left: 38px;
+    bottom: -42px;
+    width: 46px;
+    height: 54px;
+    background: inherit;
+    border-left: inherit;
+    border-bottom: inherit;
+    transform: skewY(36deg);
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .wish-text {
+    position: static;
+    top: auto;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    width: 100%;
+    max-width: none;
+    max-height: none;
+    padding: 0;
+    color: #fcf8f2;
+    font-size: 18px;
+    line-height: 1.28;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    text-align: center;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    -webkit-line-clamp: 5;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .child-name {
+    position: static;
+    top: auto;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    margin-top: 22px;
+    color: #fdf7f0;
+    font-size: 17px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.stage-slot--hero {
+    z-index: 45;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.stage-slot--hero .message-card-shell {
+    border-color: #ff8ea8;
+    box-shadow:
+        0 28px 90px rgba(0, 0, 0, 0.34),
+        0 0 50px rgba(255, 121, 158, 0.24);
+    padding: 42px 34px 86px;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.stage-slot--hero .wish-text {
+    font-size: 28px;
+    line-height: 1.18;
+    -webkit-line-clamp: 5;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.stage-slot--hero .child-name {
+    font-size: 24px;
+    letter-spacing: 1.2px;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.stage-slot--hero .message-card-shell::after {
+    width: 56px;
+    height: 66px;
+    left: 70px;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.stage-slot--left-low,
+html.display-mode-messagewall .wish-card.messagewall-mode.stage-slot--left-high,
+html.display-mode-messagewall .wish-card.messagewall-mode.stage-slot--right-high,
+html.display-mode-messagewall .wish-card.messagewall-mode.stage-slot--right-low {
+    z-index: 40;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.card-entering,
+html.display-mode-messagewall .wish-card.messagewall-mode.new-wish-highlight {
+    animation: messageStagePulse 2.8s ease;
+}
+
+@keyframes messageStagePulse {
+    0% {
+        transform: translate3d(var(--slot-x, 0px), calc(var(--slot-y, 0px) + 12px), 0) scale(0.96);
+        opacity: 0;
+    }
+    22% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate3d(var(--slot-x, 0px), var(--slot-y, 0px), 0) scale(1);
+        opacity: 1;
+    }
+}
+
+html.display-mode-messagewall .display-container {
+    background:
+        radial-gradient(circle at 18% 84%, rgba(255, 118, 160, 0.18) 0%, rgba(255, 118, 160, 0.05) 18%, transparent 36%),
+        radial-gradient(circle at 83% 10%, rgba(188, 108, 255, 0.16) 0%, rgba(188, 108, 255, 0.04) 18%, transparent 34%),
+        url("/images/messagewall-background.png?v=1") center/cover no-repeat,
+        #050713;
+    overflow: hidden;
+}
+
+html.display-mode-messagewall .display-container::before,
+html.display-mode-messagewall .display-container::after {
+    display: block;
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    z-index: 1;
+    filter: blur(16px);
+    opacity: 0.9;
+}
+
+html.display-mode-messagewall .display-container::before {
+    inset: auto auto 38px 26px;
+    width: 520px;
+    height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 122, 166, 0.24) 0%, rgba(255, 122, 166, 0.08) 42%, transparent 72%);
+}
+
+html.display-mode-messagewall .display-container::after {
+    inset: 42px 116px auto auto;
+    width: 320px;
+    height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(190, 112, 255, 0.22) 0%, rgba(190, 112, 255, 0.06) 46%, transparent 74%);
+}
+
+html.display-mode-messagewall .message-stage {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 35;
+    pointer-events: none;
+}
+
+html.display-mode-messagewall .message-stage__top-logo {
+    position: absolute;
+    top: 42px;
+    left: 46px;
+    width: clamp(230px, 20vw, 380px);
+    height: auto;
+    z-index: 2;
+    filter: drop-shadow(0 6px 24px rgba(0, 0, 0, 0.38));
+}
+
+html.display-mode-messagewall .message-stage__headline {
+    position: absolute;
+    top: 41%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(84vw, 1360px);
+    text-align: center;
+    color: #fffaf7;
+    z-index: 2;
+    text-shadow: 0 8px 34px rgba(0, 0, 0, 0.35);
+}
+
+html.display-mode-messagewall .message-stage__headline-prefix {
+    display: block;
+    margin-bottom: 12px;
+    font-size: clamp(18px, 1.8vw, 30px);
+    font-weight: 800;
+    letter-spacing: clamp(4px, 0.55vw, 10px);
+    text-transform: uppercase;
+}
+
+html.display-mode-messagewall .message-stage__headline-text {
+    font-size: clamp(42px, 4.6vw, 86px);
+    line-height: 1.02;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+html.display-mode-messagewall .message-stage__bottom-logo {
+    position: absolute;
+    left: 52px;
+    bottom: 42px;
+    width: clamp(140px, 13vw, 240px);
+    height: auto;
+    z-index: 2;
+    filter: drop-shadow(0 6px 24px rgba(0, 0, 0, 0.34));
+}
+
+html.display-mode-messagewall .message-stage__brand-row,
+html.display-mode-messagewall .message-stage__brand-stack,
+html.display-mode-messagewall .message-stage__brand-mark,
+html.display-mode-messagewall .message-stage__brand-copy,
+html.display-mode-messagewall .message-stage__brand-divider,
+html.display-mode-messagewall .message-stage__conference-copy,
+html.display-mode-messagewall .message-stage__sponsor,
+html.display-mode-messagewall .message-stage__crystal,
+html.display-mode-messagewall .message-stage__shard {
+    display: none !important;
+}
+
+html.display-mode-messagewall #wishes-container {
+    transform: translate3d(0, -56vh, 0);
+    transform-origin: top left;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode {
+    width: var(--message-card-width, 260px);
+    min-height: var(--message-card-height, 240px);
+    pointer-events: auto;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .message-card-shell {
+    position: relative;
+    width: 100%;
+    min-height: inherit;
+    padding: 22px 22px 66px;
+    background: linear-gradient(180deg, rgba(8, 11, 22, 0.92) 0%, rgba(10, 16, 34, 0.88) 100%);
+    border: 10px solid rgba(255, 255, 255, 0.96);
+    border-color: var(--message-border, rgba(255, 255, 255, 0.96));
+    box-shadow:
+        0 18px 50px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .message-card-shell::after {
+    content: "";
+    position: absolute;
+    left: 40px;
+    bottom: -40px;
+    width: 46px;
+    height: 54px;
+    background: inherit;
+    border-left: inherit;
+    border-bottom: inherit;
+    transform: skewY(36deg);
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .wish-text {
+    position: static;
+    width: 100%;
+    max-width: none;
+    max-height: none;
+    padding: 0;
+    color: #fbf7f2;
+    font-size: 18px;
+    line-height: 1.28;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    text-align: center;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    -webkit-line-clamp: 5;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .child-name {
+    position: static;
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    margin-top: 20px;
+    color: #fdf7f0;
+    font-size: 17px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.stage-slot--hero,
+html.display-mode-messagewall .wish-card.messagewall-mode.stage-slot--left-low,
+html.display-mode-messagewall .wish-card.messagewall-mode.stage-slot--left-high,
+html.display-mode-messagewall .wish-card.messagewall-mode.stage-slot--right-high,
+html.display-mode-messagewall .wish-card.messagewall-mode.stage-slot--right-low {
+    z-index: auto;
+}
+
+html.display-mode-messagewall #wishes-container {
+    z-index: 24;
+    transform: none !important;
+    transform-origin: top left;
+}
+
+html.display-mode-messagewall .message-stage__headline {
+    top: 214px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(84vw, 1360px);
+}
+
+html.display-mode-messagewall #wishes-container.spotlight-mode .wish-card {
+    opacity: 0.18;
+}
+
+html.display-mode-messagewall #wishes-container.spotlight-mode .wish-card.spotlight-active {
+    opacity: 1 !important;
+    z-index: 80 !important;
+    top: 0 !important;
+    left: 0 !important;
+    transform: translate3d(var(--spotlight-x, 0px), var(--spotlight-y, 0px), 0) scale(1.06) rotate(var(--spotlight-rot, 0deg)) !important;
+    filter: drop-shadow(0 0 34px rgba(255, 184, 150, 0.48));
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.card-entering,
+html.display-mode-messagewall .wish-card.messagewall-mode.new-wish-highlight {
+    animation: messageWallPulse 2.2s ease;
+}
+
+@keyframes messageWallPulse {
+    0% {
+        opacity: 0;
+        filter: drop-shadow(0 0 0 rgba(255, 144, 176, 0));
+    }
+    30% {
+        opacity: 1;
+    }
+    60% {
+        filter: drop-shadow(0 0 24px rgba(255, 144, 176, 0.34));
+    }
+    100% {
+        opacity: 1;
+        filter: drop-shadow(0 0 0 rgba(255, 144, 176, 0));
+    }
+}
+
+html.display-mode-messagewall .message-stage {
+    z-index: 34;
+}
+
+html.display-mode-messagewall .message-stage::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 108px;
+    width: 1080px;
+    height: 320px;
+    transform: translateX(-50%);
+    background:
+        radial-gradient(circle at center, rgba(7, 10, 22, 0.82) 0%, rgba(7, 10, 22, 0.58) 42%, rgba(7, 10, 22, 0.06) 78%, transparent 100%),
+        linear-gradient(180deg, rgba(7, 10, 22, 0.28) 0%, transparent 100%);
+    filter: blur(10px);
+    opacity: 0.95;
+    pointer-events: none;
+}
+
+html.display-mode-messagewall .message-stage__top-logo {
+    top: 28px;
+    left: 34px;
+    width: clamp(240px, 14vw, 292px);
+    filter: drop-shadow(0 10px 28px rgba(0, 0, 0, 0.34));
+}
+
+html.display-mode-messagewall .message-stage__headline {
+    top: 152px;
+    width: min(76vw, 1080px);
+    z-index: 3;
+}
+
+html.display-mode-messagewall .message-stage__headline-prefix {
+    margin-bottom: 8px;
+    font-size: clamp(15px, 1.3vw, 24px);
+    letter-spacing: clamp(3px, 0.35vw, 6px);
+}
+
+html.display-mode-messagewall .message-stage__headline-text {
+    font-size: clamp(38px, 4vw, 74px);
+    line-height: 0.98;
+    letter-spacing: 0.035em;
+}
+
+html.display-mode-messagewall .message-stage__bottom-logo {
+    left: 40px;
+    bottom: 28px;
+    width: clamp(116px, 8vw, 156px);
+    opacity: 0.92;
+}
+
+html.display-mode-messagewall #wishes-container {
+    z-index: 18;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode {
+    will-change: transform, opacity;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .message-card-shell {
+    padding: 18px 18px 56px;
+    border-width: 8px;
+    box-shadow:
+        0 14px 36px rgba(0, 0, 0, 0.28),
+        0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .message-card-shell::after {
+    left: 32px;
+    bottom: -32px;
+    width: 34px;
+    height: 44px;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .wish-text {
+    font-size: 16px;
+    line-height: 1.22;
+    -webkit-line-clamp: 4;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .child-name {
+    margin-top: 16px;
+    font-size: 14px;
+    letter-spacing: 0.7px;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.is-background-layer {
+    z-index: 12;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.is-background-layer .message-card-shell {
+    background: linear-gradient(180deg, rgba(10, 12, 24, 0.5) 0%, rgba(10, 15, 30, 0.4) 100%);
+    border-color: rgba(255, 255, 255, 0.42) !important;
+    box-shadow:
+        0 8px 22px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.is-background-layer .wish-text,
+html.display-mode-messagewall .wish-card.messagewall-mode.is-background-layer .child-name {
+    color: rgba(255, 249, 242, 0.72);
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.is-foreground-layer {
+    z-index: 22;
+}
+
+html.display-mode-messagewall #wishes-container.spotlight-mode .wish-card {
+    opacity: 0.12;
+}
+
+html.display-mode-messagewall #wishes-container.spotlight-mode .wish-card.spotlight-active {
+    opacity: 1 !important;
+    z-index: 88 !important;
+}
+
+html.display-mode-messagewall .message-stage::before {
+    top: 74px;
+    width: 980px;
+    height: 240px;
+    background:
+        radial-gradient(circle at center, rgba(7, 10, 22, 0.94) 0%, rgba(7, 10, 22, 0.76) 44%, rgba(7, 10, 22, 0.18) 82%, transparent 100%);
+}
+
+html.display-mode-messagewall .message-stage::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 420px;
+    background:
+        linear-gradient(180deg, rgba(4, 7, 18, 0.9) 0%, rgba(4, 7, 18, 0.68) 38%, rgba(4, 7, 18, 0.18) 82%, transparent 100%);
+    pointer-events: none;
+}
+
+html.display-mode-messagewall .message-stage__top-logo {
+    top: 18px;
+    left: 24px;
+    width: 236px;
+}
+
+html.display-mode-messagewall .message-stage__headline {
+    top: 104px;
+    width: min(68vw, 900px);
+}
+
+html.display-mode-messagewall .message-stage__headline-prefix {
+    margin-bottom: 6px;
+    font-size: clamp(14px, 1.05vw, 20px);
+    letter-spacing: clamp(2px, 0.28vw, 5px);
+}
+
+html.display-mode-messagewall .message-stage__headline-text {
+    font-size: clamp(34px, 3.55vw, 62px);
+    line-height: 0.96;
+}
+
+html.display-mode-messagewall .message-stage__bottom-logo {
+    left: 28px;
+    bottom: 18px;
+    width: 124px;
+}
+
+html.display-mode-messagewall #wishes-container {
+    z-index: 15;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .message-card-shell {
+    padding: 20px 18px 58px;
+    border-width: 8px;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .message-card-shell::after {
+    left: 30px;
+    bottom: -34px;
+    width: 34px;
+    height: 44px;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .wish-text {
+    font-size: 17px;
+    line-height: 1.18;
+    -webkit-line-clamp: 4;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .child-name {
+    margin-top: 14px;
+    font-size: 14px;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.is-background-layer {
+    display: none !important;
+}
+
+html.display-mode-messagewall {
+    background: #050817 !important;
+}
+
+html.display-mode-messagewall .display-container {
+    background: #050817 url('/images/marka-stage-background.png') center center / 100% 100% no-repeat !important;
+}
+
+html.display-mode-messagewall .display-container::before,
+html.display-mode-messagewall .display-container::after,
+html.display-mode-messagewall .message-stage,
+html.display-mode-messagewall .message-stage::before,
+html.display-mode-messagewall .message-stage::after,
+html.display-mode-messagewall .logos-top-bar,
+html.display-mode-messagewall .header-title-box,
+html.display-mode-messagewall .moon,
+html.display-mode-messagewall .sparkle-star,
+html.display-mode-messagewall #embers-container,
+html.display-mode-messagewall .message-stage__top-logo,
+html.display-mode-messagewall .message-stage__headline,
+html.display-mode-messagewall .message-stage__bottom-logo {
+    display: none !important;
+}
+
+html.display-mode-messagewall #spotlight-overlay,
+html.display-mode-messagewall #spotlight-label {
+    display: none !important;
+}
+
+html.display-mode-messagewall #wishes-container {
+    z-index: 22 !important;
+    pointer-events: none;
+}
+
+html.display-mode-messagewall #empty-state {
+    z-index: 30;
+}
+
+html.display-mode-messagewall #empty-state .empty-text,
+html.display-mode-messagewall #empty-state .empty-sub {
+    font-family: 'Centrale Sans', 'Nunito', sans-serif;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode {
+    position: absolute;
+    width: var(--message-card-width) !important;
+    height: var(--message-card-height) !important;
+    z-index: var(--message-card-z, 40);
+    opacity: 0;
+    pointer-events: none;
+    will-change: transform, opacity, filter;
+    transform-origin: top left;
+    filter: blur(var(--messagewall-blur, 0px)) drop-shadow(0 18px 36px rgba(0, 0, 0, 0.28));
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.card-entering,
+html.display-mode-messagewall .wish-card.messagewall-mode.new-wish-highlight,
+html.display-mode-messagewall #wishes-container.spotlight-mode .wish-card,
+html.display-mode-messagewall #wishes-container.spotlight-mode .wish-card.spotlight-active {
+    animation: none !important;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .message-card-shell {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    padding: 0 !important;
+    border: 0 !important;
+    background: var(--message-frame-image) center center / 100% 100% no-repeat !important;
+    box-shadow: none !important;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .message-card-shell::after {
+    display: none !important;
+    content: none !important;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .message-card-fill {
+    position: absolute;
+    inset: var(--message-fill-top) var(--message-fill-right) var(--message-fill-bottom) var(--message-fill-left);
+    background: linear-gradient(180deg, rgba(8, 11, 24, 0.96) 0%, rgba(10, 14, 28, 0.92) 100%);
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .message-card-content {
+    position: absolute;
+    inset: var(--message-fill-top) var(--message-fill-right) var(--message-fill-bottom) var(--message-fill-left);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+    overflow: hidden;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .wish-text,
+html.display-mode-messagewall .wish-card.messagewall-mode .child-name {
+    position: static !important;
+    inset: auto !important;
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    transform: none !important;
+    text-align: left;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .wish-text {
+    color: #fbf7f0;
+    font-family: 'Centrale Sans', 'Nunito', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.24;
+    letter-spacing: 0.01em;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;
+    overflow: hidden;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode .child-name {
+    color: #fff6ef;
+    font-family: 'Arame', 'Centrale Sans', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--small {
+    --message-frame-image: url('/images/marka-frame-small.png');
+    --message-fill-top: 14px;
+    --message-fill-right: 15px;
+    --message-fill-bottom: 42px;
+    --message-fill-left: 14px;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero {
+    --message-frame-image: url('/images/marka-frame-large.png');
+    --message-fill-top: 22px;
+    --message-fill-right: 22px;
+    --message-fill-bottom: 64px;
+    --message-fill-left: 22px;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero .message-card-content {
+    gap: 18px;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero .wish-text {
+    font-size: 19px;
+    line-height: 1.18;
+    -webkit-line-clamp: 7;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero .child-name {
+    font-size: 16px;
+}

@@ -215,7 +215,7 @@ function renderUploadPage(req, res) {
     const uploadPath = path.join(__dirname, 'public', 'upload.html');
     const host = (req.hostname || '').toLowerCase();
     const isDilekFeneri = host.includes('dilekfeneri');
-    const title = isDilekFeneri ? 'Dilek Feneri — Dilek Yükle' : 'İyilik Kumbarası — Dilek Yükle';
+    const title = isDilekFeneri ? 'Dilek Feneri — Dilegini Paylas' : 'Iyilik Kumbarasi — Dilegini Paylas';
     const siteName = isDilekFeneri ? 'Dilek Feneri' : 'İyilik Kumbarası';
     let html = fs.readFileSync(uploadPath, 'utf8');
     html = html
