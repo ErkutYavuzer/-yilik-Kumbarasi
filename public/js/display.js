@@ -30,6 +30,9 @@ class WishDisplay {
             await this.loadDisplayMode();
             this.applyDisplayMode();
             await this.loadDisplaySettings();
+            if (typeof window.finishDisplayBoot === 'function') {
+                requestAnimationFrame(() => window.finishDisplayBoot());
+            }
             this.connectSocket();
             this.bindEvents();
             this.initHeaderLogoObservers();
@@ -37,6 +40,9 @@ class WishDisplay {
             this.setupAudio();
             this.loadTheme();
         } catch (e) {
+            if (typeof window.finishDisplayBoot === 'function') {
+                window.finishDisplayBoot();
+            }
             console.error('WishDisplay init hatası:', e);
             // Retry after 2s — mobilde ilk yüklemede ağ gecikmesi olabilir
             setTimeout(() => {

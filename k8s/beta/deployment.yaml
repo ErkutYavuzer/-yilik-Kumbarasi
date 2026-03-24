@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: dilek-kumbarasi-beta
-          image: ghcr.io/ayavuzer/dilek-kumbarasi:beta-2.2.0-p55
+          image: ghcr.io/ayavuzer/dilek-kumbarasi:beta-2.2.0-p56
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
