@@ -1542,7 +1542,7 @@ html.display-mode-messagewall .wish-card.messagewall-mode .message-card-content 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 12px;
+    gap: 10px;
     overflow: hidden;
 }
 
@@ -1562,51 +1562,53 @@ html.display-mode-messagewall .wish-card.messagewall-mode .wish-text {
     color: #fbf7f0;
     font-family: 'Centrale Sans', 'Nunito', sans-serif;
     font-weight: 400;
-    font-size: 14px;
-    line-height: 1.24;
-    letter-spacing: 0.01em;
+    font-size: 15px;
+    line-height: 1.18;
+    letter-spacing: 0;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 6;
+    -webkit-line-clamp: 7;
     overflow: hidden;
+    text-wrap: pretty;
 }
 
 html.display-mode-messagewall .wish-card.messagewall-mode .child-name {
     color: #fff6ef;
     font-family: 'Arame', 'Centrale Sans', sans-serif;
     font-weight: 700;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 1;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
 }
 
 html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--small {
     --message-frame-image: url('/images/marka-frame-small.png');
-    --message-fill-top: 14px;
-    --message-fill-right: 15px;
-    --message-fill-bottom: 42px;
-    --message-fill-left: 14px;
+    --message-fill-top: 18px;
+    --message-fill-right: 18px;
+    --message-fill-bottom: 46px;
+    --message-fill-left: 18px;
 }
 
 html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero {
     --message-frame-image: url('/images/marka-frame-large.png');
-    --message-fill-top: 22px;
-    --message-fill-right: 22px;
-    --message-fill-bottom: 64px;
-    --message-fill-left: 22px;
+    --message-fill-top: 26px;
+    --message-fill-right: 24px;
+    --message-fill-bottom: 72px;
+    --message-fill-left: 24px;
 }
 
 html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero .message-card-content {
-    gap: 18px;
+    gap: 14px;
 }
 
 html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero .wish-text {
-    font-size: 19px;
-    line-height: 1.18;
-    -webkit-line-clamp: 7;
+    font-size: 22px;
+    line-height: 1.14;
+    -webkit-line-clamp: 6;
 }
 
 html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero .child-name {
-    font-size: 16px;
+    font-size: 19px;
+    letter-spacing: 0.04em;
 }
