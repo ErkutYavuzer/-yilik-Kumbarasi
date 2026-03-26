@@ -1539,19 +1539,14 @@ html.display-mode-messagewall .wish-card.messagewall-mode .message-card-fill {
 html.display-mode-messagewall .wish-card.messagewall-mode .message-card-content {
     position: absolute;
     inset: var(--message-fill-top) var(--message-fill-right) var(--message-fill-bottom) var(--message-fill-left);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 8px;
+    display: block;
     overflow: hidden;
 }
 
 html.display-mode-messagewall .wish-card.messagewall-mode .wish-text,
 html.display-mode-messagewall .wish-card.messagewall-mode .child-name {
-    position: static !important;
-    inset: auto !important;
-    width: 100% !important;
-    max-width: none !important;
+    position: absolute !important;
+    inset: auto;
     padding: 0 !important;
     margin: 0 !important;
     transform: none !important;
@@ -1572,7 +1567,6 @@ html.display-mode-messagewall .wish-card.messagewall-mode .wish-text {
     text-wrap: pretty;
     overflow-wrap: anywhere;
     word-break: break-word;
-    max-width: 88%;
 }
 
 html.display-mode-messagewall .wish-card.messagewall-mode .child-name {
@@ -1587,32 +1581,53 @@ html.display-mode-messagewall .wish-card.messagewall-mode .child-name {
 
 html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--small {
     --message-frame-image: url('/images/marka-frame-small.png');
-    --message-fill-top: 20px;
+    --message-fill-top: 18px;
     --message-fill-right: 18px;
     --message-fill-bottom: 46px;
     --message-fill-left: 18px;
 }
 
-html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero {
-    --message-frame-image: url('/images/marka-frame-large.png');
-    --message-fill-top: 46px;
-    --message-fill-right: 32px;
-    --message-fill-bottom: 72px;
-    --message-fill-left: 32px;
+html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--small .wish-text {
+    top: 0;
+    left: 0;
+    width: 140px !important;
+    max-width: 140px !important;
+    max-height: 152px;
 }
 
-html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero .message-card-content {
-    gap: 10px;
+html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--small .child-name {
+    left: 0;
+    right: auto;
+    bottom: 4px;
+    width: 144px !important;
+    max-width: 144px !important;
+}
+
+html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero {
+    --message-frame-image: url('/images/marka-frame-large.png');
+    --message-fill-top: 52px;
+    --message-fill-right: 32px;
+    --message-fill-bottom: 70px;
+    --message-fill-left: 34px;
 }
 
 html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero .wish-text {
-    font-size: 21px;
-    line-height: 1.13;
+    top: 0;
+    left: 0;
+    width: 208px !important;
+    max-width: 208px !important;
+    max-height: 212px;
+    font-size: 20px;
+    line-height: 1.12;
     -webkit-line-clamp: 6;
-    max-width: 78%;
 }
 
 html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero .child-name {
+    left: 0;
+    right: auto;
+    bottom: 2px;
+    width: 208px !important;
+    max-width: 208px !important;
     font-size: 14px;
     letter-spacing: 0.03em;
 }
