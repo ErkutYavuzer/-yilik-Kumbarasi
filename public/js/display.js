@@ -677,7 +677,9 @@ class WishDisplay {
         document.addEventListener('fullscreenchange', () => {
             const fsBtn = document.getElementById('fullscreen-btn');
             if (fsBtn) {
-                fsBtn.innerHTML = document.fullscreenElement ? '&#x2716;' : '&#x26F6;';
+                fsBtn.innerHTML = '&#x26F6;';
+                fsBtn.title = 'Tam ekran';
+                fsBtn.setAttribute('aria-label', 'Tam ekran');
             }
             document.documentElement.classList.toggle('display-fullscreen', !!document.fullscreenElement);
             resyncFullscreenLayout();
