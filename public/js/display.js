@@ -747,6 +747,16 @@ class WishDisplay {
         return truncated.replace(/\n/g, '<br>');
     }
 
+    formatMessageWallHtml(text) {
+        if (!text) return '';
+        const normalized = text
+            .replace(/\s*\n+\s*/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+        const truncated = normalized.length > 180 ? normalized.substring(0, 180) + '…' : normalized;
+        return truncated;
+    }
+
     queueMessageWallWish(wish) {
         if (!wish || wish.id === undefined || wish.id === null) return;
         const wishId = String(wish.id);
@@ -789,18 +799,149 @@ class WishDisplay {
         return available[Math.floor(Math.random() * available.length)];
     }
 
-    applyMessageWallContent(card, wish) {
+    applyMessageWallContent(card, wish, slot = null) {
         if (!card) return;
         const textEl = card.querySelector('.wish-text');
         const nameEl = card.querySelector('.child-name');
         if (textEl) {
             textEl.innerHTML = wish && wish.wishText
-                ? this.formatWishHtml(wish.wishText)
+                ? this.formatMessageWallHtml(wish.wishText)
                 : 'Dilek metni bekleniyor.';
         }
         if (nameEl) {
             nameEl.textContent = wish && wish.childName ? wish.childName : 'ISIM BEKLENIYOR';
         }
+        this.fitMessageWallTypography(card, slot);
+        requestAnimationFrame(() => this.fitMessageWallTypography(card, slot));
+    }
+
+    getMessageWallTypographyConfig(slot) {
+        const variant = slot && slot.variant === 'large' ? 'large' : 'small';
+        if (variant === 'large') {
+            return {
+                textTop: 12,
+                textSidePadding: 14,
+                textMinWidth: 178,
+                textMaxWidth: 236,
+                textMinFont: 21,
+                textMaxFont: 30,
+                textLineHeight: 1.06,
+                nameBottom: 14,
+                nameMinWidth: 188,
+                nameMaxWidth: 228,
+                nameMinFont: 17,
+                nameMaxFont: 21,
+                nameLineHeight: 1,
+                nameReserve: 48,
+                maxLines: 6
+            };
+        }
+        return {
+            textTop: 8,
+            textSidePadding: 12,
+            textMinWidth: 120,
+            textMaxWidth: 160,
+            textMinFont: 14,
+            textMaxFont: 19,
+            textLineHeight: 1.14,
+            nameBottom: 10,
+            nameMinWidth: 118,
+            nameMaxWidth: 160,
+            nameMinFont: 13,
+            nameMaxFont: 16,
+            nameLineHeight: 1,
+            nameReserve: 32,
+            maxLines: 8
+        };
+    }
+
+    fitTextToBox(element, {
+        minFont,
+        maxFont,
+        maxHeight,
+        maxWidth,
+        lineHeight,
+        maxLines = 8
+    }) {
+        if (!element) return;
+        element.style.fontSize = `${maxFont}px`;
+        element.style.lineHeight = String(lineHeight);
+        element.style.maxWidth = `${Math.max(1, maxWidth)}px`;
+        element.style.width = `${Math.max(1, maxWidth)}px`;
+        element.style.maxHeight = `${Math.max(1, maxHeight)}px`;
+        element.style.webkitLineClamp = String(maxLines);
+
+        for (let size = maxFont; size >= minFont; size -= 0.5) {
+            element.style.fontSize = `${size}px`;
+            const fitsHeight = element.scrollHeight <= maxHeight + 1;
+            const fitsWidth = element.scrollWidth <= maxWidth + 1;
+            if (fitsHeight && fitsWidth) {
+                return size;
+            }
+        }
+
+        element.style.fontSize = `${minFont}px`;
+        return minFont;
+    }
+
+    fitMessageWallTypography(card, slot = null) {
+        if (!card) return;
+        const contentEl = card.querySelector('.message-card-content');
+        const textEl = card.querySelector('.wish-text');
+        const nameEl = card.querySelector('.child-name');
+        if (!contentEl || !textEl || !nameEl) return;
+
+        const resolvedSlot = slot
+            || this.getMessageWallSlotByKey(card.dataset.slotKey)
+            || { variant: card.classList.contains('messagewall-slot--hero') ? 'large' : 'small' };
+        const cfg = this.getMessageWallTypographyConfig(resolvedSlot);
+        const contentWidth = contentEl.clientWidth || 0;
+        const contentHeight = contentEl.clientHeight || 0;
+        if (!contentWidth || !contentHeight) return;
+
+        const textWidth = Math.max(
+            cfg.textMinWidth,
+            Math.min(cfg.textMaxWidth, contentWidth - (cfg.textSidePadding * 2))
+        );
+        const textLeft = Math.max(0, Math.round((contentWidth - textWidth) / 2));
+        const textMaxHeight = Math.max(36, contentHeight - cfg.nameReserve - cfg.textTop);
+
+        textEl.style.top = `${cfg.textTop}px`;
+        textEl.style.left = `${textLeft}px`;
+        textEl.style.right = 'auto';
+        textEl.style.textAlign = 'left';
+        textEl.style.width = `${textWidth}px`;
+        textEl.style.maxWidth = `${textWidth}px`;
+        textEl.style.maxHeight = `${textMaxHeight}px`;
+        this.fitTextToBox(textEl, {
+            minFont: cfg.textMinFont,
+            maxFont: cfg.textMaxFont,
+            maxHeight: textMaxHeight,
+            maxWidth: textWidth,
+            lineHeight: cfg.textLineHeight,
+            maxLines: cfg.maxLines
+        });
+
+        const nameWidth = Math.max(
+            cfg.nameMinWidth,
+            Math.min(cfg.nameMaxWidth, textWidth + 18)
+        );
+        const nameLeft = Math.max(0, Math.round((contentWidth - nameWidth) / 2));
+        nameEl.style.left = `${nameLeft}px`;
+        nameEl.style.right = 'auto';
+        nameEl.style.bottom = `${cfg.nameBottom}px`;
+        nameEl.style.width = `${nameWidth}px`;
+        nameEl.style.maxWidth = `${nameWidth}px`;
+        nameEl.style.textAlign = 'left';
+
+        this.fitTextToBox(nameEl, {
+            minFont: cfg.nameMinFont,
+            maxFont: cfg.nameMaxFont,
+            maxHeight: 26,
+            maxWidth: nameWidth,
+            lineHeight: cfg.nameLineHeight,
+            maxLines: 1
+        });
     }
 
     easeOutBack(t) {
@@ -823,13 +964,14 @@ class WishDisplay {
             this.wishes.push(wish);
         }
 
-        this.applyMessageWallContent(cardData.element, wish);
         cardData.element.dataset.wishId = wish ? wish.id : '';
         cardData.element.dataset.slotKey = slot.key;
+        cardData.element.dataset.slotVariant = slot.variant;
         cardData.element.className = `wish-card messagewall-mode ${slot.className}`.trim();
         cardData.element.style.setProperty('--message-card-width', `${slot.width}px`);
         cardData.element.style.setProperty('--message-card-height', `${slot.height}px`);
         cardData.element.style.setProperty('--message-card-z', `${slot.zIndex}`);
+        this.applyMessageWallContent(cardData.element, wish, slot);
 
         cardData.cardWidth = slot.width;
         cardData.cardHeight = slot.height;
