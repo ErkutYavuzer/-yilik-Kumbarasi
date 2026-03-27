@@ -1557,7 +1557,7 @@ html.display-mode-messagewall .wish-card.messagewall-mode .wish-text {
     color: #fbf7f0;
     font-family: 'Centrale Sans', 'Nunito', sans-serif;
     font-weight: 400;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.18;
     letter-spacing: 0;
     display: -webkit-box;
@@ -1588,19 +1588,19 @@ html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--smal
 }
 
 html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--small .wish-text {
-    top: 2px;
-    left: 0;
-    width: 132px !important;
-    max-width: 132px !important;
-    max-height: 150px;
+    top: 8px;
+    left: 8px;
+    width: 120px !important;
+    max-width: 120px !important;
+    max-height: 142px;
 }
 
 html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--small .child-name {
-    left: 0;
+    left: 8px;
     right: auto;
     bottom: 10px;
-    width: 144px !important;
-    max-width: 144px !important;
+    width: 132px !important;
+    max-width: 132px !important;
     font-size: 14px;
 }
 
@@ -1613,22 +1613,22 @@ html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero
 }
 
 html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero .wish-text {
-    top: 0;
-    left: 0;
-    width: 194px !important;
-    max-width: 194px !important;
-    max-height: 204px;
-    font-size: 22px;
-    line-height: 1.09;
+    top: 12px;
+    left: 12px;
+    width: 178px !important;
+    max-width: 178px !important;
+    max-height: 188px;
+    font-size: 23px;
+    line-height: 1.08;
     -webkit-line-clamp: 6;
 }
 
 html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero .child-name {
-    left: 0;
+    left: 12px;
     right: auto;
     bottom: 14px;
-    width: 220px !important;
-    max-width: 220px !important;
+    width: 204px !important;
+    max-width: 204px !important;
     font-size: 18px;
     letter-spacing: 0.028em;
 }
