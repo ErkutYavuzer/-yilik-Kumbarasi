@@ -964,36 +964,49 @@ class WishDisplay {
         const style = this.displaySettings && typeof this.displaySettings.messageWallEntranceStyle === 'string'
             ? this.displaySettings.messageWallEntranceStyle
             : 'standard';
-        return ['standard', 'soft', 'pop'].includes(style) ? style : 'standard';
+        const normalized = style === 'soft' ? 'glide' : style;
+        return ['standard', 'glide', 'pop'].includes(normalized) ? normalized : 'standard';
     }
 
     getMessageWallEntrancePreset(slot, entranceStyle = this.getMessageWallEntranceStyle()) {
         const dropDistance = slot && slot.variant === 'large' ? 180 : 140;
-        const style = ['standard', 'soft', 'pop'].includes(entranceStyle) ? entranceStyle : 'standard';
+        const normalized = entranceStyle === 'soft' ? 'glide' : entranceStyle;
+        const style = ['standard', 'glide', 'pop'].includes(normalized) ? normalized : 'standard';
 
-        if (style === 'soft') {
+        if (style === 'glide') {
+            const horizontalOffset = slot.key === 'hero'
+                ? -96
+                : slot.key.includes('left')
+                    ? -118
+                    : 118;
             return {
                 style,
-                startY: slot.y + (slot.variant === 'large' ? 28 : 22),
-                startScale: 0.985,
-                startBlur: 10
+                startX: slot.x + horizontalOffset,
+                startY: slot.y + (slot.variant === 'large' ? 14 : 10),
+                startScale: 0.96,
+                startBlur: 12,
+                startRotation: horizontalOffset < 0 ? -5.5 : 5.5
             };
         }
 
         if (style === 'pop') {
             return {
                 style,
+                startX: slot.x,
                 startY: slot.y + (slot.variant === 'large' ? 16 : 12),
                 startScale: 0.82,
-                startBlur: 14
+                startBlur: 14,
+                startRotation: 0
             };
         }
 
         return {
             style: 'standard',
+            startX: slot.x,
             startY: slot.y - dropDistance,
             startScale: 0.94,
-            startBlur: 7
+            startBlur: 7,
+            startRotation: 0
         };
     }
 
@@ -1001,14 +1014,16 @@ class WishDisplay {
         const preset = this.getMessageWallEntrancePreset(slot, cardData && cardData.entranceStyle);
         const clamped = Math.max(0, Math.min(1, progress));
 
-        if (preset.style === 'soft') {
-            const eased = this.easeOutCubic(clamped);
+        if (preset.style === 'glide') {
+            const moveEase = this.easeOutCubic(clamped);
+            const settleEase = this.easeOutBack(clamped);
             return {
-                x: slot.x,
-                y: this.lerp(preset.startY, slot.y, eased),
-                opacity: eased,
-                renderScale: this.lerp(preset.startScale, 1, eased),
-                blur: (1 - eased) * preset.startBlur
+                x: this.lerp(preset.startX, slot.x, moveEase),
+                y: this.lerp(preset.startY, slot.y, moveEase),
+                opacity: Math.min(1, 0.16 + clamped * 1.08),
+                renderScale: this.lerp(preset.startScale, 1, settleEase),
+                blur: (1 - clamped) * preset.startBlur,
+                rotation: this.lerp(preset.startRotation || 0, 0, settleEase)
             };
         }
 
@@ -1020,7 +1035,8 @@ class WishDisplay {
                 y: this.lerp(preset.startY, slot.y, moveEase),
                 opacity: Math.min(1, 0.18 + clamped * 1.2),
                 renderScale: this.lerp(preset.startScale, 1, scaleEase),
-                blur: (1 - clamped) * preset.startBlur
+                blur: (1 - clamped) * preset.startBlur,
+                rotation: 0
             };
         }
 
@@ -1030,7 +1046,8 @@ class WishDisplay {
             y: this.lerp(preset.startY, slot.y, eased),
             opacity: Math.min(1, clamped * 1.25),
             renderScale: this.lerp(preset.startScale, 1, eased),
-            blur: (1 - clamped) * preset.startBlur
+            blur: (1 - clamped) * preset.startBlur,
+            rotation: 0
         };
     }
 
@@ -1069,12 +1086,14 @@ class WishDisplay {
         cardData.holdDuration = 7200 + Math.random() * 1800;
         cardData.exitDuration = 380 + Math.random() * 140;
         cardData.entranceStyle = entrancePreset.style;
+        cardData.startX = entrancePreset.startX;
         cardData.startY = entrancePreset.startY;
         cardData.endY = slot.y;
-        cardData.x = slot.x;
+        cardData.x = animate ? entrancePreset.startX : slot.x;
         cardData.y = animate ? cardData.startY : slot.y;
         cardData.opacity = animate ? 0 : 1;
         cardData.renderScale = animate ? entrancePreset.startScale : 1;
+        cardData.rotation = animate ? (entrancePreset.startRotation || 0) : 0;
         cardData.element.style.opacity = cardData.opacity.toString();
         cardData.element.style.setProperty('--messagewall-blur', animate ? `${entrancePreset.startBlur}px` : '0px');
         cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${currentScale * cardData.renderScale}) rotate(0deg)`;
@@ -1098,6 +1117,7 @@ class WishDisplay {
             cardData.y = frame.y;
             cardData.opacity = frame.opacity;
             cardData.renderScale = frame.renderScale;
+            cardData.rotation = frame.rotation || 0;
             cardData.element.style.setProperty('--messagewall-blur', `${frame.blur}px`);
             if (progress >= 1) {
                 cardData.phase = 'holding';
@@ -1106,6 +1126,7 @@ class WishDisplay {
                 cardData.y = slot.y;
                 cardData.opacity = 1;
                 cardData.renderScale = 1;
+                cardData.rotation = 0;
                 cardData.element.style.setProperty('--messagewall-blur', '0px');
             }
             return;

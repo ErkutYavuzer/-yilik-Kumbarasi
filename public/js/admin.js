@@ -1000,7 +1000,9 @@ async function saveDisplaySettings() {
     const settings = {
         speedMultiplier: parseFloat(document.getElementById('display-speed').value),
         scaleMultiplier: parseFloat(document.getElementById('display-scale').value),
-        messageWallEntranceStyle: document.getElementById('display-messagewall-animation')?.value || 'standard',
+        messageWallEntranceStyle: ((document.getElementById('display-messagewall-animation')?.value || 'standard') === 'soft'
+            ? 'glide'
+            : (document.getElementById('display-messagewall-animation')?.value || 'standard')),
         maxVisible: parseInt(document.getElementById('display-maxvisible').value),
         logoOffsetPx: parseInt(document.getElementById('display-logo-offset').value),
         headerOffsetPx: parseInt(document.getElementById('display-header-offset').value),
@@ -1043,7 +1045,8 @@ function setDisplaySettingsUI(data) {
     }
     if (data.messageWallEntranceStyle !== undefined) {
         const el = document.getElementById('display-messagewall-animation');
-        if (el) el.value = data.messageWallEntranceStyle;
+        const normalized = data.messageWallEntranceStyle === 'soft' ? 'glide' : data.messageWallEntranceStyle;
+        if (el) el.value = normalized;
     }
     if (data.maxVisible !== undefined) {
         const el = document.getElementById('display-maxvisible');
