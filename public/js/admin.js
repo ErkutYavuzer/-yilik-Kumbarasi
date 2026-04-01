@@ -768,6 +768,9 @@ function syncDisplaySettingsModeUI(mode) {
     if (noteEl) {
         noteEl.style.display = isMessageWall ? 'block' : 'none';
     }
+    if (noteEl && isMessageWall) {
+        noteEl.textContent = 'Marka Sahnesi sabit kompozisyon kullaniyor. Bu modda kart giris animasyonu, kart gecis hizi ve kart olcegi ayarlanabilir.';
+    }
     if (speedLabel) {
         speedLabel.innerHTML = `<i data-lucide="gauge" style="width:14px;height:14px;vertical-align:middle;"></i> ${isMessageWall ? 'Gecis Hizi' : 'Animasyon Hizi'} <span id="speed-value" style="color:var(--accent);font-weight:700;margin-left:6px;">${speedValue}</span>`;
     }
@@ -799,6 +802,7 @@ function syncDisplaySettingsModeUI(mode) {
 
     setSettingCardVisibility('display-speed', true);
     setSettingCardVisibility('display-scale', true);
+    setSettingCardVisibility('display-messagewall-animation', isMessageWall);
 
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
@@ -996,6 +1000,7 @@ async function saveDisplaySettings() {
     const settings = {
         speedMultiplier: parseFloat(document.getElementById('display-speed').value),
         scaleMultiplier: parseFloat(document.getElementById('display-scale').value),
+        messageWallEntranceStyle: document.getElementById('display-messagewall-animation')?.value || 'standard',
         maxVisible: parseInt(document.getElementById('display-maxvisible').value),
         logoOffsetPx: parseInt(document.getElementById('display-logo-offset').value),
         headerOffsetPx: parseInt(document.getElementById('display-header-offset').value),
@@ -1035,6 +1040,10 @@ function setDisplaySettingsUI(data) {
         const el = document.getElementById('display-scale');
         if (el) el.value = data.scaleMultiplier;
         updateScaleLabel(data.scaleMultiplier);
+    }
+    if (data.messageWallEntranceStyle !== undefined) {
+        const el = document.getElementById('display-messagewall-animation');
+        if (el) el.value = data.messageWallEntranceStyle;
     }
     if (data.maxVisible !== undefined) {
         const el = document.getElementById('display-maxvisible');

@@ -18,7 +18,7 @@ class WishDisplay {
         this.socket = null;
         this.isMuted = false;
         this.audioCtx = null;
-        this.displaySettings = { speedMultiplier: 1.0, scaleMultiplier: 1.0, maxVisible: 20, logoOffsetPx: 0, headerOffsetPx: 0, logoScale: 1, headerScale: 1, dayMode: false }; // Global ekran ayarları
+        this.displaySettings = { speedMultiplier: 1.0, scaleMultiplier: 1.0, messageWallEntranceStyle: 'standard', maxVisible: 20, logoOffsetPx: 0, headerOffsetPx: 0, logoScale: 1, headerScale: 1, dayMode: false }; // Global ekran ayarları
         this.displayMode = 'balloon'; // 'balloon' veya 'lantern'
         this._raffleAnimating = false; // Çekiliş animasyonu aktif mi
 
@@ -952,12 +952,95 @@ class WishDisplay {
         return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
     }
 
+    easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+    }
+
+    lerp(start, end, t) {
+        return start + (end - start) * t;
+    }
+
+    getMessageWallEntranceStyle() {
+        const style = this.displaySettings && typeof this.displaySettings.messageWallEntranceStyle === 'string'
+            ? this.displaySettings.messageWallEntranceStyle
+            : 'standard';
+        return ['standard', 'soft', 'pop'].includes(style) ? style : 'standard';
+    }
+
+    getMessageWallEntrancePreset(slot, entranceStyle = this.getMessageWallEntranceStyle()) {
+        const dropDistance = slot && slot.variant === 'large' ? 180 : 140;
+        const style = ['standard', 'soft', 'pop'].includes(entranceStyle) ? entranceStyle : 'standard';
+
+        if (style === 'soft') {
+            return {
+                style,
+                startY: slot.y + (slot.variant === 'large' ? 28 : 22),
+                startScale: 0.985,
+                startBlur: 10
+            };
+        }
+
+        if (style === 'pop') {
+            return {
+                style,
+                startY: slot.y + (slot.variant === 'large' ? 16 : 12),
+                startScale: 0.82,
+                startBlur: 14
+            };
+        }
+
+        return {
+            style: 'standard',
+            startY: slot.y - dropDistance,
+            startScale: 0.94,
+            startBlur: 7
+        };
+    }
+
+    getMessageWallEntranceFrame(cardData, slot, progress) {
+        const preset = this.getMessageWallEntrancePreset(slot, cardData && cardData.entranceStyle);
+        const clamped = Math.max(0, Math.min(1, progress));
+
+        if (preset.style === 'soft') {
+            const eased = this.easeOutCubic(clamped);
+            return {
+                x: slot.x,
+                y: this.lerp(preset.startY, slot.y, eased),
+                opacity: eased,
+                renderScale: this.lerp(preset.startScale, 1, eased),
+                blur: (1 - eased) * preset.startBlur
+            };
+        }
+
+        if (preset.style === 'pop') {
+            const moveEase = this.easeOutCubic(clamped);
+            const scaleEase = this.easeOutBack(clamped);
+            return {
+                x: slot.x,
+                y: this.lerp(preset.startY, slot.y, moveEase),
+                opacity: Math.min(1, 0.18 + clamped * 1.2),
+                renderScale: this.lerp(preset.startScale, 1, scaleEase),
+                blur: (1 - clamped) * preset.startBlur
+            };
+        }
+
+        const eased = this.easeOutBack(clamped);
+        return {
+            x: slot.x,
+            y: this.lerp(preset.startY, slot.y, eased),
+            opacity: Math.min(1, clamped * 1.25),
+            renderScale: this.lerp(preset.startScale, 1, eased),
+            blur: (1 - clamped) * preset.startBlur
+        };
+    }
+
     armMessageWallCard(cardData, wish, animate = true, delayMs = 0) {
         if (!cardData || !cardData.element || !cardData.slot) return;
         const slot = cardData.slot;
         const currentScale = this.displaySettings.scaleMultiplier || 1.0;
         const now = performance.now();
         const oldWishId = cardData.element.dataset.wishId;
+        const entrancePreset = this.getMessageWallEntrancePreset(slot);
 
         if (oldWishId) {
             this.wishes = this.wishes.filter(item => String(item.id) !== String(oldWishId));
@@ -985,14 +1068,15 @@ class WishDisplay {
         cardData.enterDuration = 560 + Math.random() * 120;
         cardData.holdDuration = 7200 + Math.random() * 1800;
         cardData.exitDuration = 380 + Math.random() * 140;
-        cardData.startY = slot.y - (slot.variant === 'large' ? 180 : 140);
+        cardData.entranceStyle = entrancePreset.style;
+        cardData.startY = entrancePreset.startY;
         cardData.endY = slot.y;
         cardData.x = slot.x;
         cardData.y = animate ? cardData.startY : slot.y;
         cardData.opacity = animate ? 0 : 1;
-        cardData.renderScale = animate ? 0.94 : 1;
+        cardData.renderScale = animate ? entrancePreset.startScale : 1;
         cardData.element.style.opacity = cardData.opacity.toString();
-        cardData.element.style.setProperty('--messagewall-blur', animate ? '7px' : '0px');
+        cardData.element.style.setProperty('--messagewall-blur', animate ? `${entrancePreset.startBlur}px` : '0px');
         cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${currentScale * cardData.renderScale}) rotate(0deg)`;
     }
 
@@ -1009,12 +1093,12 @@ class WishDisplay {
 
         if (cardData.phase === 'entering') {
             const progress = Math.max(0, Math.min(1, elapsed / cardData.enterDuration));
-            const eased = this.easeOutBack(progress);
-            cardData.x = slot.x;
-            cardData.y = cardData.startY + (slot.y - cardData.startY) * eased;
-            cardData.opacity = Math.min(1, progress * 1.25);
-            cardData.renderScale = 0.94 + (1 - 0.94) * eased;
-            cardData.element.style.setProperty('--messagewall-blur', `${(1 - progress) * 7}px`);
+            const frame = this.getMessageWallEntranceFrame(cardData, slot, progress);
+            cardData.x = frame.x;
+            cardData.y = frame.y;
+            cardData.opacity = frame.opacity;
+            cardData.renderScale = frame.renderScale;
+            cardData.element.style.setProperty('--messagewall-blur', `${frame.blur}px`);
             if (progress >= 1) {
                 cardData.phase = 'holding';
                 cardData.phaseStartedAt = now;

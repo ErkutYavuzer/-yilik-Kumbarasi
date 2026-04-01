@@ -359,7 +359,7 @@
                     <div class="mod-sub" id="display-settings-sub">Aktif gosterim modu icin gecerli ayarlar</div>
                     <div id="display-settings-note"
                         style="display:none; margin:16px 0; padding:12px 14px; border-radius:12px; background:rgba(255,184,77,0.12); border:1px solid rgba(255,184,77,0.22); color:var(--text2); font-size:13px;">
-                        Marka Sahnesi sabit kompozisyon kullaniyor. Bu modda sadece kart gecis hizi ve kart olcegi ayarlanabilir.
+                        Marka Sahnesi sabit kompozisyon kullaniyor. Bu modda kart giris animasyonu, kart gecis hizi ve kart olcegi ayarlanabilir.
                     </div>
                     <div class="settings-grid">
                         <div class="setting-card">
@@ -384,6 +384,19 @@
                             <div
                                 style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
                                 <span>0.1x</span><span>5.0x</span>
+                            </div>
+                        </div>
+                        <div class="setting-card">
+                            <div class="setting-label"><i data-lucide="sparkles"
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Kart Giris Animasyonu
+                            </div>
+                            <select class="setting-select" id="display-messagewall-animation" onchange="saveDisplaySettings()">
+                                <option value="standard">Standart</option>
+                                <option value="soft">Yumusak Fade</option>
+                                <option value="pop">Pop Zoom</option>
+                            </select>
+                            <div style="font-size:11px;color:var(--text3);margin-top:8px;">
+                                Yeni kartlar secilen efektle sahneye gelir.
                             </div>
                         </div>
                         <div class="setting-card">
@@ -1011,7 +1024,7 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/admin.js?v=2.0.3"></script>
+    <script src="/js/admin.js?v=2.0.4"></script>
     <script>
         // Init Lucide Icons
         document.addEventListener('DOMContentLoaded', () => {

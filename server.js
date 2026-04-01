@@ -278,6 +278,7 @@ const savedDisplaySettings = loadSettings().displaySettings || {};
 let displaySettings = {
     speedMultiplier: savedDisplaySettings.speedMultiplier || 1.0,
     scaleMultiplier: savedDisplaySettings.scaleMultiplier || 1.0,
+    messageWallEntranceStyle: ['standard', 'soft', 'pop'].includes(savedDisplaySettings.messageWallEntranceStyle) ? savedDisplaySettings.messageWallEntranceStyle : 'standard',
     maxVisible: savedDisplaySettings.maxVisible || 20,
     logoOffsetPx: typeof savedDisplaySettings.logoOffsetPx === 'number' ? savedDisplaySettings.logoOffsetPx : 0,
     headerOffsetPx: typeof savedDisplaySettings.headerOffsetPx === 'number' ? savedDisplaySettings.headerOffsetPx : 0,
@@ -350,10 +351,11 @@ app.get('/api/display-settings', (req, res) => {
 
 // Ekran Ayarlarını Güncelle API'si
 app.post('/api/display-settings', (req, res) => {
-    const { speedMultiplier, scaleMultiplier, maxVisible, logoOffsetPx, headerOffsetPx, logoScale, headerScale, bakanlikScale, akmScale, bakanlikX, bakanlikY, akmX, akmY, logoTopX, logoTopY, headerX, headerY, dayMode } = req.body;
+    const { speedMultiplier, scaleMultiplier, messageWallEntranceStyle, maxVisible, logoOffsetPx, headerOffsetPx, logoScale, headerScale, bakanlikScale, akmScale, bakanlikX, bakanlikY, akmX, akmY, logoTopX, logoTopY, headerX, headerY, dayMode } = req.body;
 
     if (typeof speedMultiplier === 'number') displaySettings.speedMultiplier = speedMultiplier;
     if (typeof scaleMultiplier === 'number') displaySettings.scaleMultiplier = scaleMultiplier;
+    if (['standard', 'soft', 'pop'].includes(messageWallEntranceStyle)) displaySettings.messageWallEntranceStyle = messageWallEntranceStyle;
     if (typeof maxVisible === 'number') displaySettings.maxVisible = Math.max(1, Math.min(100, maxVisible));
     if (typeof logoOffsetPx === 'number') displaySettings.logoOffsetPx = Math.max(-2160, Math.min(2160, logoOffsetPx));
     if (typeof headerOffsetPx === 'number') displaySettings.headerOffsetPx = Math.max(-2160, Math.min(2160, headerOffsetPx));
