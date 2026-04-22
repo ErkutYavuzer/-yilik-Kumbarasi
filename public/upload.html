@@ -284,6 +284,16 @@
             margin-top: 6px;
             padding-right: 4px;
         }
+
+        .text-helper {
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.35;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.82);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        }
         .char-counter.warning {
             color: #FF6B6B;
         }
@@ -659,13 +669,14 @@
 
         <!-- STEP 1: Photo -->
         <div class="step active" id="step1">
-            <div class="page-title">Markalarin gelecegi icin dilegini paylas.</div>
+            <div class="page-title">Uluslararası Ankara Marka Buluşmaları için dileğini paylaş.</div>
 
             <!-- YAZI ALANI -->
             <div class="text-area-wrapper" id="text-area-wrapper">
-                <textarea class="dilek-textarea" id="dilekInput" placeholder="Dilegini klavyeden buraya yazabilirsin"
+                <textarea class="dilek-textarea" id="dilekInput" placeholder="Markaların geleceğine dair mesajını buraya yazabilirsin"
                     maxlength="140"></textarea>
             </div>
+            <div class="text-helper">Markaların geleceğine dair kısa mesajını buraya yaz.</div>
             <div class="char-counter" id="charCounter">0 / 140</div>
 
             <button type="button" class="next-btn" id="nextBtn1" onclick="goStep(2)">Devam Et &#x27A1;&#xFE0F;</button>
@@ -675,8 +686,8 @@
         <div class="step" id="step2">
             <div class="name-card">
 
-                <div class="name-label">Lütfen İsminizi Yazın</div>
-                <input type="text" class="name-input" id="nameInput" placeholder="Adini yaz" autocomplete="off"
+                <div class="name-label">Lütfen adınızı yazın</div>
+                <input type="text" class="name-input" id="nameInput" placeholder="Adınızı yazın" autocomplete="off"
                     maxlength="30">
             </div>
             <button type="button" class="next-btn show" id="nameNextBtn" onclick="goStep(3)"
@@ -698,7 +709,7 @@
                 <div class="progress-text" id="progressText">Yükleniyor</div>
             </div>
             <button type="button" class="throw-btn" id="throwBtn" onclick="submitWish()">
-                &#x1F3EE; Dilegini Gonder &#x1F3EE;
+                &#x1F3EE; Dileğini Gönder &#x1F3EE;
             </button>
             <button type="button" class="back-link" onclick="goStep(2)">&#x2B05;&#xFE0F; Geri Don</button>
         </div>
@@ -707,8 +718,8 @@
     <!-- Success -->
     <div class="success-screen" id="successScreen">
         <div class="success-jar">&#x1F3EE;</div>
-        <div class="success-msg">Dileğiniz Onay Bekliyor</div>
-        <div class="success-sub">Dileğiniz yöneticiye iletildi, onaylandıktan sonra ekranda görünecektir &#x2728;</div>
+        <div class="success-msg">Mesajın onay için alındı</div>
+        <div class="success-sub">Mesajın etkinlik ekibine iletildi. Onaylandığında ekranda yerini alacak &#x2728;</div>
     </div>
 
     <script>
@@ -756,7 +767,7 @@
                 note.className = 'preview-note';
 
                 if (ci) ci.style.display = 'none';
-                note.textContent = '✍️ Yazı ile Gönderiliyor: "' + textInput.value.trim().substring(0, 30) + '"';
+                note.textContent = '✍️ Mesaj gönderiliyor: "' + textInput.value.trim().substring(0, 30) + '"';
 
                 if (!document.querySelector('.preview-note')) {
                     document.querySelector('.preview-info').appendChild(note);
@@ -771,8 +782,8 @@
         }
 
         function submitWish() {
-            if (textInput.value.trim().length < 5) return alert('Dilek metni en az 5 karakter olmali!');
-            if (textInput.value.trim().length > 140) return alert('Dilek metni en fazla 140 karakter olabilir!');
+            if (textInput.value.trim().length < 5) return alert('Mesaj en az 5 karakter olmalı!');
+            if (textInput.value.trim().length > 140) return alert('Mesaj en fazla 140 karakter olabilir!');
 
             var btn = document.getElementById('throwBtn');
             btn.disabled = true; btn.textContent = 'Gönderiliyor';
@@ -806,13 +817,13 @@
                         }, 3500);
                     } else {
                         alert('Hata: ' + (data.error || 'Bilinmeyen'));
-                        btn.disabled = false; btn.textContent = 'Kumbaraya At!';
+                        btn.disabled = false; btn.textContent = 'Dileğini Gönder';
                         progressWrapper.classList.remove('show');
                     }
                 })
                 .catch(function (err) {
                     alert('Gönderme hatası: ' + err.message);
-                    btn.disabled = false; btn.textContent = 'Kumbaraya At!';
+                    btn.disabled = false; btn.textContent = 'Dileğini Gönder';
                     progressWrapper.classList.remove('show');
                 });
         }
@@ -827,7 +838,7 @@
             document.getElementById('nameNextBtn').style.opacity = '0.4';
             document.getElementById('nameNextBtn').style.pointerEvents = 'none';
             document.getElementById('throwBtn').disabled = false;
-            document.getElementById('throwBtn').textContent = 'Kumbaraya At!';
+            document.getElementById('throwBtn').textContent = 'Dileğini Gönder';
             document.getElementById('progressWrapper').classList.remove('show');
             document.getElementById('progressFill').style.width = '0%';
             const confirmImg = document.getElementById('confirmImg');

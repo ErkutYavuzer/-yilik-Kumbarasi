@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uluslararası Ankara Marka Buluşmaları QR Afişi</title>
+    <style>
+        @font-face {
+            font-family: "Centrale Sans";
+            src: url("fonts/CentraleSans-Regular.otf") format("opentype");
+            font-weight: 400;
+        }
+
+        @font-face {
+            font-family: "Centrale Sans";
+            src: url("fonts/CentraleSans-Bold.otf") format("opentype");
+            font-weight: 700;
+        }
+
+        @font-face {
+            font-family: "Arame";
+            src: url("fonts/Arame-Bold.ttf") format("truetype");
+            font-weight: 700;
+        }
+
+        :root {
+            --bg: #06101f;
+            --bg-soft: #091428;
+            --panel: rgba(11, 17, 34, 0.68);
+            --line: rgba(255, 255, 255, 0.12);
+            --text: #f8f6f2;
+            --muted: rgba(248, 246, 242, 0.72);
+            --accent: #ff8297;
+            --accent-soft: rgba(255, 130, 151, 0.16);
+        }
+
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            width: 210mm;
+            height: 297mm;
+            background: #02050d;
+            color: var(--text);
+            font-family: "Centrale Sans", sans-serif;
+            overflow: hidden;
+        }
+
+        body {
+            display: block;
+        }
+
+        .poster {
+            position: relative;
+            width: 210mm;
+            height: 297mm;
+            overflow: hidden;
+            padding: 16mm 14mm 14mm;
+            background:
+                radial-gradient(circle at 58% 8%, rgba(205, 138, 245, 0.58), transparent 20%),
+                radial-gradient(circle at 20% 100%, rgba(188, 123, 220, 0.42), transparent 26%),
+                radial-gradient(circle at 90% 82%, rgba(255, 115, 126, 0.22), transparent 22%),
+                linear-gradient(180deg, #081122 0%, #040914 100%);
+        }
+
+        .poster::before {
+            content: "";
+            position: absolute;
+            right: -6mm;
+            top: 34mm;
+            width: 122mm;
+            height: 176mm;
+            background: url("images/messagewall-background.png") no-repeat center / cover;
+            opacity: 0.26;
+            mix-blend-mode: screen;
+            filter: saturate(1.08) blur(0.4px);
+            pointer-events: none;
+        }
+
+        .poster::after {
+            content: "";
+            position: absolute;
+            inset: auto 10mm 18mm auto;
+            width: 74mm;
+            height: 74mm;
+            background: radial-gradient(circle at center, rgba(255, 126, 145, 0.42), transparent 68%);
+            filter: blur(18px);
+            pointer-events: none;
+        }
+
+        .topbar,
+        .content,
+        .footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 8mm;
+        }
+
+        .logo-plaque {
+            width: 96mm;
+            display: block;
+        }
+
+        .date-chip {
+            padding: 5.4mm 6.2mm 4.8mm;
+            border-radius: 5mm;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(8, 13, 26, 0.78);
+            text-align: right;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .date-chip strong {
+            display: block;
+            font-family: "Arame", sans-serif;
+            font-size: 7.7mm;
+            line-height: 1;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .date-chip span {
+            display: block;
+            margin-top: 2.2mm;
+            font-size: 3.4mm;
+            color: var(--muted);
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(68mm, 0.82fr);
+            gap: 12mm;
+            margin-top: 18mm;
+        }
+
+        .copy-column {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 210mm;
+            padding-top: 8mm;
+        }
+
+        .eyebrow {
+            margin: 0 0 5mm;
+            font-family: "Arame", sans-serif;
+            font-size: 4.4mm;
+            line-height: 1;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+
+        .headline {
+            margin: 0;
+            max-width: 94mm;
+            font-family: "Arame", sans-serif;
+            font-size: 18.6mm;
+            line-height: 0.92;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        .subcopy {
+            max-width: 78mm;
+            margin: 8mm 0 0;
+            font-size: 6mm;
+            line-height: 1.28;
+            color: var(--muted);
+        }
+
+        .cta-block {
+            max-width: 84mm;
+            margin-top: 14mm;
+        }
+
+        .cta-title {
+            margin: 0 0 3.4mm;
+            font-family: "Arame", sans-serif;
+            font-size: 5mm;
+            line-height: 1;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        .cta-copy {
+            margin: 0;
+            font-size: 4.8mm;
+            line-height: 1.35;
+            color: var(--muted);
+        }
+
+        .steps {
+            display: grid;
+            gap: 3.4mm;
+            margin-top: 12mm;
+            padding-top: 7mm;
+            border-top: 1px solid var(--line);
+        }
+
+        .step {
+            display: grid;
+            grid-template-columns: 8mm 1fr;
+            gap: 4mm;
+            align-items: start;
+        }
+
+        .step-index {
+            font-family: "Arame", sans-serif;
+            font-size: 4.6mm;
+            line-height: 1;
+            color: var(--accent);
+        }
+
+        .step-text {
+            margin: 0;
+            font-size: 4.2mm;
+            line-height: 1.35;
+            color: var(--muted);
+        }
+
+        .qr-column {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-start;
+            gap: 6mm;
+            padding-top: 20mm;
+        }
+
+        .scan-tag {
+            align-self: flex-start;
+            padding: 2.2mm 3.6mm;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 999px;
+            background: rgba(9, 14, 28, 0.8);
+            font-family: "Arame", sans-serif;
+            font-size: 3.3mm;
+            line-height: 1;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+
+        .qr-shell {
+            position: relative;
+            padding: 7mm;
+            border-radius: 9mm;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(246, 244, 240, 0.96) 100%);
+            box-shadow:
+                0 26px 60px rgba(0, 0, 0, 0.24),
+                0 0 0 1px rgba(255, 255, 255, 0.22);
+        }
+
+        .qr-shell::before {
+            content: "";
+            position: absolute;
+            inset: 5mm;
+            border-radius: 6mm;
+            border: 1px solid rgba(5, 11, 24, 0.08);
+            pointer-events: none;
+        }
+
+        .qr-shell img {
+            position: relative;
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 4mm;
+        }
+
+        .qr-meta {
+            padding: 5mm 5.4mm 0;
+            color: #0a1022;
+        }
+
+        .qr-title {
+            margin: 0;
+            font-family: "Arame", sans-serif;
+            font-size: 6.2mm;
+            line-height: 0.98;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .qr-copy {
+            margin: 3mm 0 0;
+            font-size: 4.4mm;
+            line-height: 1.32;
+            color: rgba(10, 16, 34, 0.82);
+        }
+
+        .url-box {
+            margin-top: 4.6mm;
+            padding: 3.4mm 3.8mm;
+            border-radius: 4mm;
+            background: #0a1022;
+            color: #fff;
+            font-size: 3.9mm;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            overflow-wrap: anywhere;
+        }
+
+        .footer {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 8mm;
+            margin-top: 8mm;
+            padding-top: 8mm;
+            border-top: 1px solid var(--line);
+        }
+
+        .footer-note {
+            max-width: 88mm;
+        }
+
+        .footer-note strong {
+            display: block;
+            margin-bottom: 2mm;
+            font-family: "Arame", sans-serif;
+            font-size: 4.2mm;
+            line-height: 1;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .footer-note p {
+            margin: 0;
+            font-size: 3.8mm;
+            line-height: 1.45;
+            color: var(--muted);
+        }
+
+        .bottom-logo {
+            width: 40mm;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="poster">
+        <header class="topbar">
+            <img class="logo-plaque" src="images/messagewall-top-logo.png"
+                alt="Uluslararas&#305; Ankara Marka Bulu&#351;malar&#305;">
+            <div class="date-chip">
+                <strong>24-25 Nisan 2026</strong>
+                <span>ATO Congresium</span>
+            </div>
+        </header>
+
+        <section class="content">
+            <div class="copy-column">
+                <div>
+                    <p class="eyebrow">Uluslararas&#305; Ankara Marka Bulu&#351;malar&#305;</p>
+                    <h1 class="headline">Markalar&#305;n gelece&#287;i i&#231;in dile&#287;ini payla&#351;.</h1>
+                    <p class="subcopy">Uluslararas&#305; Ankara Marka Bulu&#351;malar&#305;'nda markalar&#305;n
+                        gelece&#287;ine dair mesaj&#305;n&#305; b&#305;rak. Katk&#305;n etkinlik alan&#305;ndaki canl&#305;
+                        deneyimin bir par&#231;as&#305; olsun.</p>
+
+                    <div class="cta-block">
+                        <h2 class="cta-title">QR ile kat&#305;l</h2>
+                        <p class="cta-copy">Telefon kameranla QR kodu okut, k&#305;sa formu doldur ve marka
+                            gelece&#287;ine dair mesaj&#305;n&#305; ekrana ta&#351;&#305;.</p>
+                    </div>
+                </div>
+
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-index">01</div>
+                        <p class="step-text">QR kodu okut ve kat&#305;l&#305;m sayfas&#305;n&#305; a&#231;.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-index">02</div>
+                        <p class="step-text">Marka d&#252;nyas&#305;n&#305;n gelece&#287;ine dair k&#305;sa mesaj&#305;n&#305;
+                            yaz.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-index">03</div>
+                        <p class="step-text">Mesaj&#305;n onayland&#305;&#287;&#305;nda etkinlik ekran&#305;nda yerini
+                            als&#305;n.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="qr-column">
+                <div class="scan-tag">QR kodu okut</div>
+                <div class="qr-shell">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=960x960&data=https%3A%2F%2Fdilekfeneri.mezodigi.ai%2Fupload"
+                        alt="Uluslararas&#305; Ankara Marka Bulu&#351;malar&#305; kat&#305;l&#305;m QR kodu">
+                    <div class="qr-meta">
+                        <h2 class="qr-title">Hemen kat&#305;l</h2>
+                        <p class="qr-copy">Etkinlik deneyimine saniyeler i&#231;inde dahil ol.</p>
+                        <div class="url-box">dilekfeneri.mezodigi.ai/upload</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="footer-note">
+                <strong>Bas&#305;l&#305; da&#287;&#305;t&#305;ma haz&#305;r</strong>
+                <p>Bu afi&#351;i giri&#351;, fuaye ve salon alanlar&#305;nda kullanabilirsiniz. Kat&#305;l&#305;mc&#305;lar
+                    do&#287;rudan kat&#305;l&#305;m sayfas&#305;na y&ouml;nlendirilir.</p>
+            </div>
+            <img class="bottom-logo" src="images/messagewall-bottom-logo.png" alt="Ankara Ticaret Odas&#305;">
+        </footer>
+    </main>
+</body>
+
+</html>

@@ -115,6 +115,15 @@ function saveToRejected(wish, reason) {
     }
 }
 
+function clearRejectedWishes() {
+    try {
+        fs.writeFileSync(rejectedFile, JSON.stringify([], null, 2), 'utf8');
+    } catch (err) {
+        console.error('Red logu temizleme hatası:', err.message);
+        throw err;
+    }
+}
+
 // Bekleyen dilekleri dosyaya kaydet
 function savePendingWishes() {
     try {
@@ -185,10 +194,8 @@ const upload = multer({ storage });
 
 function renderDisplayPage(req, res) {
     const displayPath = path.join(__dirname, 'public', 'display.html');
-    const host = (req.hostname || '').toLowerCase();
-    const isDilekFeneri = host.includes('dilekfeneri');
-    const title = isDilekFeneri ? 'Dilek Feneri - Gösterim' : 'İyilik Kumbarası - Gösterim';
-    const siteName = isDilekFeneri ? 'Dilek Feneri' : 'İyilik Kumbarası';
+    const title = 'Uluslararası Ankara Marka Buluşmaları - Dilek Ekranı';
+    const siteName = 'Uluslararası Ankara Marka Buluşmaları';
     let html = fs.readFileSync(displayPath, 'utf8');
     html = html
         .replace(/__DISPLAY_TITLE__/g, title)
@@ -199,10 +206,8 @@ function renderDisplayPage(req, res) {
 
 function renderAdminPage(req, res) {
     const adminPath = path.join(__dirname, 'public', 'admin.html');
-    const host = (req.hostname || '').toLowerCase();
-    const isDilekFeneri = host.includes('dilekfeneri');
-    const title = isDilekFeneri ? 'Dilek Feneri — Yönetim (Pro)' : 'İyilik Kumbarası — Yönetim (Pro)';
-    const siteName = isDilekFeneri ? 'Dilek Feneri' : 'İyilik Kumbarası';
+    const title = 'Uluslararası Ankara Marka Buluşmaları - Yönetim';
+    const siteName = 'Uluslararası Ankara Marka Buluşmaları';
     let html = fs.readFileSync(adminPath, 'utf8');
     html = html
         .replace(/__ADMIN_TITLE__/g, title)
@@ -213,10 +218,8 @@ function renderAdminPage(req, res) {
 
 function renderUploadPage(req, res) {
     const uploadPath = path.join(__dirname, 'public', 'upload.html');
-    const host = (req.hostname || '').toLowerCase();
-    const isDilekFeneri = host.includes('dilekfeneri');
-    const title = isDilekFeneri ? 'Dilek Feneri — Dilegini Paylas' : 'Iyilik Kumbarasi — Dilegini Paylas';
-    const siteName = isDilekFeneri ? 'Dilek Feneri' : 'İyilik Kumbarası';
+    const title = 'Uluslararası Ankara Marka Buluşmaları - Dileğini Paylaş';
+    const siteName = 'Uluslararası Ankara Marka Buluşmaları';
     let html = fs.readFileSync(uploadPath, 'utf8');
     html = html
         .replace(/__UPLOAD_TITLE__/g, title)
@@ -265,16 +268,18 @@ console.log(`📂 ${pendingWishes.length} bekleyen dilek yüklendi.`);
 let drawnWishes = [];
 
 // AI Moderasyon ayarlari
+const savedAppSettings = loadSettings();
+const savedModerationSettings = savedAppSettings.moderationSettings || {};
 let moderationSettings = {
-    enabled: true,
-    checkText: true,
-    checkImage: true,
+    enabled: typeof savedModerationSettings.enabled === 'boolean' ? savedModerationSettings.enabled : true,
+    checkText: typeof savedModerationSettings.checkText === 'boolean' ? savedModerationSettings.checkText : true,
     model: 'gemini-3-flash',
-    strictness: 'normal' // 'strict' | 'normal' | 'lenient'
+    strictness: ['strict', 'normal', 'lenient'].includes(savedModerationSettings.strictness) ? savedModerationSettings.strictness : 'normal',
+    autoApprove: typeof savedModerationSettings.autoApprove === 'boolean' ? savedModerationSettings.autoApprove : false
 };
 
 // Ekran (Gösterim) Ayarları
-const savedDisplaySettings = loadSettings().displaySettings || {};
+const savedDisplaySettings = savedAppSettings.displaySettings || {};
 const normalizeMessageWallEntranceStyle = (value) => {
     if (value === 'soft') return 'glide';
     return value;
@@ -298,8 +303,24 @@ let displaySettings = {
     logoTopY: typeof savedDisplaySettings.logoTopY === 'number' ? savedDisplaySettings.logoTopY : 0,
     headerX: typeof savedDisplaySettings.headerX === 'number' ? savedDisplaySettings.headerX : 0,
     headerY: typeof savedDisplaySettings.headerY === 'number' ? savedDisplaySettings.headerY : 0,
-    dayMode: typeof savedDisplaySettings.dayMode === 'boolean' ? savedDisplaySettings.dayMode : false
+    dayMode: typeof savedDisplaySettings.dayMode === 'boolean' ? savedDisplaySettings.dayMode : false,
+    qrVisible: typeof savedDisplaySettings.qrVisible === 'boolean' ? savedDisplaySettings.qrVisible : false,
+    qrSize: typeof savedDisplaySettings.qrSize === 'number' ? savedDisplaySettings.qrSize : 220,
+    qrTop: typeof savedDisplaySettings.qrTop === 'number' ? savedDisplaySettings.qrTop : 160,
+    qrRight: typeof savedDisplaySettings.qrRight === 'number' ? savedDisplaySettings.qrRight : 80
 };
+
+function persistModerationSettings() {
+    saveSettings({ moderationSettings });
+}
+
+function approveWishDirect(wish) {
+    wish.status = 'approved';
+    wishes.push(wish);
+    saveWishes();
+    io.emit('new-wish', wish);
+    return wish;
+}
 
 app.get('/upload', (req, res) => {
     renderUploadPage(req, res);
@@ -313,6 +334,12 @@ app.get('/admin', (req, res) => {
 app.get('/admin.html', (req, res) => {
     renderAdminPage(req, res);
 });
+app.get('/marka-bulusmalari-qr-flyer', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'marka-bulusmalari-qr-flyer.html'));
+});
+app.get('/marka-bulusmalari-qr-flyer.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'marka-bulusmalari-qr-flyer.html'));
+});
 
 // Moderasyon Ayarları API'leri (Frontend Arayüzüne Uygun)
 app.get('/api/moderation', (req, res) => {
@@ -324,11 +351,22 @@ app.get('/api/moderation/log', (req, res) => {
     res.json(loadRejectedWishes());
 });
 
+app.delete('/api/moderation/log', (req, res) => {
+    try {
+        clearRejectedWishes();
+        console.log('🧹 Moderasyon logu temizlendi');
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ success: false, error: 'Moderasyon logu temizlenemedi' });
+    }
+});
+
 // Moderasyon açık/kapalı (Toggle)
 app.post('/api/moderation/toggle', (req, res) => {
     moderationSettings.enabled = !moderationSettings.enabled;
     const state = moderationSettings.enabled ? 'AÇIK' : 'KAPALI';
     console.log(`\n⚙️ Moderasyon durumu toggle:`, state);
+    persistModerationSettings();
     io.emit('moderation-state', moderationSettings);
     res.json({ success: true, ...moderationSettings });
 });
@@ -336,14 +374,15 @@ app.post('/api/moderation/toggle', (req, res) => {
 // Moderasyon seviyesi, vb tüm ayarların güncellenmesi
 app.post('/api/moderation/settings', (req, res) => {
     // Arayüzden artık "model" gönderilmeyeceği/gönderilse de arka planda geçerli olmayacağı için sabit tutuyoruz.
-    const { enabled, strictness, checkText, checkImage } = req.body;
+    const { enabled, strictness, checkText, autoApprove } = req.body;
 
     if (typeof enabled === 'boolean') moderationSettings.enabled = enabled;
     if (['strict', 'normal', 'lenient'].includes(strictness)) moderationSettings.strictness = strictness;
     if (typeof checkText === 'boolean') moderationSettings.checkText = checkText;
-    if (typeof checkImage === 'boolean') moderationSettings.checkImage = checkImage;
+    if (typeof autoApprove === 'boolean') moderationSettings.autoApprove = autoApprove;
 
     console.log(`\n⚙️ Moderasyon Ayarları Güncellendi:`, moderationSettings);
+    persistModerationSettings();
     io.emit('moderation-state', moderationSettings);
     res.json({ success: true, ...moderationSettings });
 });
@@ -355,7 +394,7 @@ app.get('/api/display-settings', (req, res) => {
 
 // Ekran Ayarlarını Güncelle API'si
 app.post('/api/display-settings', (req, res) => {
-    const { speedMultiplier, scaleMultiplier, messageWallEntranceStyle, maxVisible, logoOffsetPx, headerOffsetPx, logoScale, headerScale, bakanlikScale, akmScale, bakanlikX, bakanlikY, akmX, akmY, logoTopX, logoTopY, headerX, headerY, dayMode } = req.body;
+    const { speedMultiplier, scaleMultiplier, messageWallEntranceStyle, maxVisible, logoOffsetPx, headerOffsetPx, logoScale, headerScale, bakanlikScale, akmScale, bakanlikX, bakanlikY, akmX, akmY, logoTopX, logoTopY, headerX, headerY, dayMode, qrVisible, qrSize, qrTop, qrRight } = req.body;
     const normalizedEntranceStyle = normalizeMessageWallEntranceStyle(messageWallEntranceStyle);
 
     if (typeof speedMultiplier === 'number') displaySettings.speedMultiplier = speedMultiplier;
@@ -377,6 +416,10 @@ app.post('/api/display-settings', (req, res) => {
     if (typeof headerX === 'number') displaySettings.headerX = Math.max(-2160, Math.min(2160, headerX));
     if (typeof headerY === 'number') displaySettings.headerY = Math.max(-2160, Math.min(2160, headerY));
     if (typeof dayMode === 'boolean') displaySettings.dayMode = dayMode;
+    if (typeof qrVisible === 'boolean') displaySettings.qrVisible = qrVisible;
+    if (typeof qrSize === 'number') displaySettings.qrSize = Math.max(120, Math.min(480, qrSize));
+    if (typeof qrTop === 'number') displaySettings.qrTop = Math.max(0, Math.min(2160, qrTop));
+    if (typeof qrRight === 'number') displaySettings.qrRight = Math.max(0, Math.min(2160, qrRight));
 
     console.log(`
 📺 Ekran Ayarları Güncellendi: Hız: ${displaySettings.speedMultiplier}x, Büyüklük: ${displaySettings.scaleMultiplier}x, Max: ${displaySettings.maxVisible}`);
@@ -631,11 +674,18 @@ app.post('/api/upload', upload.single('photo'), async (req, res) => {
             status: 'pending'
         };
 
+        if (moderationSettings.autoApprove) {
+            approveWishDirect(wish);
+            console.log(`✅ Yeni dilek direkt onaylandı: ${wish.childName}`);
+            res.json({ success: true, wish, approvalMode: 'auto-approved' });
+            return;
+        }
+
         pendingWishes.push(wish);
         savePendingWishes();
         io.emit('new-pending-wish', wish);
         console.log(`⏳ Yeni dilek onaya gönderildi: ${wish.childName}`);
-        res.json({ success: true, wish });
+        res.json({ success: true, wish, approvalMode: 'pending' });
     } catch (error) {
         console.error('Yukleme hatasi:', error);
         res.status(500).json({ error: 'Sunucu hatasi' });
@@ -752,8 +802,7 @@ app.get('/api/auto-spotlight/status', (req, res) => {
 });
 
 // === TEMA SİSTEMİ ===
-const savedSettings = loadSettings();
-let currentTheme = savedSettings.theme || 'turktelekom';
+let currentTheme = savedAppSettings.theme || 'turktelekom';
 app.get('/api/theme', (req, res) => {
     res.json({ theme: currentTheme });
 });
@@ -768,7 +817,7 @@ app.post('/api/theme', (req, res) => {
 });
 
 // === GÖSTERİM MODU SİSTEMİ ===
-let currentDisplayMode = savedSettings.displayMode || 'balloon'; // 'balloon' veya 'lantern'
+let currentDisplayMode = savedAppSettings.displayMode || 'balloon'; // 'balloon' veya 'lantern'
 
 app.get('/api/display-mode', (req, res) => {
     res.json({ displayMode: currentDisplayMode });

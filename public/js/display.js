@@ -11,6 +11,8 @@ class WishDisplay {
         this.spotlightOverlay = document.getElementById('spotlight-overlay');
         this.spotlightLabel = document.getElementById('spotlight-label');
         this.spotlightName = document.getElementById('spotlight-name');
+        this.displayQrPanel = document.getElementById('display-qr-panel');
+        this.displayQrBox = document.getElementById('display-qr-box');
 
         this.wishes = [];
         this.wishCards = [];
@@ -30,6 +32,7 @@ class WishDisplay {
             await this.loadDisplayMode();
             this.applyDisplayMode();
             await this.loadDisplaySettings();
+            this.initDisplayQr();
             if (typeof window.finishDisplayBoot === 'function') {
                 requestAnimationFrame(() => window.finishDisplayBoot());
             }
@@ -100,23 +103,23 @@ class WishDisplay {
 
         const legacyTitle = document.querySelector('.header-line2');
         if (legacyTitle) {
-            legacyTitle.textContent = messageWall ? 'Dilekler Markalarin Gelecegi Icin' : 'Dilekler Kadinlar Icin';
+            legacyTitle.textContent = 'Uluslararasi Ankara Marka Bulusmalari';
         }
 
         const stageTitle = document.querySelector('.message-stage__headline-text');
         if (stageTitle) {
-            stageTitle.textContent = 'PEKI SENIN MARKAN ICIN DILEGIN NE?';
+            stageTitle.textContent = 'PEKI SENIN MARKAN ICIN MESAJIN NE?';
         }
 
         const stagePrefix = document.querySelector('.message-stage__headline-prefix');
         if (stagePrefix) {
-            stagePrefix.textContent = 'DILEKLER MARKALARIN GELECEGI ICIN';
+            stagePrefix.textContent = 'MESAJLAR MARKALARIN GELECEGI ICIN';
         }
 
         const emptyText = document.querySelector('#empty-state .empty-text');
         const emptySub = document.querySelector('#empty-state .empty-sub');
         if (emptyText) emptyText.textContent = 'Dilekler Bekleniyor...';
-        if (emptySub) emptySub.textContent = 'Ilk dilek paylasildiginda burada gorunecek';
+        if (emptySub) emptySub.textContent = 'İlk dilek paylaşıldığında burada görünecek';
     }
 
     // === AUDIO ===
@@ -508,6 +511,10 @@ class WishDisplay {
         const headerOffsetPx = typeof this.displaySettings.headerOffsetPx === 'number' ? this.displaySettings.headerOffsetPx : 0;
         const logoScale = typeof this.displaySettings.logoScale === 'number' ? this.displaySettings.logoScale : 1;
         const headerScale = typeof this.displaySettings.headerScale === 'number' ? this.displaySettings.headerScale : 1;
+        const qrVisible = !!this.displaySettings.qrVisible;
+        const qrSize = typeof this.displaySettings.qrSize === 'number' ? this.displaySettings.qrSize : 220;
+        const qrTop = typeof this.displaySettings.qrTop === 'number' ? this.displaySettings.qrTop : 160;
+        const qrRight = typeof this.displaySettings.qrRight === 'number' ? this.displaySettings.qrRight : 80;
         console.log(`📺 Ayarlar uygulanıyor: Hız=${speed}x, Ölçek=${scale}x, Max=${maxVisible}`);
 
         // screenMode artık otomatik — her ekran kendi aspect ratio'suna göre ayarlanıyor
@@ -518,6 +525,9 @@ class WishDisplay {
         document.documentElement.style.setProperty('--header-offset', `${headerOffsetPx}px`);
         document.documentElement.style.setProperty('--logo-scale', logoScale.toString());
         document.documentElement.style.setProperty('--header-scale', headerScale.toString());
+        document.documentElement.style.setProperty('--qr-size', `${qrSize}px`);
+        document.documentElement.style.setProperty('--qr-top', `${qrTop}px`);
+        document.documentElement.style.setProperty('--qr-right', `${qrRight}px`);
 
         // Ayrı logo boyutları
         const bakanlikScale = typeof this.displaySettings.bakanlikScale === 'number' ? this.displaySettings.bakanlikScale : 1;
@@ -549,6 +559,9 @@ class WishDisplay {
 
         // Gündüz modu sınıfı
         document.documentElement.classList.toggle('day-mode', !!this.displaySettings.dayMode);
+        if (this.displayQrPanel) {
+            this.displayQrPanel.classList.toggle('visible', qrVisible);
+        }
 
         // Logo ve başlık çakışmasını önle (ekranlar arası ölçek farkı)
         this.updateHeaderLogoSpacing();
@@ -706,6 +719,16 @@ class WishDisplay {
         // Never exceed admin setting, never below 2
         const adminMax = (this.displaySettings && this.displaySettings.maxVisible) || 20;
         return Math.max(2, Math.min(adminMax, maxAllowed));
+    }
+
+    initDisplayQr() {
+        if (!this.displayQrBox) return;
+        const uploadUrl = `${window.location.origin}/upload`;
+        this.displayQrBox.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=640x640&data=' + encodeURIComponent(uploadUrl);
+        img.alt = 'Katılım QR kodu';
+        this.displayQrBox.appendChild(img);
     }
 
     getMessageWallSlots() {
@@ -1996,7 +2019,7 @@ class WishDisplay {
     showNewWishToast(name) {
         const toast = document.getElementById('new-wish-toast');
         if (!toast) return;
-        toast.textContent = '\u{1F389} ' + name + ' bir dilek paylasti!';
+        toast.textContent = '\u{1F389} ' + name + ' mesajini paylasti!';
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 3000);
     }
@@ -2013,7 +2036,7 @@ class WishDisplay {
     applyTheme(theme) {
         const stageTitle = document.querySelector('.message-stage__headline-text');
         if (stageTitle && this.isMessageWallMode()) {
-            stageTitle.textContent = 'PEKI SENIN MARKAN ICIN DILEGIN NE?';
+            stageTitle.textContent = 'PEKI SENIN MARKAN ICIN MESAJIN NE?';
         }
     }
 

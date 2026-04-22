@@ -1226,9 +1226,65 @@
     /* Overlay içindeki etkileşimli elemanlar tıklanabilir */
     #ui-overlay .logo-box,
     #ui-overlay .header-title-box,
+    #ui-overlay #display-qr-panel,
     #ui-overlay .fullscreen-btn,
     #ui-overlay .mute-btn {
       pointer-events: auto;
+    }
+
+    #display-qr-panel {
+      position: absolute;
+      top: var(--qr-top, 160px);
+      right: var(--qr-right, 80px);
+      width: var(--qr-size, 220px);
+      display: none;
+      z-index: 9998;
+      pointer-events: none;
+      text-align: center;
+      border-radius: 26px;
+      padding: 14px 14px 12px;
+      background: rgba(6, 11, 24, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.34);
+      backdrop-filter: blur(10px);
+    }
+
+    #display-qr-panel.visible {
+      display: block;
+    }
+
+    .display-qr__title {
+      margin: 0 0 10px;
+      font-size: 14px;
+      line-height: 1.2;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.92);
+      text-transform: uppercase;
+    }
+
+    .display-qr__box {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: #fff;
+      border-radius: 18px;
+      padding: 12px;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+    }
+
+    .display-qr__box img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: 10px;
+    }
+
+    .display-qr__hint {
+      margin-top: 10px;
+      font-size: 12px;
+      line-height: 1.3;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.72);
     }
   </style>
 </head>
@@ -1295,13 +1351,13 @@
       <!-- Empty state -->
       <div id="empty-state">
         <div class="empty-icon">&#x2728;</div>
-        <div class="empty-text">Dilekler Bekleniyor...</div>
-        <div class="empty-sub">Ilk dilek paylasildiginda burada gorunecek</div>
+        <div class="empty-text">Marka dilekleri bekleniyor...</div>
+        <div class="empty-sub">İlk katılımcı mesajı geldiğinde burada görünecek</div>
       </div>
       <!-- Raffle (Çekiliş) Overlay -->
       <div id="raffle-overlay">
         <div class="raffle-box">
-          <div class="raffle-title">🎁 ŞANSLI KALPLER 🎁</div>
+          <div class="raffle-title">🎁 ŞANSLI KATILIMCILAR 🎁</div>
           <div class="raffle-winners-container" id="raffle-winners-container">
             <!-- Javascript will inject winners here -->
           </div>
@@ -1323,21 +1379,27 @@
       <!-- Header Title -->
       <div class="header-title-box">
         <div class="title-glow-wrapper">
-          <div class="header-line2">Dilekler Kadınlar İçin</div>
+          <div class="header-line2">Uluslararası Ankara Marka Buluşmaları</div>
         </div>
       </div>
 
       <div class="message-stage" aria-hidden="true">
         <img class="message-stage__top-logo" src="/images/messagewall-top-logo.png?v=1"
-          alt="Uluslararasi Ankara Marka Bulusmalari - Braind Conference" />
+          alt="Uluslararası Ankara Marka Buluşmaları - Brand Conference" />
 
         <div class="message-stage__headline">
-          <span class="message-stage__headline-prefix">DILEKLER MARKALARIN GELECEGI ICIN</span>
-          <h1 class="message-stage__headline-text">PEKI SENIN MARKAN ICIN DILEGIN NE?</h1>
+          <span class="message-stage__headline-prefix">MESAJLAR MARKALARIN GELECEGI ICIN</span>
+          <h1 class="message-stage__headline-text">PEKI SENIN MARKAN ICIN MESAJIN NE?</h1>
         </div>
 
         <img class="message-stage__bottom-logo" src="/images/messagewall-bottom-logo.png?v=1"
           alt="ATO Ankara Ticaret Odasi" />
+      </div>
+
+      <div id="display-qr-panel" aria-live="polite">
+        <div class="display-qr__title">Katılım QR</div>
+        <div class="display-qr__box" id="display-qr-box"></div>
+        <div class="display-qr__hint">Mesaj bırakmak için okut</div>
       </div>
 
       <button type="button" class="fullscreen-btn" id="fullscreen-btn" title="Tam ekran" aria-label="Tam ekran">
@@ -1362,7 +1424,7 @@
 
   <!-- New wish toast -->
   <div class="new-wish-toast" id="new-wish-toast">
-    &#x1F389; Yeni Dilek Geldi!
+    &#x1F389; Yeni marka dileği geldi!
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
@@ -1502,7 +1564,7 @@
       }
     })();
   </script>
-  <script src="js/display.js?v=18.8.6"></script>
+<script src="js/display.js?v=18.8.10"></script>
 </body>
 
 </html>

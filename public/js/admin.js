@@ -148,14 +148,14 @@ function switchTab(name, btn) {
 
     const titles = {
         dashboard: '📊 Dashboard',
-        pending: '⏳ Bekleyen Dilekler',
+        pending: '⏳ Bekleyen Mesajlar',
         qr: '📱 QR Kod',
         moderation: '🤖 Moderasyon',
         slideshow: '🔄 Slayt Gösterisi',
         theme: '🎨 Tema',
-        upload: '📸 Dilek Ekle',
-        wishes: '🏺 Tüm Dilekler',
-        raffle: '🎁 Çekiliş Yönetimi',
+        upload: '📸 Mesaj Ekle',
+        wishes: '💬 Tüm Mesajlar',
+        raffle: '🎁 Katılımcı Seçimi',
         stats: '📈 İstatistikler',
         archive: '📦 Arşiv & Kurtarma'
     };
@@ -255,7 +255,7 @@ function renderWishes() {
         if (empty) {
             empty.style.display = 'block';
             const p = empty.querySelector('p');
-            if (p) p.textContent = wishes.length > 0 ? 'Filtrelere uygun dilek bulunamadı.' : 'Henüz dilek eklenmemiş.';
+            if (p) p.textContent = wishes.length > 0 ? 'Filtrelere uygun mesaj bulunamadı.' : 'Henüz mesaj eklenmemiş.';
         }
         updateBulkActions();
         return;
@@ -288,15 +288,15 @@ function renderWishesTable(filteredItems = []) {
                     <img src="${w.photoUrl}" alt="${w.childName}" loading="lazy">
                 </a>
                 ` : `
-                <div style="width:64px; height:64px; background:var(--bg2); border: 2px dashed var(--card-border); border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--text3); cursor:help" title="Sadece metin olarak paylaşıldı"><i data-lucide="type"></i></div>
+                <div style="width:64px; height:64px; background:var(--bg2); border: 2px dashed var(--card-border); border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--text3); cursor:help" title="Sadece metin paylaşıldı"><i data-lucide="type"></i></div>
                 `}
             </td>
             <td style="font-weight:600;">${w.childName}</td>
-            <td><div class="ocr-text" title="${(w.wishText || 'Okunamadı veya metin yok').replace(/"/g, '&quot;')}">${w.wishText || '<span style="color:var(--text3);font-style:italic">Veri yok</span>'}</div></td>
+            <td><div class="ocr-text" title="${(w.wishText || 'Okunamadi veya metin yok').replace(/"/g, '&quot;')}">${w.wishText || '<span style="color:var(--text3);font-style:italic">Metin yok</span>'}</div></td>
             <td style="color:var(--text2);font-size:13px">${formatTime(w.timestamp)}</td>
             <td>
                 <div class="wish-actions" style="display:flex; gap:6px;">
-                    <button class="btn btn-ghost" onclick="spotlightWish('${w.id}')" style="padding:6px 10px; font-size:12px;" title="Spotlight"><i data-lucide="star" style="width:14px;height:14px;"></i> Spotlight</button>
+                    <button class="btn btn-ghost" onclick="spotlightWish('${w.id}')" style="padding:6px 10px; font-size:12px;" title="Sahneye Al"><i data-lucide="star" style="width:14px;height:14px;"></i> Sahneye Al</button>
                     <button class="btn btn-primary" onclick="editWish('${w.id}', \`${w.childName.replace(/`/g, '\\`')}\`, \`${(w.wishText || '').replace(/`/g, '\\`')}\`)" style="padding:6px 10px; font-size:12px;" title="Düzenle"><i data-lucide="pencil" style="width:14px;height:14px;"></i></button>
                     <button class="btn btn-danger" onclick="confirmDelete('${w.id}', \`${w.childName.replace(/`/g, '\\`')}\`)" style="padding:6px 10px; font-size:12px;" title="Sil"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button>
                 </div>
@@ -325,7 +325,7 @@ function renderWishesGrid(filteredItems = []) {
                 <div class="grid-wish-time">${formatTime(w.timestamp)}</div>
                 <div class="grid-wish-text" title="${(w.wishText || '').replace(/"/g, '&quot;')}">${w.wishText || 'Metin yok'}</div>
                 <div class="grid-wish-actions">
-                    <button class="btn btn-ghost" onclick="spotlightWish('${w.id}')" title="Spotlight"><i data-lucide="star" style="width:16px;height:16px;"></i></button>
+                    <button class="btn btn-ghost" onclick="spotlightWish('${w.id}')" title="Sahneye Al"><i data-lucide="star" style="width:16px;height:16px;"></i></button>
                     <button class="btn btn-primary" onclick="editWish('${w.id}', \`${w.childName.replace(/`/g, '\\`')}\`, \`${(w.wishText || '').replace(/`/g, '\\`')}\`)" title="Düzenle"><i data-lucide="pencil" style="width:16px;height:16px;"></i></button>
                     <button class="btn btn-danger" onclick="confirmDelete('${w.id}', \`${w.childName.replace(/`/g, '\\`')}\` )" title="Sil"><i data-lucide="trash-2" style="width:16px;height:16px;"></i></button>
                 </div>
@@ -368,7 +368,7 @@ function confirmDeleteSelected() {
     const selected = document.querySelectorAll('.wish-check:checked');
     if (selected.length === 0) return;
 
-    document.getElementById('modal-text').textContent = `${selected.length} adet dilek arşive kaldırılacak. Arşivden geri yüklenebilir.`;
+    document.getElementById('modal-text').textContent = `${selected.length} adet mesaj arşive kaldırılacak. Arşivden geri yüklenebilir.`;
     modalAction = () => deleteSelectedWishes();
     document.getElementById('modal-confirm-btn').textContent = 'Seçilenleri Sil';
     document.getElementById('modal-overlay').classList.add('show');
@@ -387,7 +387,7 @@ async function deleteSelectedWishes() {
         }
     }
 
-    showToast(`🗑️ ${deletedCount} adet dilek silindi`);
+    showToast(`🗑️ ${deletedCount} adet mesaj silindi`);
     loadWishes();
 }
 
@@ -396,7 +396,7 @@ function renderRecent() {
     if (!grid) return;
     const recent = [...wishes].reverse().slice(0, 6);
     if (!recent.length) {
-        grid.innerHTML = '<div style="color:var(--text3);font-size:14px;padding:20px;">Henüz dilek yok</div>';
+        grid.innerHTML = '<div style="color:var(--text3);font-size:14px;padding:20px;">Henüz mesaj yok</div>';
         return;
     }
     grid.innerHTML = recent.map(w => `
@@ -410,7 +410,7 @@ function renderRecent() {
             <div class="wish-name" style="font-size:13px">${w.childName}</div>
             <div class="wish-time">${formatTime(w.timestamp)}</div>
             <div class="wish-actions" style="display:flex; gap:4px; margin-top:6px;">
-                <button class="btn btn-ghost" onclick="spotlightWish('${w.id}')" style="font-size:11px;padding:5px 8px; flex:1" title="Spotlight"><i data-lucide="star" style="width:14px;height:14px;"></i></button>
+                <button class="btn btn-ghost" onclick="spotlightWish('${w.id}')" style="font-size:11px;padding:5px 8px; flex:1" title="Sahneye Al"><i data-lucide="star" style="width:14px;height:14px;"></i></button>
                 <button class="btn btn-primary" onclick="editWish('${w.id}', \`${w.childName.replace(/`/g, '\\`')}\`, \`${(w.wishText || '').replace(/`/g, '\\`')}\`)" style="font-size:11px;padding:5px 8px;" title="Düzenle"><i data-lucide="pencil" style="width:14px;height:14px;"></i></button>
                 <button class="btn btn-danger" onclick="confirmDelete('${w.id}', \`${w.childName.replace(/`/g, '\\`')}\`)" style="font-size:11px;padding:5px 8px" title="Sil"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button>
             </div>
@@ -433,7 +433,7 @@ function updateStats() {
     if (totalEl) totalEl.textContent = total;
     if (todayEl) todayEl.textContent = today;
     if (spotlightEl) spotlightEl.textContent = spotW ? spotW.childName : '—';
-    if (badgeEl) badgeEl.textContent = total + ' Dilek';
+    if (badgeEl) badgeEl.textContent = total + ' Mesaj';
 
     // Stats tab stats
     const total2El = document.getElementById('stat-total-2');
@@ -455,26 +455,26 @@ async function spotlightWish(id) {
     const res = await fetch(`/api/spotlight/${id}`, { method: 'POST' });
     const data = await res.json();
     if (data.success) {
-        showToast(`${data.wish.childName} öne çıkarıldı!`);
+        showToast(`${data.wish.childName} sahneye alındı!`);
         loadWishes();
     }
 }
 
 async function spotlightOff() {
     await fetch('/api/spotlight-off', { method: 'POST' }).catch(() => { });
-    showToast('Spotlight kapatıldı');
+    showToast('Öne çıkarma kapatıldı');
     loadWishes();
 }
 
 async function deleteWish(id) {
     await fetch(`/api/wishes/${id}`, { method: 'DELETE' });
-    showToast('Dilek silindi');
+    showToast('Mesaj silindi');
     loadWishes();
 }
 
 async function clearAllWishes() {
     await fetch('/api/wishes', { method: 'DELETE' });
-    showToast('Tüm dilekler silindi');
+    showToast('Tüm mesajlar silindi');
     loadWishes();
 }
 
@@ -536,7 +536,7 @@ async function restoreWish(id) {
         const res = await fetch(`/api/restore/${id}`, { method: 'POST' });
         const data = await res.json();
         if (data.success) {
-            showToast('♻️ Dilek başarıyla geri yüklendi!');
+            showToast('♻️ Mesaj başarıyla geri yüklendi!');
             loadArchivedWishes(); // Arşiv listesini güncelle
             if (typeof loadStats === 'function') loadStats();
         } else {
@@ -576,7 +576,7 @@ function renderSessions(sessions = []) {
         <tr class="wish-row">
             <td style="font-weight:600;"><i data-lucide="folder-archive" style="width:16px;height:16px;vertical-align:text-bottom;margin-right:4px;"></i>${s.filename}</td>
             <td style="color:var(--text2);font-size:13px">${new Date(s.createdAt).toLocaleString('tr-TR')}</td>
-            <td style="color:var(--accent);font-weight:600;">${s.count} Dilek</td>
+            <td style="color:var(--accent);font-weight:600;">${s.count} Mesaj</td>
             <td>
                 <div class="wish-actions">
                     <button class="btn btn-primary" onclick="restoreSession('${s.filename}')" style="padding:6px 12px; font-size:13px; font-weight:600;" title="Tümünü Geri Yükle"><i data-lucide="package-plus" style="width:16px;height:16px;"></i> Oturumu Geri Yükle</button>
@@ -589,13 +589,13 @@ function renderSessions(sessions = []) {
 }
 
 async function restoreSession(filename) {
-    if (!confirm('DİKKAT: Bu oturumdaki TÜM dilekler geri yüklenecektir. Onaylıyor musunuz?')) return;
+    if (!confirm('DİKKAT: Bu oturumdaki TÜM mesajlar geri yüklenecektir. Onaylıyor musunuz?')) return;
 
     try {
         const res = await fetch(`/api/sessions/${filename}/restore`, { method: 'POST' });
         const data = await res.json();
         if (data.success) {
-            showToast(`♻️ ${data.count} dilek başarıyla geri yüklendi!`);
+            showToast(`♻️ ${data.count} mesaj başarıyla geri yüklendi!`);
             loadArchivedWishes();
             if (typeof loadStats === 'function') loadStats();
         } else {
@@ -631,7 +631,7 @@ async function saveEditedWish() {
     const btn = document.getElementById('edit-save-btn');
 
     if (!newName) {
-        showToast('⚠️ İsim boş bırakılamaz');
+        showToast('⚠️ Katılımcı adı boş bırakılamaz');
         return;
     }
 
@@ -647,7 +647,7 @@ async function saveEditedWish() {
 
         const data = await res.json();
         if (data.success) {
-            showToast('Dilek başarıyla güncellendi!');
+            showToast('Kayıt başarıyla güncellendi!');
             closeEditModal();
             loadWishes();
         } else {
@@ -662,16 +662,16 @@ async function saveEditedWish() {
 }
 
 function confirmDelete(id, name) {
-    document.getElementById('modal-text').textContent = `${name} isimli dilek arşive kaldırılacak. Sonradan geri yüklenebilir.`;
+    document.getElementById('modal-text').textContent = `${name} isimli kayıt arşive kaldırılacak. Sonradan geri yüklenebilir.`;
     modalAction = () => deleteWish(id);
     document.getElementById('modal-confirm-btn').textContent = 'Sil';
     document.getElementById('modal-overlay').classList.add('show');
 }
 
 function confirmClearAll() {
-    document.getElementById('modal-text').textContent = "Tüm dilekler ve fotoğraflar arşive kaldırılacak ve bir 'Oturum' olarak kaydedilecek. Arşivden geri yüklenebilir.";
+    document.getElementById('modal-text').textContent = "Tüm mesajlar ve görseller arşive kaldırılacak ve bir 'Oturum' olarak kaydedilecek. Arşivden geri yüklenebilir.";
     modalAction = clearAllWishes;
-    document.getElementById('modal-confirm-btn').textContent = 'Tümünü Sil';
+    document.getElementById('modal-confirm-btn').textContent = 'Tümünü Arşivle';
     document.getElementById('modal-overlay').classList.add('show');
 }
 
@@ -691,7 +691,7 @@ function closeModal() {
 async function adminUpload() {
     const file = document.getElementById('admin-photo').files[0];
     const name = document.getElementById('admin-name').value.trim();
-    if (!file && !name) { showToast('⚠️ Bilgileri girin'); return; }
+    if (!file && !name) { showToast('⚠️ En az bir katılımcı bilgisi girin'); return; }
     const btn = document.getElementById('admin-upload-btn');
     btn.disabled = true; btn.textContent = '⏳ Yükleniyor...';
     const fd = new FormData();
@@ -701,7 +701,7 @@ async function adminUpload() {
         const res = await fetch('/api/upload', { method: 'POST', body: fd });
         const data = await res.json();
         if (data.success) {
-            showToast('Dilek eklendi!');
+            showToast('Mesaj eklendi!');
             document.getElementById('admin-photo').value = '';
             document.getElementById('admin-name').value = '';
             loadWishes();
@@ -709,7 +709,7 @@ async function adminUpload() {
             showToast('Hata: ' + (data.error || 'Bilinmeyen Hata'));
         }
     } catch (e) { showToast('Bağlantı hatası'); }
-    btn.disabled = false; btn.innerHTML = '<i data-lucide="sparkles" style="width:16px;height:16px;"></i> Ekle';
+    btn.disabled = false; btn.innerHTML = '<i data-lucide="sparkles" style="width:16px;height:16px;"></i> Kaydı Ekle';
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
@@ -755,12 +755,12 @@ function syncDisplaySettingsModeUI(mode) {
     const maxVisibleLabel = document.getElementById('display-maxvisible-label');
 
     if (titleEl) {
-        titleEl.innerHTML = `<i data-lucide="monitor-cog" style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> ${isMessageWall ? 'Marka Sahnesi Ayarlari' : 'Ekran Ayarlari'}`;
+        titleEl.innerHTML = `<i data-lucide="monitor-cog" style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> ${isMessageWall ? 'Marka Sahnesi Ayarlari' : 'Sahne Ayarlari'}`;
     }
     if (subEl) {
         subEl.textContent = isMessageWall
             ? 'Marka Sahnesi icin sadece calisan kontroller gosterilir'
-            : 'Aktif gosterim modu icin gecerli ayarlar';
+            : 'Aktif gosterim modu icin gecerli sahne ayarlari';
     }
     if (legacySubEl) {
         legacySubEl.style.display = 'none';
@@ -769,16 +769,16 @@ function syncDisplaySettingsModeUI(mode) {
         noteEl.style.display = isMessageWall ? 'block' : 'none';
     }
     if (noteEl && isMessageWall) {
-        noteEl.textContent = 'Marka Sahnesi sabit kompozisyon kullaniyor. Bu modda kart giris animasyonu, kart gecis hizi ve kart olcegi ayarlanabilir.';
+        noteEl.textContent = 'Marka Sahnesi sabit kompozisyon kullaniyor. Bu modda kart giris animasyonu, akis hizi ve kart olcegi ayarlanabilir.';
     }
     if (speedLabel) {
         speedLabel.innerHTML = `<i data-lucide="gauge" style="width:14px;height:14px;vertical-align:middle;"></i> ${isMessageWall ? 'Gecis Hizi' : 'Animasyon Hizi'} <span id="speed-value" style="color:var(--accent);font-weight:700;margin-left:6px;">${speedValue}</span>`;
     }
     if (scaleLabel) {
-        scaleLabel.innerHTML = `<i data-lucide="scaling" style="width:14px;height:14px;vertical-align:middle;"></i> ${isMessageWall ? 'Kart Olcegi' : 'Fener Buyuklugu'} <span id="scale-value" style="color:var(--accent);font-weight:700;margin-left:6px;">${scaleValue}</span>`;
+        scaleLabel.innerHTML = `<i data-lucide="scaling" style="width:14px;height:14px;vertical-align:middle;"></i> ${isMessageWall ? 'Kart Olcegi' : 'Sahne Olcegi'} <span id="scale-value" style="color:var(--accent);font-weight:700;margin-left:6px;">${scaleValue}</span>`;
     }
     if (maxVisibleLabel) {
-        maxVisibleLabel.innerHTML = `<i data-lucide="layers" style="width:14px;height:14px;vertical-align:middle;"></i> Maksimum Dilek Sayisi <span id="maxvisible-value" style="color:var(--accent);font-weight:700;margin-left:6px;">${maxVisibleValue}</span>`;
+        maxVisibleLabel.innerHTML = `<i data-lucide="layers" style="width:14px;height:14px;vertical-align:middle;"></i> Maksimum Kart Sayisi <span id="maxvisible-value" style="color:var(--accent);font-weight:700;margin-left:6px;">${maxVisibleValue}</span>`;
     }
 
     [
@@ -803,6 +803,10 @@ function syncDisplaySettingsModeUI(mode) {
     setSettingCardVisibility('display-speed', true);
     setSettingCardVisibility('display-scale', true);
     setSettingCardVisibility('display-messagewall-animation', isMessageWall);
+    setSettingCardVisibility('display-qr-visible', true);
+    setSettingCardVisibility('display-qr-size', true);
+    setSettingCardVisibility('display-qr-top', true);
+    setSettingCardVisibility('display-qr-right', true);
 
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
@@ -817,7 +821,7 @@ async function setDisplayMode(mode) {
     document.querySelectorAll('.display-mode-option').forEach(b => {
         b.classList.toggle('active', b.dataset.mode === mode);
     });
-    showToast('Gösterim modu değiştirildi!');
+    showToast('Gösterim teması güncellendi!');
 }
 
 async function loadCurrentDisplayMode() {
@@ -833,7 +837,7 @@ loadCurrentDisplayMode();
 
 // ─── AUTO SPOTLIGHT ───
 async function startAutoSpotlight() {
-    if (!wishes.length) { showToast('⚠️ Dilek yok!'); return; }
+    if (!wishes.length) { showToast('Mesaj yok!'); return; }
     const delay = document.getElementById('auto-delay').value;
     const res = await fetch('/api/auto-spotlight/start', {
         method: 'POST',
@@ -942,8 +946,8 @@ async function toggleModeration() {
 async function saveModerationSettings() {
     const settings = {
         checkText: document.getElementById('mod-text').checked,
-        checkImage: document.getElementById('mod-image').checked,
         strictness: document.getElementById('mod-strictness').value,
+        autoApprove: document.getElementById('mod-auto-approve')?.checked === true,
     };
     try {
         const res = await fetch('/api/moderation/settings', {
@@ -979,11 +983,41 @@ function setModerationUI(data) {
         const textLabel = document.getElementById('mod-text-label');
         if (textLabel) textLabel.textContent = data.checkText ? 'Açık' : 'Kapalı';
     }
-    const imgEl = document.getElementById('mod-image');
-    if (imgEl && data.checkImage !== undefined) {
-        imgEl.checked = data.checkImage;
-        const imgLabel = document.getElementById('mod-image-label');
-        if (imgLabel) imgLabel.textContent = data.checkImage ? 'Açık' : 'Kapalı';
+    const autoApproveEl = document.getElementById('mod-auto-approve');
+    if (autoApproveEl && data.autoApprove !== undefined) {
+        autoApproveEl.checked = data.autoApprove;
+        const autoApproveLabel = document.getElementById('mod-auto-approve-label');
+        if (autoApproveLabel) autoApproveLabel.textContent = data.autoApprove ? 'Açık' : 'Kapalı';
+        const flowNote = document.getElementById('mod-flow-note');
+        if (flowNote) {
+            flowNote.textContent = data.autoApprove
+                ? (on
+                    ? 'Açıksa AI kontrolden geçen kayıtlar doğrudan yayına alınır; uygunsuz içerik reddedilir.'
+                    : 'Açıksa moderasyon kapalıyken kayıtlar doğrudan onaylanır ve yayına alınır.')
+                : 'Kapalıysa kayıtlar bekleyen listesine düşer ve admin onayı gerekir.';
+        }
+    }
+}
+
+function confirmClearModerationLog() {
+    document.getElementById('modal-text').textContent = 'Moderasyon logundaki tüm geçmiş kayıtlar silinecek. Bu işlem geri alınamaz.';
+    modalAction = clearModerationLog;
+    document.getElementById('modal-confirm-btn').textContent = 'Geçmişi Temizle';
+    document.getElementById('modal-overlay').classList.add('show');
+}
+
+async function clearModerationLog() {
+    try {
+        const res = await fetch('/api/moderation/log', { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+            showToast('Moderasyon geçmişi temizlendi');
+            loadModerationLog();
+        } else {
+            showToast('Hata: ' + (data.error || 'Moderasyon geçmişi temizlenemedi'));
+        }
+    } catch (e) {
+        showToast('Bağlantı hatası!');
     }
 }
 
@@ -1014,6 +1048,10 @@ async function saveDisplaySettings() {
         bakanlikY: parseInt(document.getElementById('display-bakanlik-y').value),
         akmX: parseInt(document.getElementById('display-akm-x').value),
         akmY: parseInt(document.getElementById('display-akm-y').value),
+        qrVisible: !!document.getElementById('display-qr-visible')?.checked,
+        qrSize: parseInt(document.getElementById('display-qr-size').value),
+        qrTop: parseInt(document.getElementById('display-qr-top').value),
+        qrRight: parseInt(document.getElementById('display-qr-right').value),
         logoTopX: parseInt(document.getElementById('display-logo-x').value),
         logoTopY: parseInt(document.getElementById('display-logo-y').value),
         headerX: parseInt(document.getElementById('display-header-x').value),
@@ -1052,6 +1090,27 @@ function setDisplaySettingsUI(data) {
         const el = document.getElementById('display-maxvisible');
         if (el) el.value = data.maxVisible;
         updateMaxVisibleLabel(data.maxVisible);
+    }
+    if (data.qrVisible !== undefined) {
+        const qrToggle = document.getElementById('display-qr-visible');
+        const qrToggleLabel = document.getElementById('display-qr-visible-label');
+        if (qrToggle) qrToggle.checked = !!data.qrVisible;
+        if (qrToggleLabel) qrToggleLabel.textContent = data.qrVisible ? 'Açık' : 'Kapalı';
+    }
+    if (data.qrSize !== undefined) {
+        const el = document.getElementById('display-qr-size');
+        if (el) el.value = data.qrSize;
+        updateQrSizeLabel(data.qrSize);
+    }
+    if (data.qrTop !== undefined) {
+        const el = document.getElementById('display-qr-top');
+        if (el) el.value = data.qrTop;
+        updateQrTopLabel(data.qrTop);
+    }
+    if (data.qrRight !== undefined) {
+        const el = document.getElementById('display-qr-right');
+        if (el) el.value = data.qrRight;
+        updateQrRightLabel(data.qrRight);
     }
     if (data.logoOffsetPx !== undefined) {
         const el = document.getElementById('display-logo-offset');
@@ -1169,6 +1228,21 @@ function updateMaxVisibleLabel(val) {
     if (el) el.textContent = parseInt(val);
 }
 
+function updateQrSizeLabel(val) {
+    const el = document.getElementById('qr-size-value');
+    if (el) el.textContent = `${parseInt(val)}px`;
+}
+
+function updateQrTopLabel(val) {
+    const el = document.getElementById('qr-top-value');
+    if (el) el.textContent = `${parseInt(val)}px`;
+}
+
+function updateQrRightLabel(val) {
+    const el = document.getElementById('qr-right-value');
+    if (el) el.textContent = `${parseInt(val)}px`;
+}
+
 function updateLogoOffsetLabel(val) {
     const el = document.getElementById('logo-offset-value');
     if (el) el.textContent = `${parseInt(val)}px`;
@@ -1216,7 +1290,7 @@ async function startRaffle() {
         const data = await res.json();
 
         if (data.success && data.winners) {
-            showToast('🎁 Sıradaki talihli ekranda belirdi!');
+            showToast('🎁 Sıradaki katılımcı ekranda belirdi!');
 
             // Butonları güncelle
             btnStart.style.display = 'none';
@@ -1225,21 +1299,21 @@ async function startRaffle() {
             // Admin logunu göster (Yığılmalı)
             const listEl = document.getElementById('raffle-results-list');
             const newWinner = `<li style="background:var(--card-hover); padding:10px 15px; border-radius:8px; border-left:4px solid var(--accent); display:flex; justify-content:space-between;">
-                    <span style="font-weight:bold;">Sıradaki Talihli</span>
+                    <span style="font-weight:bold;">Sıradaki Katılımcı</span>
                     <span>${data.winners[0].childName}</span>
                  </li>`;
             listEl.innerHTML += newWinner;
             document.getElementById('raffle-results-container').style.display = 'block';
         } else {
-            showToast('❌ Hata: ' + (data.error || 'Çekiliş yapılamadı'));
+            showToast('❌ Hata: ' + (data.error || 'Katılımcı seçimi yapılamadı'));
             btnStart.disabled = false;
-            btnStart.innerHTML = '<i data-lucide="party-popper" style="width:20px;height:20px;"></i> Sıradaki Talihliyi Çek';
+            btnStart.innerHTML = '<i data-lucide="party-popper" style="width:20px;height:20px;"></i> Sıradaki Katılımcıyı Seç';
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
     } catch (e) {
         showToast('❌ Bağlantı hatası!');
         btnStart.disabled = false;
-        btnStart.innerHTML = '<i data-lucide="party-popper" style="width:20px;height:20px;"></i> Sıradaki Talihliyi Çek';
+        btnStart.innerHTML = '<i data-lucide="party-popper" style="width:20px;height:20px;"></i> Sıradaki Katılımcıyı Seç';
         if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 }
@@ -1247,12 +1321,12 @@ async function startRaffle() {
 async function closeRaffleDisplay() {
     try {
         await fetch('/api/raffle/close', { method: 'POST' });
-        showToast('⏹️ Çekiliş ekranı kapatıldı.');
+        showToast('⏹️ Katılımcı seçimi ekranı kapatıldı.');
 
         // Formu sıfırla
         document.getElementById('btn-raffle-start').style.display = 'flex';
         document.getElementById('btn-raffle-start').disabled = false;
-        document.getElementById('btn-raffle-start').innerHTML = '<i data-lucide="party-popper" style="width:20px;height:20px;"></i> Sıradaki Talihliyi Çek';
+        document.getElementById('btn-raffle-start').innerHTML = '<i data-lucide="party-popper" style="width:20px;height:20px;"></i> Sıradaki Katılımcıyı Seç';
         if (typeof lucide !== 'undefined') lucide.createIcons();
         document.getElementById('btn-raffle-close').style.display = 'none';
 
@@ -1263,12 +1337,12 @@ async function closeRaffleDisplay() {
 }
 
 async function resetRaffleMemory() {
-    if (!confirm('Çekiliş hafızasını sıfırlamak (çıkanların tekrar çıkabilmesine izin vermek) istediğinizden emin misiniz?')) return;
+    if (!confirm('Seçim hafızasını sıfırlamak ve aynı katılımcıların yeniden seçilebilmesine izin vermek istediğinizden emin misiniz?')) return;
     try {
         const res = await fetch('/api/raffle/reset', { method: 'POST' });
         const data = await res.json();
         if (data.success) {
-            showToast('🔄 Çekiliş hafızası sıfırlandı.');
+            showToast('🔄 Seçim hafızası sıfırlandı.');
             document.getElementById('raffle-results-list').innerHTML = '';
             document.getElementById('raffle-results-container').style.display = 'none';
         }
@@ -1304,7 +1378,7 @@ async function loadStats() {
                     tbody.innerHTML = stats.wishesByDate.map(row =>
                         `<tr>
                             <td>${row.date}</td>
-                            <td><span style="font-weight:600; color:var(--accent);">${row.count}</span> Dilek</td>
+                            <td><span style="font-weight:600; color:var(--accent);">${row.count}</span> Mesaj</td>
                          </tr>`
                     ).join('');
                 } else {
@@ -1337,6 +1411,7 @@ function showToast(msg) {
 
         const container = document.getElementById('qr-container');
         const urlEl = document.getElementById('qr-url');
+        const hintEl = document.querySelector('#tab-qr .qr-hint');
 
         if (container) {
             container.innerHTML = '';
@@ -1346,6 +1421,9 @@ function showToast(msg) {
             container.appendChild(img);
         }
         if (urlEl) urlEl.textContent = url;
+        if (hintEl) {
+            hintEl.innerHTML = 'Uluslararasi Ankara Marka Bulusmalari icin mesajini paylas; yapay zeka caginda markalarin gelecegine kendi izini birak.';
+        }
     } catch (err) {
         console.error("QR Code oluşturulamadı:", err);
     }
@@ -1361,7 +1439,7 @@ async function loadPendingWishes() {
         renderPendingWishes();
         updatePendingBadge();
     } catch (e) {
-        console.error('Bekleyen dilekler yüklenemedi:', e);
+        console.error('Bekleyen mesajlar yüklenemedi:', e);
     }
 }
 
@@ -1414,7 +1492,7 @@ async function approveWish(id) {
     try {
         const res = await fetch(`/api/wishes/${id}/approve`, { method: 'POST' });
         if (res.ok) {
-            showToast('Dilek onaylandı ✅');
+            showToast('Mesaj onaylandı ✅');
             loadPendingWishes();
             loadWishes();
         } else {
@@ -1429,7 +1507,7 @@ async function rejectWish(id) {
     try {
         const res = await fetch(`/api/wishes/${id}/reject`, { method: 'POST' });
         if (res.ok) {
-            showToast('Dilek reddedildi 🚫');
+            showToast('Mesaj yayına alınmadı 🚫');
             loadPendingWishes();
         } else {
             showToast('Reddetme hatası', 'error');
@@ -1445,7 +1523,7 @@ async function approveAllPending() {
         const res = await fetch('/api/pending-wishes/approve-all', { method: 'POST' });
         const data = await res.json();
         if (data.success) {
-            showToast(`${data.count} dilek toplu onaylandı ✅`);
+            showToast(`${data.count} mesaj toplu onaylandı ✅`);
             loadPendingWishes();
             loadWishes();
         }
