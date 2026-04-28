@@ -11,7 +11,7 @@ if (sessionStorage.getItem('adminAuth') === 'true') {
 }
 function checkAuth() {
     const pass = document.getElementById('auth-pass').value;
-    if (pass === '1234') {
+    if (pass === '0360') {
         sessionStorage.setItem('adminAuth', 'true');
         document.getElementById('auth-overlay').style.display = 'none';
         showToast('Giriş başarılı');
@@ -755,12 +755,12 @@ function syncDisplaySettingsModeUI(mode) {
     const maxVisibleLabel = document.getElementById('display-maxvisible-label');
 
     if (titleEl) {
-        titleEl.innerHTML = `<i data-lucide="monitor-cog" style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> ${isMessageWall ? 'Marka Sahnesi Ayarlari' : 'Sahne Ayarlari'}`;
+        titleEl.innerHTML = `<i data-lucide="monitor-cog" style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> ${isMessageWall ? 'Marka Sahnesi Ayarları' : 'Sahne Ayarları'}`;
     }
     if (subEl) {
         subEl.textContent = isMessageWall
-            ? 'Marka Sahnesi icin sadece calisan kontroller gosterilir'
-            : 'Aktif gosterim modu icin gecerli sahne ayarlari';
+            ? 'Marka Sahnesi için sadece çalışan kontroller gösterilir'
+            : 'Aktif gösterim modu için geçerli sahne ayarları';
     }
     if (legacySubEl) {
         legacySubEl.style.display = 'none';
@@ -769,10 +769,10 @@ function syncDisplaySettingsModeUI(mode) {
         noteEl.style.display = isMessageWall ? 'block' : 'none';
     }
     if (noteEl && isMessageWall) {
-        noteEl.textContent = 'Marka Sahnesi sabit kompozisyon kullaniyor. Bu modda kart giris animasyonu, akis hizi ve kart olcegi ayarlanabilir.';
+        noteEl.textContent = 'Marka Sahnesi sabit kompozisyon kullanıyor. Bu modda kart giriş animasyonu, akış hızı ve kart ölçeği ayarlanabilir.';
     }
     if (speedLabel) {
-        speedLabel.innerHTML = `<i data-lucide="gauge" style="width:14px;height:14px;vertical-align:middle;"></i> ${isMessageWall ? 'Gecis Hizi' : 'Animasyon Hizi'} <span id="speed-value" style="color:var(--accent);font-weight:700;margin-left:6px;">${speedValue}</span>`;
+        speedLabel.innerHTML = `<i data-lucide="gauge" style="width:14px;height:14px;vertical-align:middle;"></i> ${isMessageWall ? 'Geçiş Hızı' : 'Animasyon Hızı'} <span id="speed-value" style="color:var(--accent);font-weight:700;margin-left:6px;">${speedValue}</span>`;
     }
     if (scaleLabel) {
         scaleLabel.innerHTML = `<i data-lucide="scaling" style="width:14px;height:14px;vertical-align:middle;"></i> ${isMessageWall ? 'Kart Olcegi' : 'Sahne Olcegi'} <span id="scale-value" style="color:var(--accent);font-weight:700;margin-left:6px;">${scaleValue}</span>`;
@@ -1422,7 +1422,7 @@ function showToast(msg) {
         }
         if (urlEl) urlEl.textContent = url;
         if (hintEl) {
-            hintEl.innerHTML = 'Uluslararasi Ankara Marka Bulusmalari icin mesajini paylas; yapay zeka caginda markalarin gelecegine kendi izini birak.';
+            hintEl.innerHTML = 'Uluslararası Ankara Marka Buluşmaları için mesajını paylaş; yapay zeka çağında markaların geleceğine kendi izini bırak.';
         }
     } catch (err) {
         console.error("QR Code oluşturulamadı:", err);

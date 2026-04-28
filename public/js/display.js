@@ -103,17 +103,17 @@ class WishDisplay {
 
         const legacyTitle = document.querySelector('.header-line2');
         if (legacyTitle) {
-            legacyTitle.textContent = 'Uluslararasi Ankara Marka Bulusmalari';
+            legacyTitle.textContent = 'Uluslararası Ankara Marka Buluşmaları';
         }
 
         const stageTitle = document.querySelector('.message-stage__headline-text');
         if (stageTitle) {
-            stageTitle.textContent = 'PEKI SENIN MARKAN ICIN MESAJIN NE?';
+            stageTitle.textContent = 'PEKİ SENİN MARKAN İÇİN DİLEĞİN NE?';
         }
 
         const stagePrefix = document.querySelector('.message-stage__headline-prefix');
         if (stagePrefix) {
-            stagePrefix.textContent = 'MESAJLAR MARKALARIN GELECEGI ICIN';
+            stagePrefix.textContent = 'DİLEKLER MARKALARIN GELECEĞİ İÇİN';
         }
 
         const emptyText = document.querySelector('#empty-state .empty-text');
@@ -2019,7 +2019,7 @@ class WishDisplay {
     showNewWishToast(name) {
         const toast = document.getElementById('new-wish-toast');
         if (!toast) return;
-        toast.textContent = '\u{1F389} ' + name + ' mesajini paylasti!';
+        toast.textContent = '\u{1F389} ' + name + ' mesajını paylaştı!';
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 3000);
     }
@@ -2036,7 +2036,7 @@ class WishDisplay {
     applyTheme(theme) {
         const stageTitle = document.querySelector('.message-stage__headline-text');
         if (stageTitle && this.isMessageWallMode()) {
-            stageTitle.textContent = 'PEKI SENIN MARKAN ICIN MESAJIN NE?';
+            stageTitle.textContent = 'PEKİ SENİN MARKAN İÇİN DİLEĞİN NE?';
         }
     }
 

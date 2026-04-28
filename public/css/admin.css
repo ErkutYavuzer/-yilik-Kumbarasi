@@ -450,6 +450,10 @@ body.focus-mode .main {
     align-items: center;
 }
 
+.topbar-actions .btn[onclick="spotlightOff()"] {
+    display: none;
+}
+
 .btn {
     display: inline-flex;
     align-items: center;
@@ -1505,19 +1509,290 @@ body.focus-mode .wishes-grid {
 
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
+    body {
+        display: block;
+        min-height: 100dvh;
+        padding-bottom: calc(92px + env(safe-area-inset-bottom));
+    }
+
+    body.focus-mode {
+        padding-bottom: 0;
+    }
+
     .sidebar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: auto;
+        height: calc(74px + env(safe-area-inset-bottom));
+        margin: 0;
+        border-width: 1px 0 0;
+        border-radius: 18px 18px 0 0;
+        display: block;
+        overflow: hidden;
+        z-index: 250;
+        box-shadow: 0 -12px 30px rgba(0, 0, 0, 0.28);
+        transform: translateZ(0);
+    }
+
+    .sidebar-logo,
+    .sidebar-footer,
+    .nav-label {
         display: none;
+    }
+
+    .sidebar-nav {
+        height: 100%;
+        padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        scroll-snap-type: x proximity;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .sidebar-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .nav-item {
+        width: 72px;
+        min-width: 72px;
+        max-width: 72px;
+        height: 58px;
+        padding: 7px 8px;
+        flex: 0 0 auto;
+        flex-direction: column;
+        justify-content: center;
+        gap: 4px;
+        border-radius: 12px;
+        scroll-snap-align: start;
+        text-align: center;
+    }
+
+    .nav-item .icon {
+        width: 24px;
+        height: 24px;
+        background: transparent;
+    }
+
+    .nav-item .icon svg {
+        width: 19px;
+        height: 19px;
+    }
+
+    .nav-text {
+        display: block;
+        width: 100%;
+        font-size: 10px;
+        line-height: 1.05;
+        white-space: normal;
+    }
+
+    .pending-badge {
+        position: absolute;
+        top: 5px;
+        right: 7px;
+        margin-left: 0;
+        min-width: 16px;
+        height: 16px;
+        padding: 0 4px;
+        font-size: 9px;
     }
 
     .main {
         margin-left: 0;
+        min-height: 100dvh;
+        padding: 10px 10px 0;
+    }
+
+    .content {
+        padding: 0 0 14px;
+    }
+
+    .topbar {
+        top: 8px;
+        height: auto;
+        min-height: 56px;
+        margin-bottom: 12px;
+        padding: 8px 10px 8px 14px;
+        border-radius: 14px;
+        gap: 10px;
+    }
+
+    .topbar-title {
+        min-width: 0;
+        font-size: 15px;
+        line-height: 1.2;
+        display: flex;
+        align-items: center;
+    }
+
+    .topbar-title svg {
+        flex: 0 0 auto;
+    }
+
+    .topbar-actions {
+        display: none;
+    }
+
+    .btn {
+        min-height: 42px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        justify-content: center;
+    }
+
+    .status-section {
+        margin-bottom: 12px !important;
+    }
+
+    .status-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .status-item {
+        align-items: flex-start;
+        gap: 8px;
+        min-width: 0;
+    }
+
+    .status-label,
+    .status-value {
+        overflow-wrap: anywhere;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .stat-card {
+        padding: 14px;
+        border-radius: 14px;
+        gap: 10px;
+    }
+
+    .stat-card:hover,
+    .grid-wish-card:hover {
+        transform: none;
+    }
+
+    .stat-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+    }
+
+    .stat-value {
+        font-size: 22px;
+    }
+
+    .stat-label {
+        font-size: 11px;
+        line-height: 1.2;
+    }
+
+    .card {
+        padding: 14px;
+        margin-bottom: 12px;
+        border-radius: 14px;
+    }
+
+    .card-title {
+        margin-bottom: 12px;
+        font-size: 12px;
+        line-height: 1.25;
+        letter-spacing: 0.3px;
+    }
+
+    .settings-grid,
+    .theme-grid,
+    .wishes-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .setting-card {
+        padding: 12px;
+        border-radius: 10px;
+    }
+
+    .mod-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .mod-toggle-wrap,
+    .toggle-sm-wrap {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .search-bar-row {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 10px !important;
+    }
+
+    .search-box {
+        width: 100%;
+    }
+
+    .table-responsive {
+        border-radius: 10px;
+        margin-top: 8px;
+    }
+
+    .data-table {
+        min-width: 620px;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 11px 12px;
+        font-size: 12px;
+    }
+
+    #recent-grid {
+        grid-template-columns: 1fr !important;
     }
 
     .qr-layout {
         grid-template-columns: 1fr;
+        gap: 16px;
     }
 
     .upload-form {
         grid-template-columns: 1fr;
+    }
+
+    .auth-card {
+        width: calc(100% - 28px);
+        padding: 24px;
+    }
+}
+
+@media (max-width: 420px) {
+    .status-grid,
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .nav-item {
+        width: 66px;
+        min-width: 66px;
+        max-width: 66px;
+    }
+
+    .nav-text {
+        font-size: 9.5px;
     }
 }

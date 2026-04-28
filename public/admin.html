@@ -14,7 +14,7 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Chart.js removed - causing infinite growth bug -->
-    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="/css/admin.css?v=20260424-mobile2">
 </head>
 
 <body>
@@ -366,7 +366,7 @@
                         </div>
                     </div>
                     <div class="divider"></div>
-                    <div class="mod-sub" id="display-settings-sub">Aktif gosterim modu icin gecerli ayarlar</div>
+                    <div class="mod-sub" id="display-settings-sub">Aktif gösterim modu için geçerli ayarlar</div>
                     <div id="display-settings-note"
                         style="display:none; margin:16px 0; padding:12px 14px; border-radius:12px; background:rgba(255,184,77,0.12); border:1px solid rgba(255,184,77,0.22); color:var(--text2); font-size:13px;">
                         Marka Sahnesi sabit kompozisyon kullanır. Bu modda kart geçiş animasyonu, akış hızı ve kart
@@ -399,7 +399,7 @@
                         </div>
                         <div class="setting-card">
                             <div class="setting-label"><i data-lucide="sparkles"
-                                    style="width:14px;height:14px;vertical-align:middle;"></i> Kart Giris Animasyonu
+                                    style="width:14px;height:14px;vertical-align:middle;"></i> Kart Giriş Animasyonu
                             </div>
                             <select class="setting-select" id="display-messagewall-animation" onchange="saveDisplaySettings()">
                                 <option value="standard">Standart</option>
@@ -1092,7 +1092,7 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/admin.js?v=2.0.12"></script>
+    <script src="/js/admin.js?v=2.0.14"></script>
     <script>
         // Init Lucide Icons
         document.addEventListener('DOMContentLoaded', () => {
