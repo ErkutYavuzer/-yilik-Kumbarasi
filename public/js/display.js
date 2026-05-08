@@ -20,8 +20,9 @@ class WishDisplay {
         this.socket = null;
         this.isMuted = false;
         this.audioCtx = null;
-        this.displaySettings = { speedMultiplier: 1.0, scaleMultiplier: 1.0, messageWallEntranceStyle: 'standard', maxVisible: 20, logoOffsetPx: 0, headerOffsetPx: 0, logoScale: 1, headerScale: 1, dayMode: false }; // Global ekran ayarları
+        this.displaySettings = { speedMultiplier: 1.0, scaleMultiplier: 1.0, messageWallEntranceStyle: 'standard', maxVisible: 20, logoOffsetPx: 0, headerOffsetPx: 0, logoScale: 1, headerScale: 1, dayMode: false, qrVisible: false, qrSize: 260, qrTop: 120, qrRight: 64 }; // Global ekran ayarları
         this.displayMode = 'balloon'; // 'balloon' veya 'lantern'
+        this.currentTheme = 'turktelekom';
         this._raffleAnimating = false; // Çekiliş animasyonu aktif mi
 
         this.init();
@@ -30,9 +31,10 @@ class WishDisplay {
     async init() {
         try {
             await this.loadDisplayMode();
+            await this.loadTheme();
             this.applyDisplayMode();
-            await this.loadDisplaySettings();
             this.initDisplayQr();
+            await this.loadDisplaySettings();
             if (typeof window.finishDisplayBoot === 'function') {
                 requestAnimationFrame(() => window.finishDisplayBoot());
             }
@@ -41,7 +43,6 @@ class WishDisplay {
             this.initHeaderLogoObservers();
             this.startFloatingAnimation();
             this.setupAudio();
-            this.loadTheme();
         } catch (e) {
             if (typeof window.finishDisplayBoot === 'function') {
                 window.finishDisplayBoot();
@@ -59,6 +60,10 @@ class WishDisplay {
 
     isMessageWallMode() {
         return this.displayMode === 'messagewall';
+    }
+
+    usesLandscapeCanvas() {
+        return this.isMessageWallMode() || this.currentTheme === 'aselsan';
     }
 
     getVisibleWishLimit() {
@@ -98,22 +103,23 @@ class WishDisplay {
         const messageWall = this.isMessageWallMode();
         document.documentElement.classList.toggle('display-mode-messagewall', messageWall);
         if (typeof window.setDisplayCanvasSize === 'function') {
-            window.setDisplayCanvasSize(messageWall ? 1920 : 960, messageWall ? 1080 : 2160);
+            const useLandscape = this.usesLandscapeCanvas();
+            window.setDisplayCanvasSize(useLandscape ? 1920 : 960, useLandscape ? 1080 : 2160);
         }
 
         const legacyTitle = document.querySelector('.header-line2');
         if (legacyTitle) {
-            legacyTitle.textContent = 'Uluslararası Ankara Marka Buluşmaları';
+            legacyTitle.textContent = 'ASELSAN HBTKON';
         }
 
         const stageTitle = document.querySelector('.message-stage__headline-text');
         if (stageTitle) {
-            stageTitle.textContent = 'PEKİ SENİN MARKAN İÇİN DİLEĞİN NE?';
+            stageTitle.textContent = 'PEKİ SENİN HBTKON İÇİN DİLEĞİN NE?';
         }
 
         const stagePrefix = document.querySelector('.message-stage__headline-prefix');
         if (stagePrefix) {
-            stagePrefix.textContent = 'DİLEKLER MARKALARIN GELECEĞİ İÇİN';
+            stagePrefix.textContent = 'DİLEKLER TEKNOLOJİNİN GELECEĞİ İÇİN';
         }
 
         const emptyText = document.querySelector('#empty-state .empty-text');
@@ -513,8 +519,9 @@ class WishDisplay {
         const headerScale = typeof this.displaySettings.headerScale === 'number' ? this.displaySettings.headerScale : 1;
         const qrVisible = !!this.displaySettings.qrVisible;
         const qrSize = typeof this.displaySettings.qrSize === 'number' ? this.displaySettings.qrSize : 220;
-        const qrTop = typeof this.displaySettings.qrTop === 'number' ? this.displaySettings.qrTop : 160;
-        const qrRight = typeof this.displaySettings.qrRight === 'number' ? this.displaySettings.qrRight : 80;
+        const rawQrTop = typeof this.displaySettings.qrTop === 'number' ? this.displaySettings.qrTop : 160;
+        const rawQrRight = typeof this.displaySettings.qrRight === 'number' ? this.displaySettings.qrRight : 80;
+        const safeQrPlacement = this.getSafeQrPlacement(qrSize, rawQrTop, rawQrRight);
         console.log(`📺 Ayarlar uygulanıyor: Hız=${speed}x, Ölçek=${scale}x, Max=${maxVisible}`);
 
         // screenMode artık otomatik — her ekran kendi aspect ratio'suna göre ayarlanıyor
@@ -526,8 +533,8 @@ class WishDisplay {
         document.documentElement.style.setProperty('--logo-scale', logoScale.toString());
         document.documentElement.style.setProperty('--header-scale', headerScale.toString());
         document.documentElement.style.setProperty('--qr-size', `${qrSize}px`);
-        document.documentElement.style.setProperty('--qr-top', `${qrTop}px`);
-        document.documentElement.style.setProperty('--qr-right', `${qrRight}px`);
+        document.documentElement.style.setProperty('--qr-top', `${safeQrPlacement.top}px`);
+        document.documentElement.style.setProperty('--qr-right', `${safeQrPlacement.right}px`);
 
         // Ayrı logo boyutları
         const bakanlikScale = typeof this.displaySettings.bakanlikScale === 'number' ? this.displaySettings.bakanlikScale : 1;
@@ -656,6 +663,7 @@ class WishDisplay {
             // Balonlar yeni algoritmada tamamen özgür aktığı için resize sırasında 
             // balonların yerini zorla sınırlandırmaya gerek yoktur.
             this.updateHeaderLogoSpacing();
+            this.applyDisplaySettings();
         });
 
         const resyncFullscreenLayout = () => {
@@ -711,23 +719,43 @@ class WishDisplay {
 
     // === WISH CARDS ===
     getAdaptiveMaxVisible() {
-        const cw = this.container.offsetWidth;
+        const cw = this.container.offsetWidth || 960;
+        const ch = this.container.offsetHeight || 2160;
         const cardWidth = 320;
+        const cardHeight = 400;
         const scale = this.displaySettings.scaleMultiplier || 1.0;
-        // How many non-overlapping columns fit with 80% packing factor
-        const maxAllowed = Math.floor(cw / (cardWidth * scale * 0.8));
-        // Never exceed admin setting, never below 2
+        const columns = Math.max(1, Math.floor(cw / (cardWidth * scale * 0.62)));
+        const rows = Math.max(1, Math.floor(ch / (cardHeight * scale * 0.46)));
+        const maxAllowed = Math.max(2, columns * rows);
         const adminMax = (this.displaySettings && this.displaySettings.maxVisible) || 20;
         return Math.max(2, Math.min(adminMax, maxAllowed));
     }
 
+    getSafeQrPlacement(qrSize, qrTop, qrRight) {
+        const designWidth = window.innerWidth || this.container?.offsetWidth || 960;
+        const designHeight = window.innerHeight || this.container?.offsetHeight || 2160;
+        const panelHeight = qrSize + 96;
+        const minGap = 24;
+        const maxTop = Math.max(minGap, designHeight - panelHeight - minGap);
+        const maxRight = Math.max(minGap, designWidth - qrSize - 32);
+
+        return {
+            top: Math.max(minGap, Math.min(qrTop, maxTop)),
+            right: Math.max(minGap, Math.min(qrRight, maxRight))
+        };
+    }
+
     initDisplayQr() {
-        if (!this.displayQrBox) return;
+        if (!this.displayQrPanel || !this.displayQrBox) return;
+        if (this.displayQrPanel.parentElement !== document.body) {
+            document.body.appendChild(this.displayQrPanel);
+        }
         const uploadUrl = `${window.location.origin}/upload`;
         this.displayQrBox.innerHTML = '';
         const img = document.createElement('img');
-        img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=640x640&data=' + encodeURIComponent(uploadUrl);
+        img.src = '/images/participation-qr.png?v=1';
         img.alt = 'Katılım QR kodu';
+        img.dataset.qrUrl = uploadUrl;
         this.displayQrBox.appendChild(img);
     }
 
@@ -2034,6 +2062,13 @@ class WishDisplay {
     }
 
     applyTheme(theme) {
+        this.currentTheme = theme || 'turktelekom';
+        document.documentElement.setAttribute('data-background-theme', this.currentTheme);
+        if (typeof window.setDisplayCanvasSize === 'function') {
+            const useLandscape = this.usesLandscapeCanvas();
+            window.setDisplayCanvasSize(useLandscape ? 1920 : 960, useLandscape ? 1080 : 2160);
+        }
+
         const stageTitle = document.querySelector('.message-stage__headline-text');
         if (stageTitle && this.isMessageWallMode()) {
             stageTitle.textContent = 'PEKİ SENİN MARKAN İÇİN DİLEĞİN NE?';

@@ -16,7 +16,7 @@
     };
     window.setTimeout(window.finishDisplayBoot, 5000);
   </script>
-  <link rel="stylesheet" href="/css/themes.css?v=18.7.9" />
+  <link rel="stylesheet" href="/css/themes.css?v=18.8.0" />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     * {
@@ -1226,19 +1226,18 @@
     /* Overlay içindeki etkileşimli elemanlar tıklanabilir */
     #ui-overlay .logo-box,
     #ui-overlay .header-title-box,
-    #ui-overlay #display-qr-panel,
     #ui-overlay .fullscreen-btn,
     #ui-overlay .mute-btn {
       pointer-events: auto;
     }
 
     #display-qr-panel {
-      position: absolute;
+      position: fixed;
       top: var(--qr-top, 160px);
       right: var(--qr-right, 80px);
-      width: var(--qr-size, 220px);
+      width: min(var(--qr-size, 220px), calc(100vw - 48px));
       display: none;
-      z-index: 9998;
+      z-index: 10020;
       pointer-events: none;
       text-align: center;
       border-radius: 26px;
@@ -1351,7 +1350,7 @@
       <!-- Empty state -->
       <div id="empty-state">
         <div class="empty-icon">&#x2728;</div>
-        <div class="empty-text">Marka dilekleri bekleniyor...</div>
+        <div class="empty-text">ASELSAN dilekleri bekleniyor...</div>
         <div class="empty-sub">İlk katılımcı mesajı geldiğinde burada görünecek</div>
       </div>
       <!-- Raffle (Çekiliş) Overlay -->
@@ -1379,17 +1378,17 @@
       <!-- Header Title -->
       <div class="header-title-box">
         <div class="title-glow-wrapper">
-          <div class="header-line2">Uluslararası Ankara Marka Buluşmaları</div>
+          <div class="header-line2">ASELSAN HBTKON</div>
         </div>
       </div>
 
       <div class="message-stage" aria-hidden="true">
         <img class="message-stage__top-logo" src="/images/messagewall-top-logo.png?v=1"
-          alt="Uluslararası Ankara Marka Buluşmaları - Brand Conference" />
+          alt="ASELSAN HBTKON" />
 
         <div class="message-stage__headline">
-          <span class="message-stage__headline-prefix">DİLEKLER MARKALARIN GELECEĞİ İÇİN</span>
-          <h1 class="message-stage__headline-text">PEKİ SENİN MARKAN İÇİN DİLEĞİN NE?</h1>
+          <span class="message-stage__headline-prefix">DİLEKLER TEKNOLOJİNİN GELECEĞİ İÇİN</span>
+          <h1 class="message-stage__headline-text">PEKİ SENİN HBTKON İÇİN DİLEĞİN NE?</h1>
         </div>
 
         <img class="message-stage__bottom-logo" src="/images/messagewall-bottom-logo.png?v=1"
@@ -1424,7 +1423,7 @@
 
   <!-- New wish toast -->
   <div class="new-wish-toast" id="new-wish-toast">
-    &#x1F389; Yeni marka dileği geldi!
+    &#x1F389; Yeni ASELSAN dileği geldi!
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
@@ -1473,7 +1472,7 @@
 
     scaleToFit();
     // resize — recalculate scale + dimensions
-    window.addEventListener("resize", scaleToFit);
+    // resize listener final scaleToFit tanimindan sonra baglaniyor.
 
     scaleToFit = function () {
       const viewportWidth = window.innerWidth || DESIGN_WIDTH;
@@ -1527,12 +1526,19 @@
       document.documentElement.style.setProperty('--design-height-num', String(height));
       const viewportMeta = document.querySelector('meta[name="viewport"]');
       if (viewportMeta) {
-        viewportMeta.setAttribute('content', `width=${width}, initial-scale=1.0`);
+        viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0');
       }
       scaleToFit();
     };
 
     // Kor parçacıkları oluştur
+    const scheduleDisplayScaleToFit = () => requestAnimationFrame(scaleToFit);
+    window.addEventListener("resize", scheduleDisplayScaleToFit);
+    window.addEventListener("orientationchange", scheduleDisplayScaleToFit);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", scheduleDisplayScaleToFit);
+    }
+
     window.setDisplayCanvasSize(DESIGN_WIDTH, DESIGN_HEIGHT);
 
     (function () {
@@ -1564,7 +1570,7 @@
       }
     })();
   </script>
-<script src="js/display.js?v=18.8.11"></script>
+<script src="js/display.js?v=18.8.15"></script>
 </body>
 
 </html>

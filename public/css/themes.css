@@ -1632,3 +1632,25 @@ html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero
     font-size: 20px;
     letter-spacing: 0.028em;
 }
+
+html[data-background-theme="aselsan"] {
+    background: #061334 !important;
+}
+
+html[data-background-theme="aselsan"] .display-container {
+    background: #061334 url('/images/aselsan-keyvisual.png?v=1') center center / cover no-repeat !important;
+}
+
+html[data-background-theme="aselsan"] .display-container::before,
+html[data-background-theme="aselsan"] .display-container::after,
+html[data-background-theme="aselsan"] .logos-top-bar,
+html[data-background-theme="aselsan"] .header-title-box,
+html[data-background-theme="aselsan"] .message-stage,
+html[data-background-theme="aselsan"] .message-stage::before,
+html[data-background-theme="aselsan"] .message-stage::after,
+html[data-background-theme="aselsan"] .moon,
+html[data-background-theme="aselsan"] .sparkle-star,
+html[data-background-theme="aselsan"] #embers-container,
+html[data-background-theme="aselsan"] .logo-layer {
+    display: none !important;
+}

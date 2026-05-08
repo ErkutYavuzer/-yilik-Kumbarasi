@@ -14,7 +14,7 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Chart.js removed - causing infinite growth bug -->
-    <link rel="stylesheet" href="/css/admin.css?v=20260424-mobile2">
+    <link rel="stylesheet" href="/css/admin.css?v=20260508-moderation2">
 </head>
 
 <body>
@@ -36,7 +36,7 @@
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
             <div class="logo-text">
-                <h1>Uluslararası Ankara<br>Marka Buluşmaları</h1>
+                <h1>ASELSAN<br>HBTKON</h1>
                 <p>Etkinlik Yönetim Paneli</p>
             </div>
             <button type="button" class="sidebar-toggle" id="sidebar-toggle" title="Menüyü Daralt/Aç">
@@ -266,7 +266,157 @@
 
             <!-- ── MODERASYON ── -->
             <div class="tab-panel" id="tab-moderation">
-                <div class="card">
+                <div class="moderation-workspace">
+                    <div class="card moderation-command-card">
+                        <div class="moderation-command-copy">
+                            <div class="card-title"><i data-lucide="shield-check"
+                                    style="width:18px;height:18px;"></i> Moderasyon Kontrol Merkezi</div>
+                            <h2>Mesajlar, onay akışı ve katılım QR tek ekranda</h2>
+                            <p>Bu ekranda sadece etkinlik sırasında gerekli kararlar var: moderasyon durumu,
+                                hassasiyet, otomatik onay, sahnedeki katılım QR'i ve fener akışı ekran ayarları.</p>
+                        </div>
+                        <div class="moderation-status-stack">
+                            <span class="mod-status-pill on" id="moderation-status-summary">Açık</span>
+                            <span class="moderation-meta" id="moderation-flow-summary">Bekleyen mesajlar admin onayı bekler.</span>
+                        </div>
+                    </div>
+
+                    <div class="moderation-grid">
+                        <section class="card moderation-panel">
+                            <div class="panel-heading">
+                                <div>
+                                    <div class="card-title"><i data-lucide="bot" style="width:18px;height:18px;"></i>
+                                        AI Moderasyon</div>
+                                    <p>Katılımcı isimleri ve mesaj metinleri yayına alınmadan kontrol edilir.</p>
+                                </div>
+                                <label class="toggle" title="Moderasyonu aç/kapat">
+                                    <input type="checkbox" id="moderation-enabled-toggle" onchange="saveModerationSettings()" checked>
+                                    <div class="toggle-track"></div>
+                                    <div class="toggle-thumb"></div>
+                                </label>
+                            </div>
+
+                            <div class="control-row">
+                                <label for="moderation-strictness-compact">Hassasiyet</label>
+                                <select class="setting-select" id="moderation-strictness-compact" onchange="saveModerationSettings()">
+                                    <option value="lenient">Gevşek</option>
+                                    <option value="normal" selected>Normal</option>
+                                    <option value="strict">Sert</option>
+                                </select>
+                            </div>
+
+                            <div class="control-row">
+                                <label for="moderation-auto-approve">Onay Akışı</label>
+                                <div class="inline-toggle">
+                                    <label class="toggle-sm toggle">
+                                        <input type="checkbox" id="moderation-auto-approve" onchange="saveModerationSettings()">
+                                        <div class="toggle-track"></div>
+                                        <div class="toggle-thumb"></div>
+                                    </label>
+                                    <span class="toggle-sm-label" id="moderation-auto-approve-label">Kapalı</span>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="card moderation-panel stage-control-panel">
+                            <div class="panel-heading">
+                                <div>
+                                    <div class="card-title"><i data-lucide="sliders-horizontal"
+                                            style="width:18px;height:18px;"></i> Fener Akışı</div>
+                                    <p>Sahnede kaç dilek görüneceğini, akış hızını ve fener boyutunu ayarlayın.</p>
+                                </div>
+                            </div>
+
+                            <div class="control-row slider-row">
+                                <label for="moderation-display-maxvisible">Ekrandaki Dilek</label>
+                                <div class="range-control">
+                                    <input type="range" class="setting-range" id="moderation-display-maxvisible" min="1"
+                                        max="100" step="1" value="20" oninput="updateMaxVisibleLabel(this.value)"
+                                        onchange="saveDisplaySettings()">
+                                    <span class="control-value-pill" id="moderation-maxvisible-value">20</span>
+                                </div>
+                            </div>
+
+                            <div class="control-row slider-row">
+                                <label for="moderation-display-speed">Akış Hızı</label>
+                                <div class="range-control">
+                                    <input type="range" class="setting-range" id="moderation-display-speed" min="0.1"
+                                        max="5.0" step="0.1" value="1.0" oninput="updateSpeedLabel(this.value)"
+                                        onchange="saveDisplaySettings()">
+                                    <span class="control-value-pill" id="moderation-speed-value">1.0x</span>
+                                </div>
+                            </div>
+
+                            <div class="control-row slider-row">
+                                <label for="moderation-display-scale">Fener Büyüklüğü</label>
+                                <div class="range-control">
+                                    <input type="range" class="setting-range" id="moderation-display-scale" min="0.2"
+                                        max="3.0" step="0.05" value="1.0" oninput="updateScaleLabel(this.value)"
+                                        onchange="saveDisplaySettings()">
+                                    <span class="control-value-pill" id="moderation-scale-value">1.00x</span>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="card moderation-panel qr-control-panel">
+                            <div class="panel-heading">
+                                <div>
+                                    <div class="card-title"><i data-lucide="qr-code" style="width:18px;height:18px;"></i>
+                                        Katılım QR</div>
+                                    <p>Sahne QR'i yerel asset kullanır; dış QR servisine bağlı değildir.</p>
+                                </div>
+                                <span class="mod-status-pill off" id="moderation-qr-state">Kapalı</span>
+                            </div>
+                            <div class="moderation-qr-preview">
+                                <img src="/images/participation-qr.png?v=1" alt="Katılım QR kodu" id="moderation-qr-img">
+                            </div>
+                            <div class="qr-url-box" id="moderation-qr-url">https://dilekfeneri.mezodigi.ai/upload</div>
+                            <div class="qr-actions">
+                                <label class="toggle-sm toggle" title="QR kodu gösterim ekranında göster">
+                                    <input type="checkbox" id="moderation-display-qr-visible" onchange="setDisplayQrVisibility(this.checked)">
+                                    <div class="toggle-track"></div>
+                                    <div class="toggle-thumb"></div>
+                                </label>
+                                <button type="button" class="btn btn-primary" onclick="showDisplayQr()">
+                                    <i data-lucide="eye" style="width:16px;height:16px;"></i> Sahnede Göster
+                                </button>
+                                <a class="btn btn-ghost" href="/upload" target="_blank" rel="noopener">
+                                    <i data-lucide="external-link" style="width:16px;height:16px;"></i> Katılım Sayfası
+                                </a>
+                            </div>
+                            <div class="qr-position-controls">
+                                <div class="control-row slider-row">
+                                    <label for="moderation-display-qr-size">QR Boyutu</label>
+                                    <div class="range-control">
+                                        <input type="range" class="setting-range" id="moderation-display-qr-size" min="120"
+                                            max="480" step="10" value="240" oninput="updateQrSizeLabel(this.value)"
+                                            onchange="saveDisplaySettings()">
+                                        <span class="control-value-pill" id="moderation-qr-size-value">240px</span>
+                                    </div>
+                                </div>
+                                <div class="control-row slider-row">
+                                    <label for="moderation-display-qr-top">Üst Konum</label>
+                                    <div class="range-control">
+                                        <input type="range" class="setting-range" id="moderation-display-qr-top" min="0"
+                                            max="960" step="4" value="96" oninput="updateQrTopLabel(this.value)"
+                                            onchange="saveDisplaySettings()">
+                                        <span class="control-value-pill" id="moderation-qr-top-value">96px</span>
+                                    </div>
+                                </div>
+                                <div class="control-row slider-row">
+                                    <label for="moderation-display-qr-right">Sağ Konum</label>
+                                    <div class="range-control">
+                                        <input type="range" class="setting-range" id="moderation-display-qr-right" min="0"
+                                            max="960" step="4" value="64" oninput="updateQrRightLabel(this.value)"
+                                            onchange="saveDisplaySettings()">
+                                        <span class="control-value-pill" id="moderation-qr-right-value">64px</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <div class="card legacy-moderation-settings">
                     <div class="mod-header">
                         <div class="mod-title-group">
                             <div class="mod-title"><i data-lucide="bot"
@@ -312,7 +462,7 @@
 
                     </div>
                 </div>
-                <div class="setting-card" style="margin-top: 16px;">
+                <div class="setting-card legacy-moderation-settings" style="margin-top: 16px;">
                     <div class="setting-label">Otomatik Onay</div>
                     <div class="toggle-sm-wrap" style="margin-top:8px">
                         <label class="toggle-sm toggle">
@@ -356,7 +506,7 @@
                     </div>
                 </div>
 
-                <div class="card" style="margin-top: 20px;">
+                <div class="card legacy-display-settings" style="margin-top: 20px;">
                     <div class="mod-header">
                         <div class="mod-title-group">
                             <div class="mod-title" id="display-settings-title"><i data-lucide="monitor-cog"
@@ -759,8 +909,12 @@
                     <div class="theme-grid" id="theme-grid">
                         <button type="button" class="theme-option active" data-theme="turktelekom"
                             onclick="setTheme('turktelekom')"><i data-lucide="sparkles"
-                            style="width:16px;height:16px;margin:auto;display:block;margin-bottom:6px;"></i> Marka
-                            Etkinlik Sahnesi</button>
+                            style="width:16px;height:16px;margin:auto;display:block;margin-bottom:6px;"></i> Varsayılan
+                            Sahne</button>
+                        <button type="button" class="theme-option" data-theme="aselsan"
+                            onclick="setTheme('aselsan')"><i data-lucide="shield"
+                            style="width:16px;height:16px;margin:auto;display:block;margin-bottom:6px;"></i>
+                            Aselsan</button>
                     </div>
                 </div>
                 <div class="card" style="margin-top:20px;">
@@ -779,7 +933,7 @@
                         <button type="button" class="display-mode-option theme-option" data-mode="messagewall"
                             onclick="setDisplayMode('messagewall')"><i data-lucide="panel-top"
                                 style="width:16px;height:16px;margin:auto;display:block;margin-bottom:6px;"></i>
-                            Marka Sahnesi</button>
+                            HBTKON Sahnesi</button>
                     </div>
                 </div>
             </div>
@@ -1092,7 +1246,7 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/admin.js?v=2.0.14"></script>
+    <script src="/js/admin.js?v=2.0.19"></script>
     <script>
         // Init Lucide Icons
         document.addEventListener('DOMContentLoaded', () => {

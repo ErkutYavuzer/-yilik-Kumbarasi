@@ -194,8 +194,8 @@ const upload = multer({ storage });
 
 function renderDisplayPage(req, res) {
     const displayPath = path.join(__dirname, 'public', 'display.html');
-    const title = 'Uluslararası Ankara Marka Buluşmaları - Dilek Ekranı';
-    const siteName = 'Uluslararası Ankara Marka Buluşmaları';
+    const title = 'ASELSAN HBTKON - Dilek Ekranı';
+    const siteName = 'ASELSAN HBTKON';
     let html = fs.readFileSync(displayPath, 'utf8');
     html = html
         .replace(/__DISPLAY_TITLE__/g, title)
@@ -206,8 +206,8 @@ function renderDisplayPage(req, res) {
 
 function renderAdminPage(req, res) {
     const adminPath = path.join(__dirname, 'public', 'admin.html');
-    const title = 'Uluslararası Ankara Marka Buluşmaları - Yönetim';
-    const siteName = 'Uluslararası Ankara Marka Buluşmaları';
+    const title = 'ASELSAN HBTKON - Yönetim';
+    const siteName = 'ASELSAN HBTKON';
     let html = fs.readFileSync(adminPath, 'utf8');
     html = html
         .replace(/__ADMIN_TITLE__/g, title)
@@ -218,8 +218,8 @@ function renderAdminPage(req, res) {
 
 function renderUploadPage(req, res) {
     const uploadPath = path.join(__dirname, 'public', 'upload.html');
-    const title = 'Uluslararası Ankara Marka Buluşmaları - Dileğini Paylaş';
-    const siteName = 'Uluslararası Ankara Marka Buluşmaları';
+    const title = 'ASELSAN HBTKON - Dileğini Paylaş';
+    const siteName = 'ASELSAN HBTKON';
     let html = fs.readFileSync(uploadPath, 'utf8');
     html = html
         .replace(/__UPLOAD_TITLE__/g, title)
@@ -338,6 +338,12 @@ app.get('/marka-bulusmalari-qr-flyer', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'marka-bulusmalari-qr-flyer.html'));
 });
 app.get('/marka-bulusmalari-qr-flyer.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'marka-bulusmalari-qr-flyer.html'));
+});
+app.get('/aselsan-qr-flyer', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'marka-bulusmalari-qr-flyer.html'));
+});
+app.get('/aselsan-qr-flyer.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'marka-bulusmalari-qr-flyer.html'));
 });
 

@@ -4,6 +4,33 @@ let modalAction = null;
 let autoTimer = null;
 let autoIndex = 0;
 let currentDisplayMode = 'balloon';
+const PARTICIPATION_URL = 'https://dilekfeneri.mezodigi.ai/upload';
+const PARTICIPATION_QR_SRC = '/images/participation-qr.png?v=1';
+let displaySettingsCache = {
+    speedMultiplier: 1,
+    scaleMultiplier: 1,
+    messageWallEntranceStyle: 'standard',
+    maxVisible: 20,
+    logoOffsetPx: 0,
+    headerOffsetPx: 0,
+    logoScale: 1,
+    headerScale: 1,
+    bakanlikScale: 1,
+    akmScale: 1,
+    bakanlikX: 0,
+    bakanlikY: 0,
+    akmX: 0,
+    akmY: 0,
+    logoTopX: 0,
+    logoTopY: 0,
+    headerX: 0,
+    headerY: 0,
+    dayMode: false,
+    qrVisible: false,
+    qrSize: 260,
+    qrTop: 120,
+    qrRight: 64
+};
 
 // ─── AUTHENTICATION ───
 if (sessionStorage.getItem('adminAuth') === 'true') {
@@ -716,7 +743,7 @@ async function adminUpload() {
 // ─── THEME ───
 async function setTheme(theme) {
     await fetch('/api/theme', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ theme }) });
-    document.querySelectorAll('.theme-option').forEach(b => {
+    document.querySelectorAll('#theme-grid .theme-option').forEach(b => {
         b.classList.toggle('active', b.dataset.theme === theme);
     });
     showToast('Tema değiştirildi!');
@@ -726,7 +753,7 @@ async function loadCurrentTheme() {
     try {
         const res = await fetch('/api/theme');
         const data = await res.json();
-        document.querySelectorAll('.theme-option').forEach(b => {
+        document.querySelectorAll('#theme-grid .theme-option').forEach(b => {
             b.classList.toggle('active', b.dataset.theme === data.theme);
         });
     } catch (e) { }
@@ -755,11 +782,11 @@ function syncDisplaySettingsModeUI(mode) {
     const maxVisibleLabel = document.getElementById('display-maxvisible-label');
 
     if (titleEl) {
-        titleEl.innerHTML = `<i data-lucide="monitor-cog" style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> ${isMessageWall ? 'Marka Sahnesi Ayarları' : 'Sahne Ayarları'}`;
+        titleEl.innerHTML = `<i data-lucide="monitor-cog" style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> ${isMessageWall ? 'HBTKON Sahnesi Ayarları' : 'Sahne Ayarları'}`;
     }
     if (subEl) {
         subEl.textContent = isMessageWall
-            ? 'Marka Sahnesi için sadece çalışan kontroller gösterilir'
+            ? 'HBTKON Sahnesi için sadece çalışan kontroller gösterilir'
             : 'Aktif gösterim modu için geçerli sahne ayarları';
     }
     if (legacySubEl) {
@@ -769,7 +796,7 @@ function syncDisplaySettingsModeUI(mode) {
         noteEl.style.display = isMessageWall ? 'block' : 'none';
     }
     if (noteEl && isMessageWall) {
-        noteEl.textContent = 'Marka Sahnesi sabit kompozisyon kullanıyor. Bu modda kart giriş animasyonu, akış hızı ve kart ölçeği ayarlanabilir.';
+        noteEl.textContent = 'HBTKON Sahnesi sabit kompozisyon kullanıyor. Bu modda kart giriş animasyonu, akış hızı ve kart ölçeği ayarlanabilir.';
     }
     if (speedLabel) {
         speedLabel.innerHTML = `<i data-lucide="gauge" style="width:14px;height:14px;vertical-align:middle;"></i> ${isMessageWall ? 'Geçiş Hızı' : 'Animasyon Hızı'} <span id="speed-value" style="color:var(--accent);font-weight:700;margin-left:6px;">${speedValue}</span>`;
@@ -944,10 +971,14 @@ async function toggleModeration() {
 }
 
 async function saveModerationSettings() {
+    const enabledToggle = document.getElementById('moderation-enabled-toggle') || document.getElementById('mod-toggle');
+    const strictnessEl = document.getElementById('moderation-strictness-compact') || document.getElementById('mod-strictness');
+    const autoApproveEl = document.getElementById('moderation-auto-approve') || document.getElementById('mod-auto-approve');
     const settings = {
-        checkText: document.getElementById('mod-text').checked,
-        strictness: document.getElementById('mod-strictness').value,
-        autoApprove: document.getElementById('mod-auto-approve')?.checked === true,
+        enabled: enabledToggle ? enabledToggle.checked : true,
+        checkText: true,
+        strictness: strictnessEl ? strictnessEl.value : 'normal',
+        autoApprove: autoApproveEl?.checked === true,
     };
     try {
         const res = await fetch('/api/moderation/settings', {
@@ -963,10 +994,13 @@ async function saveModerationSettings() {
 
 function setModerationUI(data) {
     const toggle = document.getElementById('mod-toggle');
+    const compactToggle = document.getElementById('moderation-enabled-toggle');
     const badge = document.getElementById('mod-badge');
+    const compactBadge = document.getElementById('moderation-status-summary');
     const statMod = document.getElementById('stat-mod');
     const on = data.enabled !== false;
     if (toggle) toggle.checked = on;
+    if (compactToggle) compactToggle.checked = on;
     if (badge) {
         badge.textContent = on ? '✅ AÇIK' : '🚫 KAPALI';
         badge.className = 'mod-status-pill ' + (on ? 'on' : 'off');
@@ -975,8 +1009,14 @@ function setModerationUI(data) {
         statMod.textContent = on ? 'AÇIK' : 'KAPALI';
         statMod.style.color = on ? 'var(--green)' : 'var(--red)';
     }
+    if (compactBadge) {
+        compactBadge.textContent = on ? 'Açık' : 'Kapalı';
+        compactBadge.className = 'mod-status-pill ' + (on ? 'on' : 'off');
+    }
     const strictEl = document.getElementById('mod-strictness');
     if (strictEl && data.strictness) strictEl.value = data.strictness;
+    const compactStrictEl = document.getElementById('moderation-strictness-compact');
+    if (compactStrictEl && data.strictness) compactStrictEl.value = data.strictness;
     const textEl = document.getElementById('mod-text');
     if (textEl && data.checkText !== undefined) {
         textEl.checked = data.checkText;
@@ -984,17 +1024,27 @@ function setModerationUI(data) {
         if (textLabel) textLabel.textContent = data.checkText ? 'Açık' : 'Kapalı';
     }
     const autoApproveEl = document.getElementById('mod-auto-approve');
-    if (autoApproveEl && data.autoApprove !== undefined) {
-        autoApproveEl.checked = data.autoApprove;
+    const compactAutoApproveEl = document.getElementById('moderation-auto-approve');
+    if ((autoApproveEl || compactAutoApproveEl) && data.autoApprove !== undefined) {
+        if (autoApproveEl) autoApproveEl.checked = data.autoApprove;
+        if (compactAutoApproveEl) compactAutoApproveEl.checked = data.autoApprove;
         const autoApproveLabel = document.getElementById('mod-auto-approve-label');
         if (autoApproveLabel) autoApproveLabel.textContent = data.autoApprove ? 'Açık' : 'Kapalı';
+        const compactAutoApproveLabel = document.getElementById('moderation-auto-approve-label');
+        if (compactAutoApproveLabel) compactAutoApproveLabel.textContent = data.autoApprove ? 'Açık' : 'Kapalı';
         const flowNote = document.getElementById('mod-flow-note');
+        const compactFlowSummary = document.getElementById('moderation-flow-summary');
         if (flowNote) {
             flowNote.textContent = data.autoApprove
                 ? (on
                     ? 'Açıksa AI kontrolden geçen kayıtlar doğrudan yayına alınır; uygunsuz içerik reddedilir.'
                     : 'Açıksa moderasyon kapalıyken kayıtlar doğrudan onaylanır ve yayına alınır.')
                 : 'Kapalıysa kayıtlar bekleyen listesine düşer ve admin onayı gerekir.';
+        }
+        if (compactFlowSummary) {
+            compactFlowSummary.textContent = data.autoApprove
+                ? (on ? 'AI kontrolden geçen mesajlar otomatik yayına alınır.' : 'Moderasyon kapalı; mesajlar doğrudan yayına alınır.')
+                : 'Mesajlar bekleyen listeye düşer ve admin onayı bekler.';
         }
     }
 }
@@ -1022,42 +1072,96 @@ async function clearModerationLog() {
 }
 
 // ─── EKRAN AYARLARI ───
+function numberSettingFromControl(id, fallback, map = (value) => parseFloat(value)) {
+    const el = document.getElementById(id);
+    if (!el) return fallback;
+    const value = map(el.value);
+    return Number.isFinite(value) ? value : fallback;
+}
+
+function booleanSettingFromControl(id, fallback) {
+    const el = document.getElementById(id);
+    return el ? !!el.checked : !!fallback;
+}
+
+function booleanSettingFromControls(ids, fallback) {
+    for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el) return !!el.checked;
+    }
+    return !!fallback;
+}
+
+function numberSettingFromControls(ids, fallback, parser = parseFloat) {
+    for (const id of ids) {
+        const el = document.getElementById(id);
+        if (!el || el.value === '') continue;
+        const value = parser(el.value);
+        if (Number.isFinite(value)) return value;
+    }
+    return fallback;
+}
+
+function setControlsValue(ids, value) {
+    ids.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.value = value;
+    });
+}
+
+function setLabelsText(ids, text) {
+    ids.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+    });
+}
+
+function getDefaultQrPlacement() {
+    return {
+        qrSize: 240,
+        qrTop: 96,
+        qrRight: 64
+    };
+}
+
 async function loadDisplaySettings() {
     try {
         const res = await fetch('/api/display-settings');
         const data = await res.json();
-        setDisplaySettingsUI(data);
+        displaySettingsCache = { ...displaySettingsCache, ...data };
+        setDisplaySettingsUI(displaySettingsCache);
     } catch (e) { }
 }
 
-async function saveDisplaySettings() {
+async function saveDisplaySettings(overrides = {}) {
     const settings = {
-        speedMultiplier: parseFloat(document.getElementById('display-speed').value),
-        scaleMultiplier: parseFloat(document.getElementById('display-scale').value),
+        speedMultiplier: numberSettingFromControls(['moderation-display-speed', 'display-speed'], displaySettingsCache.speedMultiplier || 1, parseFloat),
+        scaleMultiplier: numberSettingFromControls(['moderation-display-scale', 'display-scale'], displaySettingsCache.scaleMultiplier || 1, parseFloat),
         messageWallEntranceStyle: ((document.getElementById('display-messagewall-animation')?.value || 'standard') === 'soft'
             ? 'glide'
             : (document.getElementById('display-messagewall-animation')?.value || 'standard')),
-        maxVisible: parseInt(document.getElementById('display-maxvisible').value),
-        logoOffsetPx: parseInt(document.getElementById('display-logo-offset').value),
-        headerOffsetPx: parseInt(document.getElementById('display-header-offset').value),
-        logoScale: parseInt(document.getElementById('display-logo-scale').value) / 100,
-        headerScale: parseInt(document.getElementById('display-header-scale').value) / 100,
-        bakanlikScale: parseInt(document.getElementById('display-bakanlik-scale').value) / 100,
-        akmScale: parseInt(document.getElementById('display-akm-scale').value) / 100,
-        bakanlikX: parseInt(document.getElementById('display-bakanlik-x').value),
-        bakanlikY: parseInt(document.getElementById('display-bakanlik-y').value),
-        akmX: parseInt(document.getElementById('display-akm-x').value),
-        akmY: parseInt(document.getElementById('display-akm-y').value),
-        qrVisible: !!document.getElementById('display-qr-visible')?.checked,
-        qrSize: parseInt(document.getElementById('display-qr-size').value),
-        qrTop: parseInt(document.getElementById('display-qr-top').value),
-        qrRight: parseInt(document.getElementById('display-qr-right').value),
-        logoTopX: parseInt(document.getElementById('display-logo-x').value),
-        logoTopY: parseInt(document.getElementById('display-logo-y').value),
-        headerX: parseInt(document.getElementById('display-header-x').value),
-        headerY: parseInt(document.getElementById('display-header-y').value),
+        maxVisible: numberSettingFromControls(['moderation-display-maxvisible', 'display-maxvisible'], displaySettingsCache.maxVisible || 20, parseInt),
+        logoOffsetPx: numberSettingFromControls(['display-logo-offset'], displaySettingsCache.logoOffsetPx || 0, parseInt),
+        headerOffsetPx: numberSettingFromControls(['display-header-offset'], displaySettingsCache.headerOffsetPx || 0, parseInt),
+        logoScale: numberSettingFromControls(['display-logo-scale'], Math.round((displaySettingsCache.logoScale || 1) * 100), parseInt) / 100,
+        headerScale: numberSettingFromControls(['display-header-scale'], Math.round((displaySettingsCache.headerScale || 1) * 100), parseInt) / 100,
+        bakanlikScale: numberSettingFromControls(['display-bakanlik-scale'], Math.round((displaySettingsCache.bakanlikScale || 1) * 100), parseInt) / 100,
+        akmScale: numberSettingFromControls(['display-akm-scale'], Math.round((displaySettingsCache.akmScale || 1) * 100), parseInt) / 100,
+        bakanlikX: numberSettingFromControls(['display-bakanlik-x'], displaySettingsCache.bakanlikX || 0, parseInt),
+        bakanlikY: numberSettingFromControls(['display-bakanlik-y'], displaySettingsCache.bakanlikY || 0, parseInt),
+        akmX: numberSettingFromControls(['display-akm-x'], displaySettingsCache.akmX || 0, parseInt),
+        akmY: numberSettingFromControls(['display-akm-y'], displaySettingsCache.akmY || 0, parseInt),
+        qrVisible: booleanSettingFromControls(['moderation-display-qr-visible', 'display-qr-visible'], displaySettingsCache.qrVisible),
+        qrSize: numberSettingFromControls(['moderation-display-qr-size', 'display-qr-size'], displaySettingsCache.qrSize || 240, parseInt),
+        qrTop: numberSettingFromControls(['moderation-display-qr-top', 'display-qr-top'], displaySettingsCache.qrTop || 96, parseInt),
+        qrRight: numberSettingFromControls(['moderation-display-qr-right', 'display-qr-right'], displaySettingsCache.qrRight || 64, parseInt),
+        logoTopX: numberSettingFromControls(['display-logo-x'], displaySettingsCache.logoTopX || 0, parseInt),
+        logoTopY: numberSettingFromControls(['display-logo-y'], displaySettingsCache.logoTopY || 0, parseInt),
+        headerX: numberSettingFromControls(['display-header-x'], displaySettingsCache.headerX || 0, parseInt),
+        headerY: numberSettingFromControls(['display-header-y'], displaySettingsCache.headerY || 0, parseInt),
         dayMode: !!document.getElementById('display-daymode')?.checked
     };
+    Object.assign(settings, overrides);
     try {
         const res = await fetch('/api/display-settings', {
             method: 'POST',
@@ -1065,20 +1169,35 @@ async function saveDisplaySettings() {
             body: JSON.stringify(settings)
         });
         const data = await res.json();
-        setDisplaySettingsUI(data);
+        displaySettingsCache = { ...displaySettingsCache, ...data };
+        setDisplaySettingsUI(displaySettingsCache);
         showToast('📺 Ekran ayarları güncellendi');
     } catch (e) { showToast('❌ Kaydetme hatası'); }
 }
 
+async function setDisplayQrVisibility(visible, resetOnShow = false) {
+    const hiddenToggle = document.getElementById('display-qr-visible');
+    const compactToggle = document.getElementById('moderation-display-qr-visible');
+    if (hiddenToggle) hiddenToggle.checked = !!visible;
+    if (compactToggle) compactToggle.checked = !!visible;
+    const overrides = { qrVisible: !!visible };
+    if (visible && resetOnShow) {
+        Object.assign(overrides, getDefaultQrPlacement());
+    }
+    await saveDisplaySettings(overrides);
+}
+
+async function showDisplayQr() {
+    await setDisplayQrVisibility(true);
+}
+
 function setDisplaySettingsUI(data) {
     if (data.speedMultiplier !== undefined) {
-        const el = document.getElementById('display-speed');
-        if (el) el.value = data.speedMultiplier;
+        setControlsValue(['display-speed', 'moderation-display-speed'], data.speedMultiplier);
         updateSpeedLabel(data.speedMultiplier);
     }
     if (data.scaleMultiplier !== undefined) {
-        const el = document.getElementById('display-scale');
-        if (el) el.value = data.scaleMultiplier;
+        setControlsValue(['display-scale', 'moderation-display-scale'], data.scaleMultiplier);
         updateScaleLabel(data.scaleMultiplier);
     }
     if (data.messageWallEntranceStyle !== undefined) {
@@ -1087,29 +1206,32 @@ function setDisplaySettingsUI(data) {
         if (el) el.value = normalized;
     }
     if (data.maxVisible !== undefined) {
-        const el = document.getElementById('display-maxvisible');
-        if (el) el.value = data.maxVisible;
+        setControlsValue(['display-maxvisible', 'moderation-display-maxvisible'], data.maxVisible);
         updateMaxVisibleLabel(data.maxVisible);
     }
     if (data.qrVisible !== undefined) {
         const qrToggle = document.getElementById('display-qr-visible');
         const qrToggleLabel = document.getElementById('display-qr-visible-label');
+        const compactQrToggle = document.getElementById('moderation-display-qr-visible');
+        const compactQrState = document.getElementById('moderation-qr-state');
         if (qrToggle) qrToggle.checked = !!data.qrVisible;
         if (qrToggleLabel) qrToggleLabel.textContent = data.qrVisible ? 'Açık' : 'Kapalı';
+        if (compactQrToggle) compactQrToggle.checked = !!data.qrVisible;
+        if (compactQrState) {
+            compactQrState.textContent = data.qrVisible ? 'Açık' : 'Kapalı';
+            compactQrState.className = 'mod-status-pill ' + (data.qrVisible ? 'on' : 'off');
+        }
     }
     if (data.qrSize !== undefined) {
-        const el = document.getElementById('display-qr-size');
-        if (el) el.value = data.qrSize;
+        setControlsValue(['display-qr-size', 'moderation-display-qr-size'], data.qrSize);
         updateQrSizeLabel(data.qrSize);
     }
     if (data.qrTop !== undefined) {
-        const el = document.getElementById('display-qr-top');
-        if (el) el.value = data.qrTop;
+        setControlsValue(['display-qr-top', 'moderation-display-qr-top'], data.qrTop);
         updateQrTopLabel(data.qrTop);
     }
     if (data.qrRight !== undefined) {
-        const el = document.getElementById('display-qr-right');
-        if (el) el.value = data.qrRight;
+        setControlsValue(['display-qr-right', 'moderation-display-qr-right'], data.qrRight);
         updateQrRightLabel(data.qrRight);
     }
     if (data.logoOffsetPx !== undefined) {
@@ -1214,33 +1336,27 @@ function setDisplaySettingsUI(data) {
 }
 
 function updateSpeedLabel(val) {
-    const el = document.getElementById('speed-value');
-    if (el) el.textContent = parseFloat(val).toFixed(1) + 'x';
+    setLabelsText(['speed-value', 'moderation-speed-value'], parseFloat(val).toFixed(1) + 'x');
 }
 
 function updateScaleLabel(val) {
-    const el = document.getElementById('scale-value');
-    if (el) el.textContent = parseFloat(val).toFixed(2) + 'x';
+    setLabelsText(['scale-value', 'moderation-scale-value'], parseFloat(val).toFixed(2) + 'x');
 }
 
 function updateMaxVisibleLabel(val) {
-    const el = document.getElementById('maxvisible-value');
-    if (el) el.textContent = parseInt(val);
+    setLabelsText(['maxvisible-value', 'moderation-maxvisible-value'], String(parseInt(val)));
 }
 
 function updateQrSizeLabel(val) {
-    const el = document.getElementById('qr-size-value');
-    if (el) el.textContent = `${parseInt(val)}px`;
+    setLabelsText(['qr-size-value', 'moderation-qr-size-value'], `${parseInt(val)}px`);
 }
 
 function updateQrTopLabel(val) {
-    const el = document.getElementById('qr-top-value');
-    if (el) el.textContent = `${parseInt(val)}px`;
+    setLabelsText(['qr-top-value', 'moderation-qr-top-value'], `${parseInt(val)}px`);
 }
 
 function updateQrRightLabel(val) {
-    const el = document.getElementById('qr-right-value');
-    if (el) el.textContent = `${parseInt(val)}px`;
+    setLabelsText(['qr-right-value', 'moderation-qr-right-value'], `${parseInt(val)}px`);
 }
 
 function updateLogoOffsetLabel(val) {
@@ -1407,7 +1523,7 @@ function showToast(msg) {
 // ─── QR CODE ───
 (async function () {
     try {
-        const url = 'https://dilekfeneri.mezodigi.ai/upload';
+        const url = PARTICIPATION_URL;
 
         const container = document.getElementById('qr-container');
         const urlEl = document.getElementById('qr-url');
@@ -1416,13 +1532,14 @@ function showToast(msg) {
         if (container) {
             container.innerHTML = '';
             const img = document.createElement('img');
-            img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(url);
+            img.src = PARTICIPATION_QR_SRC;
+            img.alt = 'Katılım QR kodu';
             img.style.cssText = 'width:180px;height:180px;display:block;';
             container.appendChild(img);
         }
         if (urlEl) urlEl.textContent = url;
         if (hintEl) {
-            hintEl.innerHTML = 'Uluslararası Ankara Marka Buluşmaları için mesajını paylaş; yapay zeka çağında markaların geleceğine kendi izini bırak.';
+            hintEl.innerHTML = 'ASELSAN HBTKON için mesajını paylaş; teknoloji ve güvenli geleceğe kendi izini bırak.';
         }
     } catch (err) {
         console.error("QR Code oluşturulamadı:", err);
