@@ -6,6 +6,10 @@ let autoIndex = 0;
 let currentDisplayMode = 'balloon';
 const PARTICIPATION_URL = 'https://dilekfeneri.mezodigi.ai/upload';
 const PARTICIPATION_QR_SRC = '/images/participation-qr.png?v=1';
+const QR_PREVIEW_STAGE = { width: 1920, height: 1280 };
+const QR_PANEL_EXTRA_HEIGHT = 96;
+let qrPreviewState = null;
+let qrPreviewDrag = null;
 let displaySettingsCache = {
     speedMultiplier: 1,
     scaleMultiplier: 1,
@@ -1124,6 +1128,222 @@ function getDefaultQrPlacement() {
     };
 }
 
+function clampNumber(value, min, max) {
+    return Math.max(min, Math.min(value, max));
+}
+
+function getQrPreviewLimits(size) {
+    const minGap = 24;
+    return {
+        minTop: minGap,
+        maxTop: Math.max(minGap, QR_PREVIEW_STAGE.height - size - QR_PANEL_EXTRA_HEIGHT - minGap),
+        minRight: minGap,
+        maxRight: Math.max(minGap, QR_PREVIEW_STAGE.width - size - 32)
+    };
+}
+
+function getQrPreviewScale() {
+    const stage = document.getElementById('qr-preview-stage');
+    if (!stage) return 1;
+    const rect = stage.getBoundingClientRect();
+    return rect.width / QR_PREVIEW_STAGE.width;
+}
+
+function normalizeQrPreviewState(state) {
+    const size = clampNumber(parseInt(state.qrSize, 10) || 240, 120, 480);
+    const limits = getQrPreviewLimits(size);
+    return {
+        qrVisible: !!state.qrVisible,
+        qrSize: size,
+        qrTop: clampNumber(parseInt(state.qrTop, 10) || limits.minTop, limits.minTop, limits.maxTop),
+        qrRight: clampNumber(parseInt(state.qrRight, 10) || limits.minRight, limits.minRight, limits.maxRight)
+    };
+}
+
+function getQrStateFromControls() {
+    return normalizeQrPreviewState({
+        qrVisible: booleanSettingFromControls(['moderation-display-qr-visible', 'display-qr-visible'], displaySettingsCache.qrVisible),
+        qrSize: numberSettingFromControls(['moderation-display-qr-size', 'display-qr-size'], displaySettingsCache.qrSize || 240, parseInt),
+        qrTop: numberSettingFromControls(['moderation-display-qr-top', 'display-qr-top'], displaySettingsCache.qrTop || 96, parseInt),
+        qrRight: numberSettingFromControls(['moderation-display-qr-right', 'display-qr-right'], displaySettingsCache.qrRight || 64, parseInt)
+    });
+}
+
+function syncQrPreviewInputs() {
+    if (!qrPreviewState) return;
+    const sizeInput = document.getElementById('qr-preview-size');
+    const topInput = document.getElementById('qr-preview-top');
+    const rightInput = document.getElementById('qr-preview-right');
+    const visibleInput = document.getElementById('qr-preview-visible');
+    const limits = getQrPreviewLimits(qrPreviewState.qrSize);
+
+    if (sizeInput) sizeInput.value = qrPreviewState.qrSize;
+    if (topInput) {
+        topInput.max = limits.maxTop;
+        topInput.value = qrPreviewState.qrTop;
+    }
+    if (rightInput) {
+        rightInput.max = limits.maxRight;
+        rightInput.value = qrPreviewState.qrRight;
+    }
+    if (visibleInput) visibleInput.checked = !!qrPreviewState.qrVisible;
+
+    setLabelsText(['qr-preview-size-value'], `${qrPreviewState.qrSize}px`);
+    setLabelsText(['qr-preview-top-value'], `${qrPreviewState.qrTop}px`);
+    setLabelsText(['qr-preview-right-value'], `${qrPreviewState.qrRight}px`);
+}
+
+function renderQrPreview() {
+    if (!qrPreviewState) return;
+    const panel = document.getElementById('qr-preview-panel');
+    const stageSize = document.getElementById('qr-preview-stage-size');
+    if (!panel) return;
+
+    const scale = getQrPreviewScale();
+    panel.style.setProperty('--qr-preview-scale', scale.toString());
+    panel.style.width = `${qrPreviewState.qrSize * scale}px`;
+    panel.style.top = `${qrPreviewState.qrTop * scale}px`;
+    panel.style.right = `${qrPreviewState.qrRight * scale}px`;
+    panel.style.opacity = qrPreviewState.qrVisible ? '1' : '0.5';
+    if (stageSize) stageSize.textContent = `${QR_PREVIEW_STAGE.width} x ${QR_PREVIEW_STAGE.height}`;
+}
+
+function updateQrPreviewFromInputs() {
+    if (!qrPreviewState) return;
+    const sizeInput = document.getElementById('qr-preview-size');
+    const topInput = document.getElementById('qr-preview-top');
+    const rightInput = document.getElementById('qr-preview-right');
+    const visibleInput = document.getElementById('qr-preview-visible');
+
+    qrPreviewState = normalizeQrPreviewState({
+        qrVisible: visibleInput ? visibleInput.checked : qrPreviewState.qrVisible,
+        qrSize: sizeInput ? sizeInput.value : qrPreviewState.qrSize,
+        qrTop: topInput ? topInput.value : qrPreviewState.qrTop,
+        qrRight: rightInput ? rightInput.value : qrPreviewState.qrRight
+    });
+    syncQrPreviewInputs();
+    renderQrPreview();
+}
+
+function openQrPreviewModal() {
+    qrPreviewState = getQrStateFromControls();
+    const modal = document.getElementById('qr-preview-modal');
+    if (!modal) return;
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden', 'false');
+    syncQrPreviewInputs();
+    requestAnimationFrame(renderQrPreview);
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function closeQrPreviewModal() {
+    const modal = document.getElementById('qr-preview-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+    const panel = document.getElementById('qr-preview-panel');
+    if (panel) panel.classList.remove('dragging');
+    qrPreviewDrag = null;
+}
+
+async function saveQrPreviewSettings() {
+    if (!qrPreviewState) return;
+    qrPreviewState = normalizeQrPreviewState(qrPreviewState);
+
+    const visibleIds = ['moderation-display-qr-visible', 'display-qr-visible'];
+    visibleIds.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.checked = qrPreviewState.qrVisible;
+    });
+    setControlsValue(['moderation-display-qr-size', 'display-qr-size'], qrPreviewState.qrSize);
+    setControlsValue(['moderation-display-qr-top', 'display-qr-top'], qrPreviewState.qrTop);
+    setControlsValue(['moderation-display-qr-right', 'display-qr-right'], qrPreviewState.qrRight);
+    updateQrSizeLabel(qrPreviewState.qrSize);
+    updateQrTopLabel(qrPreviewState.qrTop);
+    updateQrRightLabel(qrPreviewState.qrRight);
+
+    await saveDisplaySettings({
+        qrVisible: qrPreviewState.qrVisible,
+        qrSize: qrPreviewState.qrSize,
+        qrTop: qrPreviewState.qrTop,
+        qrRight: qrPreviewState.qrRight
+    });
+    closeQrPreviewModal();
+    showToast('QR sahne ayarı kaydedildi');
+}
+
+function startQrPreviewDrag(event) {
+    if (!qrPreviewState) return;
+    const stage = document.getElementById('qr-preview-stage');
+    const panel = document.getElementById('qr-preview-panel');
+    if (!stage || !panel) return;
+    const panelRect = panel.getBoundingClientRect();
+    qrPreviewDrag = {
+        pointerId: event.pointerId,
+        offsetX: event.clientX - panelRect.left,
+        offsetY: event.clientY - panelRect.top
+    };
+    panel.classList.add('dragging');
+    panel.setPointerCapture(event.pointerId);
+    event.preventDefault();
+}
+
+function moveQrPreviewDrag(event) {
+    if (!qrPreviewDrag || !qrPreviewState) return;
+    const stage = document.getElementById('qr-preview-stage');
+    if (!stage) return;
+    const stageRect = stage.getBoundingClientRect();
+    const scale = getQrPreviewScale();
+    const panelWidth = qrPreviewState.qrSize * scale;
+    const panelHeight = (qrPreviewState.qrSize + QR_PANEL_EXTRA_HEIGHT) * scale;
+    const left = clampNumber(event.clientX - stageRect.left - qrPreviewDrag.offsetX, 0, stageRect.width - panelWidth);
+    const top = clampNumber(event.clientY - stageRect.top - qrPreviewDrag.offsetY, 0, stageRect.height - panelHeight);
+    const right = stageRect.width - left - panelWidth;
+
+    qrPreviewState = normalizeQrPreviewState({
+        ...qrPreviewState,
+        qrTop: Math.round(top / scale),
+        qrRight: Math.round(right / scale)
+    });
+    syncQrPreviewInputs();
+    renderQrPreview();
+}
+
+function stopQrPreviewDrag(event) {
+    if (!qrPreviewDrag) return;
+    const panel = document.getElementById('qr-preview-panel');
+    if (panel) {
+        panel.classList.remove('dragging');
+        try {
+            panel.releasePointerCapture(event.pointerId);
+        } catch (_) { }
+    }
+    qrPreviewDrag = null;
+}
+
+function initQrPreviewControls() {
+    ['qr-preview-size', 'qr-preview-top', 'qr-preview-right', 'qr-preview-visible'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', updateQrPreviewFromInputs);
+        if (el) el.addEventListener('change', updateQrPreviewFromInputs);
+    });
+
+    const panel = document.getElementById('qr-preview-panel');
+    if (panel) {
+        panel.addEventListener('pointerdown', startQrPreviewDrag);
+        panel.addEventListener('pointermove', moveQrPreviewDrag);
+        panel.addEventListener('pointerup', stopQrPreviewDrag);
+        panel.addEventListener('pointercancel', stopQrPreviewDrag);
+    }
+
+    window.addEventListener('resize', () => {
+        if (document.getElementById('qr-preview-modal')?.classList.contains('show')) {
+            renderQrPreview();
+        }
+    });
+}
+
 async function loadDisplaySettings() {
     try {
         const res = await fetch('/api/display-settings');
@@ -1656,6 +1876,7 @@ loadPendingWishes();
 loadCurrentTheme();
 loadModerationState();
 loadDisplaySettings();
+initQrPreviewControls();
 
 async function setDisplayMode(mode) {
     await fetch('/api/display-mode', {
