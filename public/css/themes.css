@@ -1638,7 +1638,7 @@ html[data-background-theme="aselsan"] {
 }
 
 html[data-background-theme="aselsan"] .display-container {
-    background: #061334 url('/images/aselsan-keyvisual.png?v=1') center center / cover no-repeat !important;
+    background: #061334 url('/images/aselsan-keyvisual.png?v=2') center center / contain no-repeat !important;
 }
 
 html[data-background-theme="aselsan"] .display-container::before,
