@@ -1232,6 +1232,7 @@
     }
 
     #display-qr-panel {
+      --qr-panel-scale: 1;
       position: fixed;
       top: var(--qr-top, 160px);
       right: var(--qr-right, 80px);
@@ -1240,8 +1241,8 @@
       z-index: 10020;
       pointer-events: none;
       text-align: center;
-      border-radius: 26px;
-      padding: 14px 14px 12px;
+      border-radius: calc(26px * var(--qr-panel-scale));
+      padding: calc(14px * var(--qr-panel-scale)) calc(14px * var(--qr-panel-scale)) calc(12px * var(--qr-panel-scale));
       background: rgba(6, 11, 24, 0.78);
       border: 1px solid rgba(255, 255, 255, 0.14);
       box-shadow: 0 18px 50px rgba(0, 0, 0, 0.34);
@@ -1254,7 +1255,7 @@
 
     .display-qr__title {
       margin: 0 0 10px;
-      font-size: 14px;
+      font-size: calc(14px * var(--qr-panel-scale));
       line-height: 1.2;
       font-weight: 900;
       letter-spacing: 0.08em;
@@ -1266,8 +1267,8 @@
       width: 100%;
       aspect-ratio: 1 / 1;
       background: #fff;
-      border-radius: 18px;
-      padding: 12px;
+      border-radius: calc(18px * var(--qr-panel-scale));
+      padding: calc(12px * var(--qr-panel-scale));
       box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
     }
 
@@ -1275,12 +1276,12 @@
       width: 100%;
       height: 100%;
       display: block;
-      border-radius: 10px;
+      border-radius: calc(10px * var(--qr-panel-scale));
     }
 
     .display-qr__hint {
       margin-top: 10px;
-      font-size: 12px;
+      font-size: calc(12px * var(--qr-panel-scale));
       line-height: 1.3;
       font-weight: 700;
       color: rgba(255, 255, 255, 0.72);
@@ -1479,11 +1480,12 @@
       const viewportHeight = window.innerHeight || DESIGN_HEIGHT;
       const isHorizontalCanvas = DESIGN_WIDTH >= DESIGN_HEIGHT;
       const isMessageWallMode = document.documentElement.classList.contains('display-mode-messagewall');
+      const isAselsanTheme = document.documentElement.getAttribute('data-background-theme') === 'aselsan';
       let scale = 1;
 
       document.documentElement.style.setProperty('--lantern-size', isHorizontalCanvas ? '260px' : '240px');
 
-      if (isMessageWallMode) {
+      if (isMessageWallMode || isAselsanTheme) {
         scale = Math.min(viewportWidth / DESIGN_WIDTH, viewportHeight / DESIGN_HEIGHT);
       } else if (isHorizontalCanvas && viewportWidth >= viewportHeight) {
         scale = Math.max(viewportWidth / DESIGN_WIDTH, viewportHeight / DESIGN_HEIGHT);
@@ -1570,7 +1572,7 @@
       }
     })();
   </script>
-<script src="js/display.js?v=18.8.15"></script>
+<script src="js/display.js?v=18.8.16"></script>
 </body>
 
 </html>

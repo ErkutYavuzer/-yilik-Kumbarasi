@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: dilek-kumbarasi-beta
-          image: ghcr.io/ayavuzer/dilek-kumbarasi:beta-qr-preview-controls-20260511-1
+          image: ghcr.io/ayavuzer/dilek-kumbarasi:beta-qr-stage-scale-20260511-1
           imagePullPolicy: Always
           ports:
             - containerPort: 3000

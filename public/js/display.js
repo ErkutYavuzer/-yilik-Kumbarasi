@@ -66,6 +66,22 @@ class WishDisplay {
         return this.isMessageWallMode() || this.currentTheme === 'aselsan';
     }
 
+    getCanvasSize() {
+        if (this.currentTheme === 'aselsan') {
+            return { width: 1920, height: 1280 };
+        }
+        if (this.isMessageWallMode()) {
+            return { width: 1920, height: 1080 };
+        }
+        return { width: 960, height: 2160 };
+    }
+
+    applyCanvasSize() {
+        if (typeof window.setDisplayCanvasSize !== 'function') return;
+        const size = this.getCanvasSize();
+        window.setDisplayCanvasSize(size.width, size.height);
+    }
+
     getVisibleWishLimit() {
         if (this.isMessageWallMode()) {
             return 5;
@@ -102,10 +118,7 @@ class WishDisplay {
     applyDisplayMode() {
         const messageWall = this.isMessageWallMode();
         document.documentElement.classList.toggle('display-mode-messagewall', messageWall);
-        if (typeof window.setDisplayCanvasSize === 'function') {
-            const useLandscape = this.usesLandscapeCanvas();
-            window.setDisplayCanvasSize(useLandscape ? 1920 : 960, useLandscape ? 1080 : 2160);
-        }
+        this.applyCanvasSize();
 
         const legacyTitle = document.querySelector('.header-line2');
         if (legacyTitle) {
@@ -532,9 +545,10 @@ class WishDisplay {
         document.documentElement.style.setProperty('--header-offset', `${headerOffsetPx}px`);
         document.documentElement.style.setProperty('--logo-scale', logoScale.toString());
         document.documentElement.style.setProperty('--header-scale', headerScale.toString());
-        document.documentElement.style.setProperty('--qr-size', `${qrSize}px`);
+        document.documentElement.style.setProperty('--qr-size', `${safeQrPlacement.size}px`);
         document.documentElement.style.setProperty('--qr-top', `${safeQrPlacement.top}px`);
         document.documentElement.style.setProperty('--qr-right', `${safeQrPlacement.right}px`);
+        document.documentElement.style.setProperty('--qr-panel-scale', safeQrPlacement.scale.toString());
 
         // Ayrı logo boyutları
         const bakanlikScale = typeof this.displaySettings.bakanlikScale === 'number' ? this.displaySettings.bakanlikScale : 1;
@@ -731,17 +745,49 @@ class WishDisplay {
         return Math.max(2, Math.min(adminMax, maxAllowed));
     }
 
+    getQrStageMetrics() {
+        const stage = document.getElementById('scaled-app') || this.container;
+        const rect = stage ? stage.getBoundingClientRect() : {
+            left: 0,
+            top: 0,
+            right: window.innerWidth || 960,
+            width: window.innerWidth || 960,
+            height: window.innerHeight || 2160
+        };
+        const rootStyle = getComputedStyle(document.documentElement);
+        const designWidth = parseFloat(rootStyle.getPropertyValue('--design-width-num')) || this.container?.offsetWidth || 960;
+        const designHeight = parseFloat(rootStyle.getPropertyValue('--design-height-num')) || this.container?.offsetHeight || 2160;
+        const scale = rect.width > 0 && designWidth > 0 ? rect.width / designWidth : 1;
+
+        return {
+            left: rect.left || 0,
+            top: rect.top || 0,
+            right: Number.isFinite(rect.right) ? rect.right : (rect.left || 0) + (rect.width || designWidth),
+            width: rect.width || designWidth,
+            height: rect.height || designHeight,
+            designWidth,
+            designHeight,
+            scale: Number.isFinite(scale) && scale > 0 ? scale : 1
+        };
+    }
+
     getSafeQrPlacement(qrSize, qrTop, qrRight) {
-        const designWidth = window.innerWidth || this.container?.offsetWidth || 960;
-        const designHeight = window.innerHeight || this.container?.offsetHeight || 2160;
+        const stage = this.getQrStageMetrics();
+        const designWidth = stage.designWidth;
+        const designHeight = stage.designHeight;
         const panelHeight = qrSize + 96;
         const minGap = 24;
         const maxTop = Math.max(minGap, designHeight - panelHeight - minGap);
         const maxRight = Math.max(minGap, designWidth - qrSize - 32);
+        const safeTop = Math.max(minGap, Math.min(qrTop, maxTop));
+        const safeRight = Math.max(minGap, Math.min(qrRight, maxRight));
+        const scaledSize = qrSize * stage.scale;
 
         return {
-            top: Math.max(minGap, Math.min(qrTop, maxTop)),
-            right: Math.max(minGap, Math.min(qrRight, maxRight))
+            top: stage.top + (safeTop * stage.scale),
+            right: Math.max(0, (window.innerWidth || stage.right) - (stage.right - (safeRight * stage.scale))),
+            size: Math.max(60, scaledSize),
+            scale: stage.scale
         };
     }
 
@@ -2064,10 +2110,7 @@ class WishDisplay {
     applyTheme(theme) {
         this.currentTheme = theme || 'turktelekom';
         document.documentElement.setAttribute('data-background-theme', this.currentTheme);
-        if (typeof window.setDisplayCanvasSize === 'function') {
-            const useLandscape = this.usesLandscapeCanvas();
-            window.setDisplayCanvasSize(useLandscape ? 1920 : 960, useLandscape ? 1080 : 2160);
-        }
+        this.applyCanvasSize();
 
         const stageTitle = document.querySelector('.message-stage__headline-text');
         if (stageTitle && this.isMessageWallMode()) {
