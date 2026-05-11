@@ -975,6 +975,39 @@ app.get('/api/wishes', (req, res) => {
     res.json(approvedWishes);
 });
 
+// Dilek düzenle
+app.put('/api/wishes/:id', (req, res) => {
+    const { id } = req.params;
+    const { childName, wishText } = req.body || {};
+    const name = typeof childName === 'string' ? childName.trim() : '';
+    const text = typeof wishText === 'string' ? wishText.trim() : '';
+
+    if (name.length < 2) {
+        return res.status(400).json({ success: false, error: 'İsim gerekli (en az 2 karakter)' });
+    }
+    if (text.length > 140) {
+        return res.status(400).json({ success: false, error: 'Dilek metni en fazla 140 karakter olabilir' });
+    }
+
+    const wishIndex = wishes.findIndex(w => w.id === id);
+    if (wishIndex !== -1) {
+        wishes[wishIndex] = { ...wishes[wishIndex], childName: name, wishText: text };
+        saveWishes();
+        io.emit('wish-updated', wishes[wishIndex]);
+        return res.json({ success: true, wish: wishes[wishIndex] });
+    }
+
+    const pendingIndex = pendingWishes.findIndex(w => w.id === id);
+    if (pendingIndex !== -1) {
+        pendingWishes[pendingIndex] = { ...pendingWishes[pendingIndex], childName: name, wishText: text };
+        savePendingWishes();
+        io.emit('pending-wish-updated', pendingWishes[pendingIndex]);
+        return res.json({ success: true, wish: pendingWishes[pendingIndex] });
+    }
+
+    res.status(404).json({ success: false, error: 'Dilek bulunamadı' });
+});
+
 // Tüm bekleyen dilekleri getir
 app.get('/api/pending-wishes', (req, res) => {
     res.json(pendingWishes);
