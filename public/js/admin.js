@@ -7,7 +7,6 @@ let currentDisplayMode = 'balloon';
 const PARTICIPATION_URL = 'https://dilekfeneri.mezodigi.ai/upload';
 const PARTICIPATION_QR_SRC = '/images/participation-qr.png?v=1';
 const QR_PREVIEW_STAGE = { width: 1920, height: 1280 };
-const QR_PANEL_EXTRA_HEIGHT = 96;
 let qrPreviewState = null;
 let qrPreviewDrag = null;
 let displaySettingsCache = {
@@ -1132,11 +1131,16 @@ function clampNumber(value, min, max) {
     return Math.max(min, Math.min(value, max));
 }
 
+function getQrPanelExtraHeight(size) {
+    return size <= 130 ? 100 : 68;
+}
+
 function getQrPreviewLimits(size) {
     const minGap = 24;
+    const bottomGap = 0;
     return {
         minTop: minGap,
-        maxTop: Math.max(minGap, QR_PREVIEW_STAGE.height - size - QR_PANEL_EXTRA_HEIGHT - minGap),
+        maxTop: Math.max(minGap, QR_PREVIEW_STAGE.height - size - getQrPanelExtraHeight(size) - bottomGap),
         minRight: minGap,
         maxRight: Math.max(minGap, QR_PREVIEW_STAGE.width - size - 32)
     };
@@ -1296,7 +1300,7 @@ function moveQrPreviewDrag(event) {
     const stageRect = stage.getBoundingClientRect();
     const scale = getQrPreviewScale();
     const panelWidth = qrPreviewState.qrSize * scale;
-    const panelHeight = (qrPreviewState.qrSize + QR_PANEL_EXTRA_HEIGHT) * scale;
+    const panelHeight = (qrPreviewState.qrSize + getQrPanelExtraHeight(qrPreviewState.qrSize)) * scale;
     const left = clampNumber(event.clientX - stageRect.left - qrPreviewDrag.offsetX, 0, stageRect.width - panelWidth);
     const top = clampNumber(event.clientY - stageRect.top - qrPreviewDrag.offsetY, 0, stageRect.height - panelHeight);
     const right = stageRect.width - left - panelWidth;

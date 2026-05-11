@@ -582,6 +582,7 @@ class WishDisplay {
         document.documentElement.classList.toggle('day-mode', !!this.displaySettings.dayMode);
         if (this.displayQrPanel) {
             this.displayQrPanel.classList.toggle('visible', qrVisible);
+            this.alignDisplayQrPanelToStage(safeQrPlacement);
         }
 
         // Logo ve başlık çakışmasını önle (ekranlar arası ölçek farkı)
@@ -771,13 +772,18 @@ class WishDisplay {
         };
     }
 
+    getQrPanelExtraHeight(qrSize) {
+        return qrSize <= 130 ? 100 : 68;
+    }
+
     getSafeQrPlacement(qrSize, qrTop, qrRight) {
         const stage = this.getQrStageMetrics();
         const designWidth = stage.designWidth;
         const designHeight = stage.designHeight;
-        const panelHeight = qrSize + 96;
+        const panelHeight = qrSize + this.getQrPanelExtraHeight(qrSize);
         const minGap = 24;
-        const maxTop = Math.max(minGap, designHeight - panelHeight - minGap);
+        const bottomGap = 0;
+        const maxTop = Math.max(minGap, designHeight - panelHeight - bottomGap);
         const maxRight = Math.max(minGap, designWidth - qrSize - 32);
         const safeTop = Math.max(minGap, Math.min(qrTop, maxTop));
         const safeRight = Math.max(minGap, Math.min(qrRight, maxRight));
@@ -787,8 +793,29 @@ class WishDisplay {
             top: stage.top + (safeTop * stage.scale),
             right: Math.max(0, (window.innerWidth || stage.right) - (stage.right - (safeRight * stage.scale))),
             size: Math.max(60, scaledSize),
-            scale: stage.scale
+            scale: stage.scale,
+            safeTop,
+            maxTop,
+            designPanelHeight: panelHeight
         };
+    }
+
+    alignDisplayQrPanelToStage(placement) {
+        if (!this.displayQrPanel || !placement) return;
+        if (!this.displayQrPanel.classList.contains('visible')) return;
+        if (Math.abs(placement.safeTop - placement.maxTop) > 0.5) return;
+
+        const stage = this.getQrStageMetrics();
+        const panelRect = this.displayQrPanel.getBoundingClientRect();
+        if (!panelRect.height || !stage.scale) return;
+
+        const actualPanelHeight = panelRect.height / stage.scale;
+        const bottomCompensation = Math.max(0, placement.designPanelHeight - actualPanelHeight);
+        if (bottomCompensation <= 0) return;
+
+        const maxPixelTop = stage.top + stage.height - panelRect.height;
+        const adjustedTop = Math.min(maxPixelTop, placement.top + (bottomCompensation * stage.scale));
+        document.documentElement.style.setProperty('--qr-top', `${Math.max(stage.top, adjustedTop)}px`);
     }
 
     initDisplayQr() {

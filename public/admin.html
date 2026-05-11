@@ -401,7 +401,7 @@
                                     <label for="moderation-display-qr-top">Üst Konum</label>
                                     <div class="range-control">
                                         <input type="range" class="setting-range" id="moderation-display-qr-top" min="0"
-                                            max="1280" step="4" value="96" oninput="updateQrTopLabel(this.value)"
+                                            max="1280" step="1" value="96" oninput="updateQrTopLabel(this.value)"
                                             onchange="saveDisplaySettings()">
                                         <span class="control-value-pill" id="moderation-qr-top-value">96px</span>
                                     </div>
@@ -611,7 +611,7 @@
                                 <span id="qr-top-value"
                                     style="color:var(--accent);font-weight:700;margin-left:6px;">160px</span>
                             </div>
-                            <input type="range" class="setting-range" id="display-qr-top" min="0" max="2160" step="4"
+                            <input type="range" class="setting-range" id="display-qr-top" min="0" max="2160" step="1"
                                 value="160" oninput="updateQrTopLabel(this.value)" onchange="saveDisplaySettings()">
                             <div
                                 style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
@@ -1248,7 +1248,7 @@
                     <div class="control-row slider-row">
                         <label for="qr-preview-top">Üst Konum</label>
                         <div class="range-control">
-                            <input type="range" class="setting-range" id="qr-preview-top" min="0" max="1280" step="4" value="96">
+                            <input type="range" class="setting-range" id="qr-preview-top" min="0" max="1280" step="1" value="96">
                             <span class="control-value-pill" id="qr-preview-top-value">96px</span>
                         </div>
                     </div>
@@ -1318,7 +1318,7 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/admin.js?v=2.0.20"></script>
+    <script src="/js/admin.js?v=2.0.21"></script>
     <script>
         // Init Lucide Icons
         document.addEventListener('DOMContentLoaded', () => {

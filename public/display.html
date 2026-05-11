@@ -1255,7 +1255,7 @@
     }
 
     .display-qr__title {
-      margin: 0 0 10px;
+      margin: 0 0 calc(10px * var(--qr-panel-scale));
       font-size: calc(14px * var(--qr-panel-scale));
       line-height: 1.2;
       font-weight: 900;
@@ -1281,7 +1281,7 @@
     }
 
     .display-qr__hint {
-      margin-top: 10px;
+      margin-top: calc(10px * var(--qr-panel-scale));
       font-size: calc(12px * var(--qr-panel-scale));
       line-height: 1.3;
       font-weight: 700;
@@ -1573,7 +1573,7 @@
       }
     })();
   </script>
-<script src="js/display.js?v=18.8.16"></script>
+<script src="js/display.js?v=18.8.17"></script>
 </body>
 
 </html>
