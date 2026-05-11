@@ -1000,7 +1000,7 @@ body.focus-mode .main {
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 12px;
-    background: #061334 url('/images/aselsan-keyvisual.png?v=2') center center / contain no-repeat;
+    background: #061334 url('/images/aselsan-keyvisual.png?v=3') center center / contain no-repeat;
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.24), 0 18px 48px rgba(0, 0, 0, 0.34);
 }
 

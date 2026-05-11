@@ -40,23 +40,24 @@
             z-index: 0;
             background:
                 linear-gradient(180deg, rgba(3, 10, 31, 0.52), rgba(3, 10, 31, 0.78)),
-                url('/images/aselsan-keyvisual.png?v=2') center center / cover no-repeat,
+                url('/images/aselsan-keyvisual.png?v=3') center center / cover no-repeat,
                 linear-gradient(135deg, #061334 0%, #0a2d5f 100%);
-            background-size: 200% 200%;
+            background-size: 200% 200%, cover, 200% 200%;
+            background-position: 0% 50%, center center, 0% 50%;
             animation: bgShift 16s ease-in-out infinite;
         }
 
         @keyframes bgShift {
             0% {
-                background-position: 0% 50%
+                background-position: 0% 50%, center center, 0% 50%
             }
 
             50% {
-                background-position: 100% 50%
+                background-position: 100% 50%, center center, 100% 50%
             }
 
             100% {
-                background-position: 0% 50%
+                background-position: 0% 50%, center center, 0% 50%
             }
         }
 
