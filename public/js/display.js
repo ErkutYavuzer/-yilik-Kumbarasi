@@ -17,6 +17,7 @@ class WishDisplay {
         this.wishes = [];
         this.wishCards = [];
         this.allServerWishes = []; // Tüm dilek havuzu eklendi
+        this.pendingMessageWallWishes = [];
         this.socket = null;
         this.isMuted = false;
         this.audioCtx = null;
@@ -396,12 +397,14 @@ class WishDisplay {
 
         this.socket.on('new-wish', (wish) => {
             console.log('🎈 Yeni dilek:', wish.childName);
-            if (this.totalWishesCount !== undefined) {
+            const wishId = String(wish.id);
+            const alreadyKnown = this.allServerWishes.some(existing => String(existing.id) === wishId);
+            if (!alreadyKnown && this.totalWishesCount !== undefined) {
                 this.totalWishesCount++;
             }
-            this.allServerWishes = [wish, ...this.allServerWishes.filter(existing => existing.id !== wish.id)];
+            this.allServerWishes = [wish, ...this.allServerWishes.filter(existing => String(existing.id) !== wishId)];
             if (this.isMessageWallMode() && this.wishCards.length >= this.getVisibleWishLimit()) {
-                this.queueMessageWallWish(wish);
+                this.showMessageWallWishImmediately(wish);
             } else {
                 this.addWish(wish, true);
             }
@@ -894,6 +897,39 @@ class WishDisplay {
         const alreadyQueued = this.pendingMessageWallWishes.some(item => String(item.id) === wishId);
         if (!alreadyVisible && !alreadyQueued) {
             this.pendingMessageWallWishes.push(wish);
+        }
+    }
+
+    showMessageWallWishImmediately(wish) {
+        if (!wish || wish.id === undefined || wish.id === null) return;
+        const wishId = String(wish.id);
+
+        this.pendingMessageWallWishes = this.pendingMessageWallWishes.filter(item => String(item.id) !== wishId);
+
+        const visibleCard = this.wishCards.find(card => String(card.element.dataset.wishId) === wishId);
+        if (visibleCard) {
+            this.armMessageWallCard(visibleCard, wish, true, 0);
+            return;
+        }
+
+        if (this.wishCards.length < this.getVisibleWishLimit()) {
+            this.addMessageWallWish(wish, true);
+            return;
+        }
+
+        const reusableCard = [...this.wishCards]
+            .filter(card => card.phase !== 'closing')
+            .sort((a, b) => {
+                const aHolding = a.phase === 'holding' ? 0 : 1;
+                const bHolding = b.phase === 'holding' ? 0 : 1;
+                if (aHolding !== bHolding) return aHolding - bHolding;
+                return (a.phaseStartedAt || 0) - (b.phaseStartedAt || 0);
+            })[0] || this.wishCards[0];
+
+        if (reusableCard) {
+            this.armMessageWallCard(reusableCard, wish, true, 0);
+        } else {
+            this.queueMessageWallWish(wish);
         }
     }
 
