@@ -758,7 +758,9 @@ class WishDisplay {
         const rootStyle = getComputedStyle(document.documentElement);
         const designWidth = parseFloat(rootStyle.getPropertyValue('--design-width-num')) || this.container?.offsetWidth || 960;
         const designHeight = parseFloat(rootStyle.getPropertyValue('--design-height-num')) || this.container?.offsetHeight || 2160;
-        const scale = rect.width > 0 && designWidth > 0 ? rect.width / designWidth : 1;
+        const scaleX = rect.width > 0 && designWidth > 0 ? rect.width / designWidth : 1;
+        const scaleY = rect.height > 0 && designHeight > 0 ? rect.height / designHeight : scaleX;
+        const scale = Math.min(scaleX, scaleY);
 
         return {
             left: rect.left || 0,
@@ -768,7 +770,9 @@ class WishDisplay {
             height: rect.height || designHeight,
             designWidth,
             designHeight,
-            scale: Number.isFinite(scale) && scale > 0 ? scale : 1
+            scale: Number.isFinite(scale) && scale > 0 ? scale : 1,
+            scaleX: Number.isFinite(scaleX) && scaleX > 0 ? scaleX : 1,
+            scaleY: Number.isFinite(scaleY) && scaleY > 0 ? scaleY : 1
         };
     }
 
@@ -790,8 +794,8 @@ class WishDisplay {
         const scaledSize = qrSize * stage.scale;
 
         return {
-            top: stage.top + (safeTop * stage.scale),
-            right: Math.max(0, (window.innerWidth || stage.right) - (stage.right - (safeRight * stage.scale))),
+            top: stage.top + (safeTop * stage.scaleY),
+            right: Math.max(0, (window.innerWidth || stage.right) - (stage.right - (safeRight * stage.scaleX))),
             size: Math.max(60, scaledSize),
             scale: stage.scale,
             safeTop,

@@ -1482,11 +1482,28 @@
       const isHorizontalCanvas = DESIGN_WIDTH >= DESIGN_HEIGHT;
       const isMessageWallMode = document.documentElement.classList.contains('display-mode-messagewall');
       const isAselsanTheme = document.documentElement.getAttribute('data-background-theme') === 'aselsan';
+      const screenWidth = window.screen && window.screen.width ? window.screen.width : 0;
+      const screenHeight = window.screen && window.screen.height ? window.screen.height : 0;
+      const isScreenSized = screenWidth > 0
+        && screenHeight > 0
+        && Math.abs(viewportWidth - screenWidth) <= 4
+        && Math.abs(viewportHeight - screenHeight) <= 4;
+      const isFullscreenLike = !!document.fullscreenElement
+        || document.documentElement.classList.contains('display-fullscreen')
+        || isScreenSized;
       let scale = 1;
+      let scaleX = 1;
+      let scaleY = 1;
+      let stretchToViewport = false;
 
       document.documentElement.style.setProperty('--lantern-size', isHorizontalCanvas ? '260px' : '240px');
 
-      if (isMessageWallMode || isAselsanTheme) {
+      if (isAselsanTheme && isFullscreenLike) {
+        stretchToViewport = true;
+        scaleX = viewportWidth / DESIGN_WIDTH;
+        scaleY = viewportHeight / DESIGN_HEIGHT;
+        scale = Math.min(scaleX, scaleY);
+      } else if (isMessageWallMode || isAselsanTheme) {
         scale = Math.min(viewportWidth / DESIGN_WIDTH, viewportHeight / DESIGN_HEIGHT);
       } else if (isHorizontalCanvas && viewportWidth >= viewportHeight) {
         scale = Math.max(viewportWidth / DESIGN_WIDTH, viewportHeight / DESIGN_HEIGHT);
@@ -1497,17 +1514,27 @@
       if (!Number.isFinite(scale) || scale <= 0) {
         scale = 1;
       }
+      if (!stretchToViewport) {
+        scaleX = scale;
+        scaleY = scale;
+      }
+      if (!Number.isFinite(scaleX) || scaleX <= 0) scaleX = 1;
+      if (!Number.isFinite(scaleY) || scaleY <= 0) scaleY = 1;
 
-      let offsetX = (viewportWidth - (DESIGN_WIDTH * scale)) / 2;
-      let offsetY = (viewportHeight - (DESIGN_HEIGHT * scale)) / 2;
+      let offsetX = stretchToViewport ? 0 : (viewportWidth - (DESIGN_WIDTH * scale)) / 2;
+      let offsetY = stretchToViewport ? 0 : (viewportHeight - (DESIGN_HEIGHT * scale)) / 2;
 
       const scaledApp = document.getElementById('scaled-app');
       if (scaledApp) {
-        scaledApp.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+        scaledApp.style.transform = stretchToViewport
+          ? `translate(${offsetX}px, ${offsetY}px) scale(${scaleX}, ${scaleY})`
+          : `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
         scaledApp.style.transformOrigin = 'top left';
         scaledApp.style.width = DESIGN_WIDTH + 'px';
         scaledApp.style.height = DESIGN_HEIGHT + 'px';
       }
+      document.documentElement.style.setProperty('--display-scale-x', String(scaleX));
+      document.documentElement.style.setProperty('--display-scale-y', String(scaleY));
 
       const container = document.querySelector('.display-container');
       if (container) {
@@ -1573,7 +1600,7 @@
       }
     })();
   </script>
-<script src="js/display.js?v=18.8.18"></script>
+<script src="js/display.js?v=18.8.19"></script>
 </body>
 
 </html>
