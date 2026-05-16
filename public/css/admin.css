@@ -994,13 +994,13 @@ body.focus-mode .main {
 
 .qr-preview-stage {
     position: relative;
-    width: min(100%, 990px, calc((100vh - 220px) * 1.5));
-    aspect-ratio: 3 / 2;
+    width: min(100%, 990px, calc((100vh - 220px) * 1.6));
+    aspect-ratio: 8 / 5;
     margin: 0 auto;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 12px;
-    background: #061334 url('/images/aselsan-keyvisual.png?v=3') center center / contain no-repeat;
+    background: #061334 url('/images/aselsan-keyvisual.png?v=3') center center / 100% 100% no-repeat;
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.24), 0 18px 48px rgba(0, 0, 0, 0.34);
 }
 

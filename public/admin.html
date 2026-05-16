@@ -14,7 +14,7 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Chart.js removed - causing infinite growth bug -->
-    <link rel="stylesheet" href="/css/admin.css?v=20260511-bg3">
+    <link rel="stylesheet" href="/css/admin.css?v=20260516-screen1344">
 </head>
 
 <body>
@@ -401,7 +401,7 @@
                                     <label for="moderation-display-qr-top">Üst Konum</label>
                                     <div class="range-control">
                                         <input type="range" class="setting-range" id="moderation-display-qr-top" min="0"
-                                            max="1280" step="1" value="96" oninput="updateQrTopLabel(this.value)"
+                                            max="840" step="1" value="96" oninput="updateQrTopLabel(this.value)"
                                             onchange="saveDisplaySettings()">
                                         <span class="control-value-pill" id="moderation-qr-top-value">96px</span>
                                     </div>
@@ -410,7 +410,7 @@
                                     <label for="moderation-display-qr-right">Sağ Konum</label>
                                     <div class="range-control">
                                         <input type="range" class="setting-range" id="moderation-display-qr-right" min="0"
-                                            max="1920" step="4" value="64" oninput="updateQrRightLabel(this.value)"
+                                            max="1344" step="4" value="64" oninput="updateQrRightLabel(this.value)"
                                             onchange="saveDisplaySettings()">
                                         <span class="control-value-pill" id="moderation-qr-right-value">64px</span>
                                     </div>
@@ -611,7 +611,7 @@
                                 <span id="qr-top-value"
                                     style="color:var(--accent);font-weight:700;margin-left:6px;">160px</span>
                             </div>
-                            <input type="range" class="setting-range" id="display-qr-top" min="0" max="2160" step="1"
+                            <input type="range" class="setting-range" id="display-qr-top" min="0" max="840" step="1"
                                 value="160" oninput="updateQrTopLabel(this.value)" onchange="saveDisplaySettings()">
                             <div
                                 style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
@@ -624,7 +624,7 @@
                                 <span id="qr-right-value"
                                     style="color:var(--accent);font-weight:700;margin-left:6px;">80px</span>
                             </div>
-                            <input type="range" class="setting-range" id="display-qr-right" min="0" max="2160" step="4"
+                            <input type="range" class="setting-range" id="display-qr-right" min="0" max="1344" step="4"
                                 value="80" oninput="updateQrRightLabel(this.value)" onchange="saveDisplaySettings()">
                             <div
                                 style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px;">
@@ -1208,7 +1208,7 @@
             <div class="qr-preview-header">
                 <div>
                     <h3 id="qr-preview-title"><i data-lucide="monitor-cog" style="width:20px;height:20px;"></i> QR Sahne Önizleme</h3>
-                    <p>3:2 Aselsan sahne yerleşimi</p>
+                    <p>1344 x 840 Aselsan sahne yerleşimi</p>
                 </div>
                 <button type="button" class="icon-btn" onclick="closeQrPreviewModal()" aria-label="Kapat">
                     <i data-lucide="x" style="width:18px;height:18px;"></i>
@@ -1218,8 +1218,8 @@
             <div class="qr-preview-workspace">
                 <div class="qr-preview-stage-wrap">
                     <div class="qr-preview-stage-meta">
-                        <span>3:2 Sahne</span>
-                        <span id="qr-preview-stage-size">1920 x 1280</span>
+                        <span>16:10 Sahne</span>
+                        <span id="qr-preview-stage-size">1344 x 840</span>
                     </div>
                     <div class="qr-preview-stage" id="qr-preview-stage">
                         <div class="qr-preview-panel" id="qr-preview-panel" tabindex="0">
@@ -1248,14 +1248,14 @@
                     <div class="control-row slider-row">
                         <label for="qr-preview-top">Üst Konum</label>
                         <div class="range-control">
-                            <input type="range" class="setting-range" id="qr-preview-top" min="0" max="1280" step="1" value="96">
+                            <input type="range" class="setting-range" id="qr-preview-top" min="0" max="840" step="1" value="96">
                             <span class="control-value-pill" id="qr-preview-top-value">96px</span>
                         </div>
                     </div>
                     <div class="control-row slider-row">
                         <label for="qr-preview-right">Sağ Konum</label>
                         <div class="range-control">
-                            <input type="range" class="setting-range" id="qr-preview-right" min="0" max="1920" step="4" value="64">
+                            <input type="range" class="setting-range" id="qr-preview-right" min="0" max="1344" step="4" value="64">
                             <span class="control-value-pill" id="qr-preview-right-value">64px</span>
                         </div>
                     </div>
@@ -1318,7 +1318,7 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/admin.js?v=2.0.21"></script>
+    <script src="/js/admin.js?v=2.0.22"></script>
     <script>
         // Init Lucide Icons
         document.addEventListener('DOMContentLoaded', () => {

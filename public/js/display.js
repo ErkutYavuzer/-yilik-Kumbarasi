@@ -68,7 +68,7 @@ class WishDisplay {
 
     getCanvasSize() {
         if (this.currentTheme === 'aselsan') {
-            return { width: 1920, height: 1280 };
+            return { width: 1344, height: 840 };
         }
         if (this.isMessageWallMode()) {
             return { width: 1920, height: 1080 };

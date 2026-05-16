@@ -6,7 +6,7 @@ let autoIndex = 0;
 let currentDisplayMode = 'balloon';
 const PARTICIPATION_URL = 'https://dilekfeneri.mezodigi.ai/upload';
 const PARTICIPATION_QR_SRC = '/images/participation-qr.png?v=1';
-const QR_PREVIEW_STAGE = { width: 1920, height: 1280 };
+const QR_PREVIEW_STAGE = { width: 1344, height: 840 };
 let qrPreviewState = null;
 let qrPreviewDrag = null;
 let displaySettingsCache = {
