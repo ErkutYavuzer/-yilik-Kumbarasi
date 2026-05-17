@@ -1577,6 +1577,10 @@ html.display-mode-messagewall .wish-card.messagewall-mode .child-name {
     line-height: 1;
     letter-spacing: 0.028em;
     text-transform: uppercase;
+    white-space: nowrap;
+    overflow: visible;
+    word-break: keep-all;
+    overflow-wrap: normal;
 }
 
 html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--small {
@@ -1596,12 +1600,12 @@ html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--smal
 }
 
 html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--small .child-name {
-    left: 8px;
+    left: 4px;
     right: auto;
     bottom: 10px;
-    width: 132px !important;
-    max-width: 132px !important;
-    font-size: 15px;
+    width: 148px !important;
+    max-width: 148px !important;
+    font-size: 14px;
 }
 
 html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero {
@@ -1624,11 +1628,11 @@ html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero
 }
 
 html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero .child-name {
-    left: 12px;
+    left: 4px;
     right: auto;
     bottom: 14px;
-    width: 204px !important;
-    max-width: 204px !important;
+    width: 220px !important;
+    max-width: 220px !important;
     font-size: 20px;
     letter-spacing: 0.028em;
 }

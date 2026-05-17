@@ -543,12 +543,15 @@ class WishDisplay {
                             ${renderedText ? `<div class="wish-text">${renderedText}</div>` : '<div class="wish-text">Dilek metni bekleniyor.</div>'}
                             <div class="child-name">${wish.childName}</div>
                         `;
+                        this.fitMessageWallTypography(cardData.element);
                     } else {
                         // Balonu yeni verilerle güncelle
                         const body = cardData.element.querySelector('.balloon-body') || cardData.element.querySelector('.lantern-text');
                         if (body) {
                             const textHtml = wish.wishText ? '<div class="wish-text">' + wish.wishText.replace(/\\n/g, '<br>') + '</div>' : '';
                             body.innerHTML = textHtml + '<div class="child-name">' + wish.childName + '</div>';
+                            this.fitFloatingCardTypography(cardData.element);
+                            requestAnimationFrame(() => this.fitFloatingCardTypography(cardData.element));
                         }
                     }
                 }
@@ -1110,12 +1113,13 @@ class WishDisplay {
                 textMaxFont: 30,
                 textLineHeight: 1.06,
                 nameBottom: 14,
-                nameMinWidth: 188,
-                nameMaxWidth: 228,
-                nameMinFont: 17,
-                nameMaxFont: 21,
-                nameLineHeight: 1,
+                nameMinWidth: 204,
+                nameMaxWidth: 220,
+                nameMinFont: 14,
+                nameMaxFont: 20,
+                nameLineHeight: 1.05,
                 nameReserve: 48,
+                nameMaxHeight: 30,
                 maxLines: 6
             };
         }
@@ -1128,12 +1132,13 @@ class WishDisplay {
             textMaxFont: 19,
             textLineHeight: 1.14,
             nameBottom: 10,
-            nameMinWidth: 118,
-            nameMaxWidth: 160,
-            nameMinFont: 13,
-            nameMaxFont: 16,
-            nameLineHeight: 1,
+            nameMinWidth: 132,
+            nameMaxWidth: 148,
+            nameMinFont: 10,
+            nameMaxFont: 14,
+            nameLineHeight: 1.05,
             nameReserve: 32,
+            nameMaxHeight: 22,
             maxLines: 8
         };
     }
@@ -1220,11 +1225,80 @@ class WishDisplay {
         this.fitTextToBox(nameEl, {
             minFont: cfg.nameMinFont,
             maxFont: cfg.nameMaxFont,
-            maxHeight: 26,
+            maxHeight: cfg.nameMaxHeight || 26,
             maxWidth: nameWidth,
             lineHeight: cfg.nameLineHeight,
             maxLines: 1
         });
+    }
+
+    fitFloatingCardTypography(card) {
+        if (!card || card.classList.contains('messagewall-mode')) return;
+
+        const textEl = card.querySelector('.wish-text');
+        const nameEl = card.querySelector('.child-name');
+
+        if (card.classList.contains('lantern-mode')) {
+            const textBox = card.querySelector('.lantern-text');
+            if (textBox) {
+                textBox.style.width = '148px';
+                textBox.style.overflow = 'visible';
+            }
+
+            if (textEl) {
+                this.fitTextToBox(textEl, {
+                    minFont: 10,
+                    maxFont: 14,
+                    maxHeight: 122,
+                    maxWidth: 148,
+                    lineHeight: 1.18,
+                    maxLines: 7
+                });
+            }
+
+            if (nameEl) {
+                nameEl.style.whiteSpace = 'nowrap';
+                nameEl.style.wordBreak = 'keep-all';
+                nameEl.style.overflowWrap = 'normal';
+                nameEl.style.width = '160px';
+                nameEl.style.maxWidth = '160px';
+                nameEl.style.textAlign = 'center';
+                this.fitTextToBox(nameEl, {
+                    minFont: 9,
+                    maxFont: 13,
+                    maxHeight: 18,
+                    maxWidth: 160,
+                    lineHeight: 1,
+                    maxLines: 1
+                });
+            }
+            return;
+        }
+
+        if (textEl) {
+            this.fitTextToBox(textEl, {
+                minFont: 13,
+                maxFont: 20,
+                maxHeight: 190,
+                maxWidth: 240,
+                lineHeight: 1.25,
+                maxLines: 8
+            });
+        }
+
+        if (nameEl) {
+            nameEl.style.whiteSpace = 'nowrap';
+            nameEl.style.wordBreak = 'keep-all';
+            nameEl.style.overflowWrap = 'normal';
+            this.fitTextToBox(nameEl, {
+                minFont: 11,
+                maxFont: 18,
+                maxHeight: 24,
+                maxWidth: 250,
+                lineHeight: 1.15,
+                maxLines: 1
+            });
+        }
     }
 
     easeOutBack(t) {
@@ -1785,6 +1859,8 @@ class WishDisplay {
         });
 
         this.container.appendChild(card);
+        this.fitFloatingCardTypography(card);
+        requestAnimationFrame(() => this.fitFloatingCardTypography(card));
         this.wishes.push(wish);
         this.recordWishShown(wish);
 
@@ -1956,6 +2032,7 @@ class WishDisplay {
                                     : 'Dilek metni bekleniyor.';
                             }
                             if (nameEl && nextWish.childName) nameEl.textContent = nextWish.childName;
+                            this.fitMessageWallTypography(cardData.element);
                             this.recordWishShown(nextWish);
                         }
 

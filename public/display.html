@@ -16,7 +16,7 @@
     };
     window.setTimeout(window.finishDisplayBoot, 5000);
   </script>
-  <link rel="stylesheet" href="/css/themes.css?v=18.8.3" />
+  <link rel="stylesheet" href="/css/themes.css?v=18.8.4" />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     * {
@@ -336,13 +336,13 @@
 
     /* Fener altı metin alanı — düz beyaz yazı */
     .lantern-text {
-      width: 112px;
+      width: 148px;
       margin: 0 auto;
       text-align: center;
       pointer-events: none;
-      overflow: hidden;
-      word-break: break-word;
-      overflow-wrap: break-word;
+      overflow: visible;
+      word-break: normal;
+      overflow-wrap: anywhere;
     }
 
     /* Fener metin stilleri — beyaz düz yazı */
@@ -362,7 +362,13 @@
       font-family: "Centrale Sans", "Nunito", sans-serif;
       line-height: 1.24;
       text-align: center;
-      overflow: visible;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 7;
+      max-height: 122px;
+      overflow: hidden;
+      overflow-wrap: anywhere;
+      word-break: normal;
     }
 
     .wish-card.lantern-mode .child-name {
@@ -377,11 +383,15 @@
       font-weight: 800;
       color: #FFD700;
       text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
-      margin-top: 4px;
+      margin: 4px auto 0;
       text-align: center;
       font-family: "Centrale Sans", "Nunito", sans-serif;
       font-style: italic;
       z-index: 2;
+      white-space: nowrap;
+      overflow: visible;
+      word-break: keep-all;
+      overflow-wrap: normal;
     }
 
     .wish-card.lantern-mode .child-name::before {
@@ -663,7 +673,9 @@
 
       display: block;
       overflow: visible;
-      word-break: break-word;
+      white-space: nowrap;
+      word-break: keep-all;
+      overflow-wrap: normal;
     }
 
     /* Empty state */
@@ -1600,7 +1612,7 @@
       }
     })();
   </script>
-<script src="js/display.js?v=18.8.22"></script>
+<script src="js/display.js?v=18.8.23"></script>
 </body>
 
 </html>

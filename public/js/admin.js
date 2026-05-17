@@ -476,6 +476,15 @@ function formatTime(ts) {
     return new Date(ts).toLocaleString('tr-TR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 }
 
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 function filterWishes() {
     renderWishes();
 }
@@ -1798,19 +1807,27 @@ function renderPendingWishes() {
 
     if (tbody) {
         tbody.parentElement.parentElement.style.display = 'block';
-        tbody.innerHTML = pendingWishes.map(w => `
-        <tr>
-            <td style="font-weight:600;">${w.childName}</td>
-            <td><div class="ocr-text" title="${(w.wishText || '').replace(/"/g, '&quot;')}">${w.wishText || '<span style="color:var(--text3);font-style:italic">Metin yok</span>'}</div></td>
-            <td style="color:var(--text2);font-size:13px">${formatTime(w.timestamp)}</td>
-            <td>
-                <div style="display:flex; gap:6px;">
+        tbody.innerHTML = pendingWishes.map(w => {
+            const name = escapeHtml(w.childName || 'Isim yok');
+            const wishText = w.wishText
+                ? escapeHtml(w.wishText)
+                : '<span style="color:var(--text3);font-style:italic">Metin yok</span>';
+            const titleText = escapeHtml(w.wishText || '');
+            const time = escapeHtml(formatTime(w.timestamp));
+            return `
+        <tr class="pending-row">
+            <td class="pending-name-cell" data-label="Katılımcı" style="font-weight:600;">${name}</td>
+            <td class="pending-message-cell" data-label="Mesaj"><div class="ocr-text pending-message-text" title="${titleText}">${wishText}</div></td>
+            <td class="pending-time-cell" data-label="Tarih" style="color:var(--text2);font-size:13px">${time}</td>
+            <td class="pending-action-cell" data-label="İşlem">
+                <div class="pending-actions" style="display:flex; gap:6px;">
                     <button class="btn btn-primary" onclick="approveWish('${w.id}')" style="padding:6px 12px; font-size:12px;"><i data-lucide="check" style="width:14px;height:14px;"></i> Onayla</button>
                     <button class="btn btn-danger" onclick="rejectWish('${w.id}')" style="padding:6px 12px; font-size:12px;"><i data-lucide="x" style="width:14px;height:14px;"></i> Reddet</button>
                 </div>
             </td>
         </tr>
-        `).join('');
+        `;
+        }).join('');
         if (typeof lucide !== 'undefined') lucide.createIcons();
     }
     if (empty) empty.style.display = 'none';
