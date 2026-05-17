@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: dilek-kumbarasi-beta
-          image: ghcr.io/ayavuzer/dilek-kumbarasi:beta-admin-approval-effect-20260516-1
+          image: ghcr.io/ayavuzer/dilek-kumbarasi:beta-fair-wish-rotation-20260517-1
           imagePullPolicy: Always
           ports:
             - containerPort: 3000

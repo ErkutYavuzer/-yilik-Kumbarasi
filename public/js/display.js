@@ -18,6 +18,9 @@ class WishDisplay {
         this.wishCards = [];
         this.allServerWishes = []; // Tüm dilek havuzu eklendi
         this.pendingMessageWallWishes = [];
+        this.wishDisplayCounts = new Map();
+        this.wishLastShownTick = new Map();
+        this.wishFairnessTick = 0;
         this.socket = null;
         this.isMuted = false;
         this.audioCtx = null;
@@ -91,13 +94,107 @@ class WishDisplay {
         return ((this.displaySettings && this.displaySettings.maxVisible) || 12);
     }
 
+    getWishId(wishOrId) {
+        if (wishOrId && typeof wishOrId === 'object') {
+            return wishOrId.id === undefined || wishOrId.id === null ? null : String(wishOrId.id);
+        }
+        return wishOrId === undefined || wishOrId === null ? null : String(wishOrId);
+    }
+
+    syncFairWishStats(pool = this.allServerWishes) {
+        const validIds = new Set();
+        (Array.isArray(pool) ? pool : []).forEach(wish => {
+            const wishId = this.getWishId(wish);
+            if (!wishId) return;
+            validIds.add(wishId);
+            if (!this.wishDisplayCounts.has(wishId)) this.wishDisplayCounts.set(wishId, 0);
+            if (!this.wishLastShownTick.has(wishId)) this.wishLastShownTick.set(wishId, 0);
+        });
+
+        for (const wishId of [...this.wishDisplayCounts.keys()]) {
+            if (!validIds.has(wishId)) this.wishDisplayCounts.delete(wishId);
+        }
+        for (const wishId of [...this.wishLastShownTick.keys()]) {
+            if (!validIds.has(wishId)) this.wishLastShownTick.delete(wishId);
+        }
+    }
+
+    recordWishShown(wish) {
+        const wishId = this.getWishId(wish);
+        if (!wishId) return;
+        this.syncFairWishStats();
+        this.wishDisplayCounts.set(wishId, (this.wishDisplayCounts.get(wishId) || 0) + 1);
+        this.wishFairnessTick += 1;
+        this.wishLastShownTick.set(wishId, this.wishFairnessTick);
+    }
+
+    forgetWishStats(id) {
+        const wishId = this.getWishId(id);
+        if (!wishId) return;
+        this.wishDisplayCounts.delete(wishId);
+        this.wishLastShownTick.delete(wishId);
+    }
+
+    getFairWishOrder(wish) {
+        const wishId = this.getWishId(wish);
+        if (!wishId || !Array.isArray(this.allServerWishes)) return Number.MAX_SAFE_INTEGER;
+        const index = this.allServerWishes.findIndex(item => this.getWishId(item) === wishId);
+        return index === -1 ? Number.MAX_SAFE_INTEGER : index;
+    }
+
+    selectFairWish(pool = this.allServerWishes, options = {}) {
+        if (!Array.isArray(pool) || pool.length === 0) return null;
+        this.syncFairWishStats();
+
+        const excluded = new Set([...(options.excludeIds || [])].map(id => String(id)));
+        const currentWishId = this.getWishId(options.currentWishId);
+        const allowExcludedFallback = options.allowExcludedFallback !== false;
+        let candidates = pool.filter(wish => {
+            const wishId = this.getWishId(wish);
+            return wishId && !excluded.has(wishId);
+        });
+
+        if (candidates.length === 0 && currentWishId) {
+            candidates = pool.filter(wish => this.getWishId(wish) !== currentWishId);
+        }
+        if (candidates.length === 0 && allowExcludedFallback) {
+            candidates = [...pool];
+        }
+        if (candidates.length === 0) return null;
+
+        return [...candidates].sort((a, b) => {
+            const aId = this.getWishId(a);
+            const bId = this.getWishId(b);
+            const countDiff = (this.wishDisplayCounts.get(aId) || 0) - (this.wishDisplayCounts.get(bId) || 0);
+            if (countDiff !== 0) return countDiff;
+            const lastShownDiff = (this.wishLastShownTick.get(aId) || 0) - (this.wishLastShownTick.get(bId) || 0);
+            if (lastShownDiff !== 0) return lastShownDiff;
+            return this.getFairWishOrder(a) - this.getFairWishOrder(b);
+        })[0];
+    }
+
+    selectFairWishes(count, options = {}) {
+        const selected = [];
+        const excluded = new Set([...(options.excludeIds || [])].map(id => String(id)));
+        const pool = Array.isArray(options.pool) ? options.pool : this.allServerWishes;
+
+        for (let i = 0; i < count; i++) {
+            const nextWish = this.selectFairWish(pool, {
+                excludeIds: excluded,
+                allowExcludedFallback: false
+            });
+            if (!nextWish) break;
+            selected.push(nextWish);
+            const wishId = this.getWishId(nextWish);
+            if (wishId) excluded.add(wishId);
+        }
+
+        return selected;
+    }
+
     getVisibleWishes(pool) {
         if (!Array.isArray(pool) || pool.length === 0) return [];
-        if (this.isMessageWallMode()) {
-            return [...pool].slice(0, this.getVisibleWishLimit());
-        }
-        const shuffled = [...pool].sort(() => 0.5 - Math.random());
-        return shuffled.slice(0, this.getVisibleWishLimit());
+        return this.selectFairWishes(this.getVisibleWishLimit(), { pool });
     }
 
     rebuildVisibleWishes(options = {}) {
@@ -109,7 +206,7 @@ class WishDisplay {
 
         const selected = this.getVisibleWishes(this.allServerWishes);
         selected.forEach((wish) => {
-            const shouldAnimate = this.isMessageWallMode() ? true : animateHighlightId === wish.id;
+            const shouldAnimate = this.isMessageWallMode() ? true : String(animateHighlightId) === String(wish.id);
             this.addWish(wish, shouldAnimate);
         });
 
@@ -391,6 +488,7 @@ class WishDisplay {
             console.log('📥 Mevcut dilekler:', serverWishes.length);
             this.totalWishesCount = serverWishes.length;
             this.allServerWishes = [...serverWishes];
+            this.syncFairWishStats();
             this.rebuildVisibleWishes();
             this.updateCounter();
         });
@@ -403,6 +501,7 @@ class WishDisplay {
                 this.totalWishesCount++;
             }
             this.allServerWishes = [wish, ...this.allServerWishes.filter(existing => String(existing.id) !== wishId)];
+            this.syncFairWishStats();
             if (this.isMessageWallMode() && this.wishCards.length >= this.getVisibleWishLimit()) {
                 this.showMessageWallWishImmediately(wish);
             } else {
@@ -430,13 +529,14 @@ class WishDisplay {
                 this.totalWishesCount = Math.max(0, this.totalWishesCount - 1);
             }
             this.allServerWishes = this.allServerWishes.filter(w => w.id !== data.id);
+            this.forgetWishStats(data.id);
             this.removeWish(data.id);
             this.updateCounter();
         });
 
         this.socket.on('wish-updated', (wish) => {
             console.log('✏️ Dilek guncellendi:', wish.childName);
-            const poolIndex = this.allServerWishes.findIndex(w => w.id === wish.id);
+            const poolIndex = this.allServerWishes.findIndex(w => String(w.id) === String(wish.id));
             if (poolIndex > -1) {
                 this.allServerWishes[poolIndex] = wish;
             }
@@ -467,7 +567,7 @@ class WishDisplay {
             }
 
             // Dizi içindeki orjinal veriyi de güncelle (spotlight için gerekli)
-            const idx = this.wishes.findIndex(w => w.id === wish.id);
+            const idx = this.wishes.findIndex(w => String(w.id) === String(wish.id));
             if (idx !== -1) {
                 this.wishes[idx] = wish;
             }
@@ -475,6 +575,7 @@ class WishDisplay {
             // Eğer o an bu dilek Spotlight modundaysa, spotlight penceresindeki yazıyı da güncelle
             if (this.spotlightOverlay.classList.contains('show') &&
                 this.spotlightWishText &&
+                idx !== -1 &&
                 this.wishes[idx].isSpotlight) {
                 this.spotlightWishText.textContent = wish.wishText || '';
             }
@@ -483,6 +584,10 @@ class WishDisplay {
         this.socket.on('all-cleared', () => {
             console.log('🗑️ Tüm dilekler silindi');
             this.totalWishesCount = 0;
+            this.allServerWishes = [];
+            this.wishDisplayCounts.clear();
+            this.wishLastShownTick.clear();
+            this.wishFairnessTick = 0;
             this.clearAll();
         });
 
@@ -613,10 +718,8 @@ class WishDisplay {
             }
         } else if (this.wishCards.length < maxVisible && this.allServerWishes && this.allServerWishes.length > 0) {
             // Eksik kartları havuzdan ekle
-            const currentIds = new Set(this.wishes.map(w => w.id));
-            const available = this.allServerWishes.filter(w => !currentIds.has(w.id));
-            const shuffled = [...available].sort(() => 0.5 - Math.random());
-            const toAdd = shuffled.slice(0, maxVisible - this.wishCards.length);
+            const currentIds = new Set(this.wishes.map(w => String(w.id)));
+            const toAdd = this.selectFairWishes(maxVisible - this.wishCards.length, { excludeIds: currentIds });
             toAdd.forEach(wish => {
                 this.addWish(wish, false);
             });
@@ -890,6 +993,39 @@ class WishDisplay {
         return truncated;
     }
 
+    formatFloatingWishHtml(text, maxLength = 140) {
+        if (!text) return '';
+        const truncated = text.length > maxLength ? text.substring(0, maxLength) + '…' : text;
+        return truncated.replace(/\n/g, '<br>');
+    }
+
+    applyFloatingWishContent(cardData, wish, maxLength = 140) {
+        if (!cardData || !cardData.element || !wish) return;
+        const oldWishId = this.getWishId(cardData.element.dataset.wishId);
+        const wishId = this.getWishId(wish);
+
+        if (wishId) {
+            cardData.element.dataset.wishId = wishId;
+        }
+
+        const oldIndex = this.wishes.findIndex(item => this.getWishId(item) === oldWishId);
+        if (oldIndex > -1) {
+            this.wishes[oldIndex] = wish;
+        } else if (!this.wishes.some(item => this.getWishId(item) === wishId)) {
+            this.wishes.push(wish);
+        }
+
+        const textEl = cardData.element.querySelector('.wish-text');
+        const nameEl = cardData.element.querySelector('.child-name');
+        if (textEl) {
+            textEl.innerHTML = wish.wishText ? this.formatFloatingWishHtml(wish.wishText, maxLength) : '';
+        }
+        if (nameEl) {
+            nameEl.textContent = wish.childName || '';
+        }
+        this.recordWishShown(wish);
+    }
+
     queueMessageWallWish(wish) {
         if (!wish || wish.id === undefined || wish.id === null) return;
         const wishId = String(wish.id);
@@ -953,16 +1089,11 @@ class WishDisplay {
         }
 
         const pool = Array.isArray(this.allServerWishes) ? [...this.allServerWishes] : [];
-        let available = pool.filter(candidate => !excluded.has(String(candidate.id)));
-        if (available.length === 0 && currentWishId !== null && currentWishId !== undefined) {
-            available = pool.filter(candidate => String(candidate.id) !== String(currentWishId));
-        }
-        if (available.length === 0) {
-            available = pool;
-        }
-        if (available.length === 0) return null;
-
-        return available[Math.floor(Math.random() * available.length)];
+        return this.selectFairWish(pool, {
+            excludeIds: excluded,
+            currentWishId,
+            allowExcludedFallback: true
+        });
     }
 
     applyMessageWallContent(card, wish, slot = null) {
@@ -1228,6 +1359,7 @@ class WishDisplay {
         }
         if (wish) {
             this.wishes.push(wish);
+            this.recordWishShown(wish);
         }
 
         cardData.element.dataset.wishId = wish ? wish.id : '';
@@ -1498,7 +1630,7 @@ class WishDisplay {
 
     addWish(wish, animate = true) {
         // Duplicate guard: ayni ID zaten varsa ekleme
-        if (this.wishes.some(w => w.id === wish.id)) {
+        if (this.wishes.some(w => String(w.id) === String(wish.id))) {
             if (this.isMessageWallMode()) {
                 this.queueMessageWallWish(wish);
             }
@@ -1668,6 +1800,7 @@ class WishDisplay {
 
         this.container.appendChild(card);
         this.wishes.push(wish);
+        this.recordWishShown(wish);
 
         // zDepth yukarıda (spawn overlap kontrolünden önce) hesaplandı
         const isNewWishEntry = animate && this.displayMode === 'lantern';
@@ -1809,14 +1942,16 @@ class WishDisplay {
                             const occupiedIds = new Set(cards
                                 .filter(other => other !== cardData)
                                 .map(other => String(other.element.dataset.wishId)));
-                            const replacementPool = this.allServerWishes.filter(candidate => !occupiedIds.has(String(candidate.id)));
-                            const sourcePool = replacementPool.length > 0 ? replacementPool : this.allServerWishes;
-                            const randomWish = sourcePool[Math.floor(Math.random() * sourcePool.length)];
+                            const nextWish = this.selectFairWish(this.allServerWishes, {
+                                excludeIds: occupiedIds,
+                                currentWishId: cardData.element.dataset.wishId,
+                                allowExcludedFallback: true
+                            });
                             const accent = Math.random() > 0.72 ? '#ff86a6' : '#ffffff';
                             const nextCardWidth = accent === '#ff86a6' ? 308 : 256;
                             const nextCardHeight = accent === '#ff86a6' ? 308 : 244;
                             const nextLayer = 'foreground';
-                            cardData.element.dataset.wishId = randomWish.id;
+                            cardData.element.dataset.wishId = nextWish.id;
                             cardData.cardWidth = nextCardWidth;
                             cardData.cardHeight = nextCardHeight;
                             cardData.targetOpacity = nextLayer === 'background' ? 0.24 : 0.96;
@@ -1830,11 +1965,12 @@ class WishDisplay {
                             const textEl = cardData.element.querySelector('.wish-text');
                             const nameEl = cardData.element.querySelector('.child-name');
                             if (textEl) {
-                                textEl.innerHTML = randomWish.wishText
-                                    ? (randomWish.wishText.length > 180 ? randomWish.wishText.substring(0, 180) + '…' : randomWish.wishText).replace(/\n/g, '<br>')
+                                textEl.innerHTML = nextWish.wishText
+                                    ? (nextWish.wishText.length > 180 ? nextWish.wishText.substring(0, 180) + '…' : nextWish.wishText).replace(/\n/g, '<br>')
                                     : 'Dilek metni bekleniyor.';
                             }
-                            if (nameEl && randomWish.childName) nameEl.textContent = randomWish.childName;
+                            if (nameEl && nextWish.childName) nameEl.textContent = nextWish.childName;
+                            this.recordWishShown(nextWish);
                         }
 
                         cardData.isNewWish = false;
@@ -1928,12 +2064,15 @@ class WishDisplay {
                             }
                             // Yeni dilek yükle
                             if (this.allServerWishes && this.allServerWishes.length > 0) {
-                                const randomWish = this.allServerWishes[Math.floor(Math.random() * this.allServerWishes.length)];
-                                cardData.element.dataset.wishId = randomWish.id;
-                                const textEl = cardData.element.querySelector('.wish-text');
-                                const nameEl = cardData.element.querySelector('.child-name');
-                                if (textEl && randomWish.wishText) textEl.innerHTML = randomWish.wishText.replace(/\n/g, '<br>');
-                                if (nameEl && randomWish.childName) nameEl.textContent = randomWish.childName;
+                                const occupiedIds = new Set(cards
+                                    .filter(other => other !== cardData)
+                                    .map(other => String(other.element.dataset.wishId)));
+                                const nextWish = this.selectFairWish(this.allServerWishes, {
+                                    excludeIds: occupiedIds,
+                                    currentWishId: cardData.element.dataset.wishId,
+                                    allowExcludedFallback: true
+                                });
+                                if (nextWish) this.applyFloatingWishContent(cardData, nextWish, 140);
                             }
                             // Recycling guard: yeni dilek efektini kaldır
                             cardData.isNewWish = false;
@@ -1979,12 +2118,15 @@ class WishDisplay {
                         cardData.x = Math.random() * maxX;
 
                         if (this.allServerWishes && this.allServerWishes.length > 0) {
-                            const randomWish = this.allServerWishes[Math.floor(Math.random() * this.allServerWishes.length)];
-                            cardData.element.dataset.wishId = randomWish.id;
-                            const textEl = cardData.element.querySelector('.wish-text');
-                            const nameEl = cardData.element.querySelector('.child-name');
-                            if (textEl && randomWish.wishText) textEl.innerHTML = randomWish.wishText.replace(/\n/g, '<br>');
-                            if (nameEl && randomWish.childName) nameEl.textContent = randomWish.childName;
+                            const occupiedIds = new Set(cards
+                                .filter(other => other !== cardData)
+                                .map(other => String(other.element.dataset.wishId)));
+                            const nextWish = this.selectFairWish(this.allServerWishes, {
+                                excludeIds: occupiedIds,
+                                currentWishId: cardData.element.dataset.wishId,
+                                allowExcludedFallback: true
+                            });
+                            if (nextWish) this.applyFloatingWishContent(cardData, nextWish, 140);
                         }
                     }
                 }
