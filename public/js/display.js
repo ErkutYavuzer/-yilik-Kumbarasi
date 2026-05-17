@@ -18,9 +18,7 @@ class WishDisplay {
         this.wishCards = [];
         this.allServerWishes = []; // Tüm dilek havuzu eklendi
         this.pendingMessageWallWishes = [];
-        this.wishDisplayCounts = new Map();
-        this.wishLastShownTick = new Map();
-        this.wishFairnessTick = 0;
+        this.wishRotationIndex = 0;
         this.socket = null;
         this.isMuted = false;
         this.audioCtx = null;
@@ -101,85 +99,75 @@ class WishDisplay {
         return wishOrId === undefined || wishOrId === null ? null : String(wishOrId);
     }
 
-    syncFairWishStats(pool = this.allServerWishes) {
-        const validIds = new Set();
-        (Array.isArray(pool) ? pool : []).forEach(wish => {
-            const wishId = this.getWishId(wish);
-            if (!wishId) return;
-            validIds.add(wishId);
-            if (!this.wishDisplayCounts.has(wishId)) this.wishDisplayCounts.set(wishId, 0);
-            if (!this.wishLastShownTick.has(wishId)) this.wishLastShownTick.set(wishId, 0);
-        });
-
-        for (const wishId of [...this.wishDisplayCounts.keys()]) {
-            if (!validIds.has(wishId)) this.wishDisplayCounts.delete(wishId);
+    syncOrderedWishRotation(pool = this.allServerWishes) {
+        const size = Array.isArray(pool) ? pool.length : 0;
+        if (size === 0) {
+            this.wishRotationIndex = 0;
+            return;
         }
-        for (const wishId of [...this.wishLastShownTick.keys()]) {
-            if (!validIds.has(wishId)) this.wishLastShownTick.delete(wishId);
+        if (!Number.isFinite(this.wishRotationIndex)) {
+            this.wishRotationIndex = 0;
         }
+        this.wishRotationIndex = ((Math.floor(this.wishRotationIndex) % size) + size) % size;
     }
 
-    recordWishShown(wish) {
+    upsertWishInUploadOrder(wish) {
         const wishId = this.getWishId(wish);
         if (!wishId) return;
-        this.syncFairWishStats();
-        this.wishDisplayCounts.set(wishId, (this.wishDisplayCounts.get(wishId) || 0) + 1);
-        this.wishFairnessTick += 1;
-        this.wishLastShownTick.set(wishId, this.wishFairnessTick);
+        const existingIndex = this.allServerWishes.findIndex(existing => this.getWishId(existing) === wishId);
+        if (existingIndex > -1) {
+            this.allServerWishes[existingIndex] = wish;
+        } else {
+            this.allServerWishes.push(wish);
+        }
+        this.syncOrderedWishRotation();
     }
 
-    forgetWishStats(id) {
-        const wishId = this.getWishId(id);
-        if (!wishId) return;
-        this.wishDisplayCounts.delete(wishId);
-        this.wishLastShownTick.delete(wishId);
+    recordWishShown() {
+        // Ordered rotation advances when a wish is selected, not when it renders.
     }
 
-    getFairWishOrder(wish) {
-        const wishId = this.getWishId(wish);
-        if (!wishId || !Array.isArray(this.allServerWishes)) return Number.MAX_SAFE_INTEGER;
-        const index = this.allServerWishes.findIndex(item => this.getWishId(item) === wishId);
-        return index === -1 ? Number.MAX_SAFE_INTEGER : index;
-    }
-
-    selectFairWish(pool = this.allServerWishes, options = {}) {
+    selectOrderedWish(pool = this.allServerWishes, options = {}) {
         if (!Array.isArray(pool) || pool.length === 0) return null;
-        this.syncFairWishStats();
+        this.syncOrderedWishRotation(pool);
 
         const excluded = new Set([...(options.excludeIds || [])].map(id => String(id)));
         const currentWishId = this.getWishId(options.currentWishId);
         const allowExcludedFallback = options.allowExcludedFallback !== false;
-        let candidates = pool.filter(wish => {
-            const wishId = this.getWishId(wish);
-            return wishId && !excluded.has(wishId);
-        });
+        const startIndex = this.wishRotationIndex;
 
-        if (candidates.length === 0 && currentWishId) {
-            candidates = pool.filter(wish => this.getWishId(wish) !== currentWishId);
+        for (let offset = 0; offset < pool.length; offset++) {
+            const index = (startIndex + offset) % pool.length;
+            const candidate = pool[index];
+            const candidateId = this.getWishId(candidate);
+            if (!candidateId || excluded.has(candidateId)) continue;
+            this.wishRotationIndex = (index + 1) % pool.length;
+            return candidate;
         }
-        if (candidates.length === 0 && allowExcludedFallback) {
-            candidates = [...pool];
-        }
-        if (candidates.length === 0) return null;
 
-        return [...candidates].sort((a, b) => {
-            const aId = this.getWishId(a);
-            const bId = this.getWishId(b);
-            const countDiff = (this.wishDisplayCounts.get(aId) || 0) - (this.wishDisplayCounts.get(bId) || 0);
-            if (countDiff !== 0) return countDiff;
-            const lastShownDiff = (this.wishLastShownTick.get(aId) || 0) - (this.wishLastShownTick.get(bId) || 0);
-            if (lastShownDiff !== 0) return lastShownDiff;
-            return this.getFairWishOrder(a) - this.getFairWishOrder(b);
-        })[0];
+        if (!allowExcludedFallback) return null;
+
+        for (let offset = 0; offset < pool.length; offset++) {
+            const index = (startIndex + offset) % pool.length;
+            const candidate = pool[index];
+            const candidateId = this.getWishId(candidate);
+            if (!candidateId || (currentWishId && candidateId === currentWishId)) continue;
+            this.wishRotationIndex = (index + 1) % pool.length;
+            return candidate;
+        }
+
+        const fallback = pool[startIndex] || pool[0];
+        this.wishRotationIndex = (startIndex + 1) % pool.length;
+        return fallback;
     }
 
-    selectFairWishes(count, options = {}) {
+    selectOrderedWishes(count, options = {}) {
         const selected = [];
         const excluded = new Set([...(options.excludeIds || [])].map(id => String(id)));
         const pool = Array.isArray(options.pool) ? options.pool : this.allServerWishes;
 
         for (let i = 0; i < count; i++) {
-            const nextWish = this.selectFairWish(pool, {
+            const nextWish = this.selectOrderedWish(pool, {
                 excludeIds: excluded,
                 allowExcludedFallback: false
             });
@@ -194,7 +182,7 @@ class WishDisplay {
 
     getVisibleWishes(pool) {
         if (!Array.isArray(pool) || pool.length === 0) return [];
-        return this.selectFairWishes(this.getVisibleWishLimit(), { pool });
+        return this.selectOrderedWishes(this.getVisibleWishLimit(), { pool });
     }
 
     rebuildVisibleWishes(options = {}) {
@@ -488,7 +476,8 @@ class WishDisplay {
             console.log('📥 Mevcut dilekler:', serverWishes.length);
             this.totalWishesCount = serverWishes.length;
             this.allServerWishes = [...serverWishes];
-            this.syncFairWishStats();
+            this.wishRotationIndex = 0;
+            this.syncOrderedWishRotation();
             this.rebuildVisibleWishes();
             this.updateCounter();
         });
@@ -500,8 +489,7 @@ class WishDisplay {
             if (!alreadyKnown && this.totalWishesCount !== undefined) {
                 this.totalWishesCount++;
             }
-            this.allServerWishes = [wish, ...this.allServerWishes.filter(existing => String(existing.id) !== wishId)];
-            this.syncFairWishStats();
+            this.upsertWishInUploadOrder(wish);
             if (this.isMessageWallMode() && this.wishCards.length >= this.getVisibleWishLimit()) {
                 this.showMessageWallWishImmediately(wish);
             } else {
@@ -528,8 +516,8 @@ class WishDisplay {
             if (this.totalWishesCount !== undefined) {
                 this.totalWishesCount = Math.max(0, this.totalWishesCount - 1);
             }
-            this.allServerWishes = this.allServerWishes.filter(w => w.id !== data.id);
-            this.forgetWishStats(data.id);
+            this.allServerWishes = this.allServerWishes.filter(w => String(w.id) !== String(data.id));
+            this.syncOrderedWishRotation();
             this.removeWish(data.id);
             this.updateCounter();
         });
@@ -585,9 +573,7 @@ class WishDisplay {
             console.log('🗑️ Tüm dilekler silindi');
             this.totalWishesCount = 0;
             this.allServerWishes = [];
-            this.wishDisplayCounts.clear();
-            this.wishLastShownTick.clear();
-            this.wishFairnessTick = 0;
+            this.wishRotationIndex = 0;
             this.clearAll();
         });
 
@@ -719,7 +705,7 @@ class WishDisplay {
         } else if (this.wishCards.length < maxVisible && this.allServerWishes && this.allServerWishes.length > 0) {
             // Eksik kartları havuzdan ekle
             const currentIds = new Set(this.wishes.map(w => String(w.id)));
-            const toAdd = this.selectFairWishes(maxVisible - this.wishCards.length, { excludeIds: currentIds });
+            const toAdd = this.selectOrderedWishes(maxVisible - this.wishCards.length, { excludeIds: currentIds });
             toAdd.forEach(wish => {
                 this.addWish(wish, false);
             });
@@ -1089,7 +1075,7 @@ class WishDisplay {
         }
 
         const pool = Array.isArray(this.allServerWishes) ? [...this.allServerWishes] : [];
-        return this.selectFairWish(pool, {
+        return this.selectOrderedWish(pool, {
             excludeIds: excluded,
             currentWishId,
             allowExcludedFallback: true
@@ -1942,7 +1928,7 @@ class WishDisplay {
                             const occupiedIds = new Set(cards
                                 .filter(other => other !== cardData)
                                 .map(other => String(other.element.dataset.wishId)));
-                            const nextWish = this.selectFairWish(this.allServerWishes, {
+                            const nextWish = this.selectOrderedWish(this.allServerWishes, {
                                 excludeIds: occupiedIds,
                                 currentWishId: cardData.element.dataset.wishId,
                                 allowExcludedFallback: true
@@ -2067,7 +2053,7 @@ class WishDisplay {
                                 const occupiedIds = new Set(cards
                                     .filter(other => other !== cardData)
                                     .map(other => String(other.element.dataset.wishId)));
-                                const nextWish = this.selectFairWish(this.allServerWishes, {
+                                const nextWish = this.selectOrderedWish(this.allServerWishes, {
                                     excludeIds: occupiedIds,
                                     currentWishId: cardData.element.dataset.wishId,
                                     allowExcludedFallback: true
@@ -2121,7 +2107,7 @@ class WishDisplay {
                             const occupiedIds = new Set(cards
                                 .filter(other => other !== cardData)
                                 .map(other => String(other.element.dataset.wishId)));
-                            const nextWish = this.selectFairWish(this.allServerWishes, {
+                            const nextWish = this.selectOrderedWish(this.allServerWishes, {
                                 excludeIds: occupiedIds,
                                 currentWishId: cardData.element.dataset.wishId,
                                 allowExcludedFallback: true
