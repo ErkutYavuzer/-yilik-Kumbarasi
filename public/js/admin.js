@@ -1,11 +1,20 @@
-const socket = io();
+const DEMO_BASE_PATH = (window.__DEMO_BASE_PATH || '').replace(/\/+$/, '');
+const apiPath = (path) => `${DEMO_BASE_PATH}${path}`;
+const originalFetch = window.fetch.bind(window);
+window.fetch = (input, init) => {
+    if (typeof input === 'string' && (input.startsWith('/api/') || input === '/api/wishes' || input.startsWith('/uploads/'))) {
+        return originalFetch(apiPath(input), init);
+    }
+    return originalFetch(input, init);
+};
+const socket = io({ path: `${DEMO_BASE_PATH}/socket.io` });
 let wishes = [];
 let modalAction = null;
 let autoTimer = null;
 let autoIndex = 0;
 let currentDisplayMode = 'balloon';
-const PARTICIPATION_URL = 'https://dilekfeneri.mezodigi.ai/upload';
-const PARTICIPATION_QR_SRC = '/images/participation-qr.png?v=1';
+const PARTICIPATION_URL = `${window.location.origin}${apiPath('/upload')}`;
+const PARTICIPATION_QR_SRC = apiPath('/images/participation-qr.png?v=1');
 const QR_PREVIEW_STAGE = { width: 1344, height: 840 };
 let qrPreviewState = null;
 let qrPreviewDrag = null;
@@ -794,11 +803,11 @@ function syncDisplaySettingsModeUI(mode) {
     const maxVisibleLabel = document.getElementById('display-maxvisible-label');
 
     if (titleEl) {
-        titleEl.innerHTML = `<i data-lucide="monitor-cog" style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> ${isMessageWall ? 'HBTKON Sahnesi Ayarları' : 'Sahne Ayarları'}`;
+        titleEl.innerHTML = `<i data-lucide="monitor-cog" style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> ${isMessageWall ? 'Etnospor Sahnesi Ayarları' : 'Sahne Ayarları'}`;
     }
     if (subEl) {
         subEl.textContent = isMessageWall
-            ? 'HBTKON Sahnesi için sadece çalışan kontroller gösterilir'
+            ? 'Etnospor Sahnesi için sadece çalışan kontroller gösterilir'
             : 'Aktif gösterim modu için geçerli sahne ayarları';
     }
     if (legacySubEl) {
@@ -808,7 +817,7 @@ function syncDisplaySettingsModeUI(mode) {
         noteEl.style.display = isMessageWall ? 'block' : 'none';
     }
     if (noteEl && isMessageWall) {
-        noteEl.textContent = 'HBTKON Sahnesi sabit kompozisyon kullanıyor. Bu modda kart giriş animasyonu, akış hızı ve kart ölçeği ayarlanabilir.';
+        noteEl.textContent = 'Etnospor Sahnesi sabit kompozisyon kullanıyor. Bu modda kart giriş animasyonu, akış hızı ve kart ölçeği ayarlanabilir.';
     }
     if (speedLabel) {
         speedLabel.innerHTML = `<i data-lucide="gauge" style="width:14px;height:14px;vertical-align:middle;"></i> ${isMessageWall ? 'Geçiş Hızı' : 'Animasyon Hızı'} <span id="speed-value" style="color:var(--accent);font-weight:700;margin-left:6px;">${speedValue}</span>`;
@@ -1772,7 +1781,7 @@ function showToast(msg) {
         }
         if (urlEl) urlEl.textContent = url;
         if (hintEl) {
-            hintEl.innerHTML = 'ASELSAN HBTKON için mesajını paylaş; teknoloji ve güvenli geleceğe kendi izini bırak.';
+            hintEl.innerHTML = 'Etnospor Festivali için mesajını paylaş; gelenek, birlik ve geleceğe kendi izini bırak.';
         }
     } catch (err) {
         console.error("QR Code oluşturulamadı:", err);

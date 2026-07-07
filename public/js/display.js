@@ -5,6 +5,8 @@
 
 class WishDisplay {
     constructor() {
+        this.basePath = (window.__DEMO_BASE_PATH || '').replace(/\/+$/, '');
+        this.isDemoMode = window.__DEMO_MODE === true || this.basePath === '/dilek';
         this.container = document.getElementById('wishes-container');
         this.emptyState = document.getElementById('empty-state');
         this.counterNumber = document.getElementById('counter-number');
@@ -23,8 +25,8 @@ class WishDisplay {
         this.isMuted = false;
         this.audioCtx = null;
         this.displaySettings = { speedMultiplier: 1.0, scaleMultiplier: 1.0, messageWallEntranceStyle: 'standard', maxVisible: 20, logoOffsetPx: 0, headerOffsetPx: 0, logoScale: 1, headerScale: 1, dayMode: false, qrVisible: false, qrSize: 260, qrTop: 120, qrRight: 64 }; // Global ekran ayarları
-        this.displayMode = 'balloon'; // 'balloon' veya 'lantern'
-        this.currentTheme = 'turktelekom';
+        this.displayMode = 'balloon'; // 'balloon', 'lantern', 'star-lantern' veya 'messagewall'
+        this.currentTheme = 'default';
         this._raffleAnimating = false; // Çekiliş animasyonu aktif mi
 
         this.init();
@@ -64,12 +66,27 @@ class WishDisplay {
         return this.displayMode === 'messagewall';
     }
 
+    isStarLanternMode() {
+        return this.displayMode === 'star-lantern';
+    }
+
+    isFloatingLanternMode() {
+        return this.displayMode === 'lantern' || this.isStarLanternMode();
+    }
+
+    isEtnosporTheme() {
+        return this.currentTheme === 'etnospor' || this.currentTheme === 'aselsan';
+    }
+
     usesLandscapeCanvas() {
-        return this.isMessageWallMode() || this.currentTheme === 'aselsan';
+        return this.isDemoMode || this.isMessageWallMode() || this.isEtnosporTheme();
     }
 
     getCanvasSize() {
-        if (this.currentTheme === 'aselsan') {
+        if (this.isDemoMode) {
+            return { width: 1920, height: 1080 };
+        }
+        if (this.isEtnosporTheme()) {
             return { width: 1344, height: 840 };
         }
         if (this.isMessageWallMode()) {
@@ -88,7 +105,7 @@ class WishDisplay {
         if (this.isMessageWallMode()) {
             return 5;
         }
-        if (this.displayMode === 'lantern') return this.getAdaptiveMaxVisible();
+        if (this.isFloatingLanternMode()) return this.getAdaptiveMaxVisible();
         return ((this.displaySettings && this.displaySettings.maxVisible) || 12);
     }
 
@@ -204,26 +221,27 @@ class WishDisplay {
     applyDisplayMode() {
         const messageWall = this.isMessageWallMode();
         document.documentElement.classList.toggle('display-mode-messagewall', messageWall);
+        document.documentElement.classList.toggle('display-mode-star-lantern', this.isStarLanternMode());
         this.applyCanvasSize();
 
         const legacyTitle = document.querySelector('.header-line2');
         if (legacyTitle) {
-            legacyTitle.textContent = 'ASELSAN HBTKON';
+            legacyTitle.textContent = 'DİLEK FENERİ';
         }
 
         const stageTitle = document.querySelector('.message-stage__headline-text');
         if (stageTitle) {
-            stageTitle.textContent = 'PEKİ SENİN HBTKON İÇİN DİLEĞİN NE?';
+            stageTitle.textContent = 'PEKİ SENİN DİLEĞİN NE?';
         }
 
         const stagePrefix = document.querySelector('.message-stage__headline-prefix');
         if (stagePrefix) {
-            stagePrefix.textContent = 'DİLEKLER TEKNOLOJİNİN GELECEĞİ İÇİN';
+            stagePrefix.textContent = 'DİLEKLER GELENEĞİN GELECEĞİ İÇİN';
         }
 
         const emptyText = document.querySelector('#empty-state .empty-text');
         const emptySub = document.querySelector('#empty-state .empty-sub');
-        if (emptyText) emptyText.textContent = 'Dilekler Bekleniyor...';
+        if (emptyText) emptyText.textContent = 'Dilekler bekleniyor...';
         if (emptySub) emptySub.textContent = 'İlk dilek paylaşıldığında burada görünecek';
     }
 
@@ -470,7 +488,7 @@ class WishDisplay {
 
     // === SOCKET ===
     connectSocket() {
-        this.socket = io();
+        this.socket = io({ path: `${this.basePath}/socket.io` });
 
         this.socket.on('all-wishes', (serverWishes) => {
             console.log('📥 Mevcut dilekler:', serverWishes.length);
@@ -688,7 +706,7 @@ class WishDisplay {
 
         // Mevcut tüm kartlara ölçeği anında uygula
         this.wishCards.forEach(cardData => {
-            const depthScale = this.displayMode === 'lantern' ? scale * (cardData.zDepth || 1) : scale;
+            const depthScale = this.isFloatingLanternMode() ? scale * (cardData.zDepth || 1) : scale;
             cardData.element.style.transform = `translate3d(${cardData.x}px, ${cardData.y}px, 0) scale(${depthScale}) rotate(${cardData.rotation}deg)`;
         });
 
@@ -831,11 +849,14 @@ class WishDisplay {
     getAdaptiveMaxVisible() {
         const cw = this.container.offsetWidth || 960;
         const ch = this.container.offsetHeight || 2160;
-        const cardWidth = 320;
-        const cardHeight = 400;
+        const isStarLantern = this.isStarLanternMode();
+        const cardWidth = isStarLantern ? 340 : 320;
+        const cardHeight = isStarLantern ? 560 : 400;
         const scale = this.displaySettings.scaleMultiplier || 1.0;
-        const columns = Math.max(1, Math.floor(cw / (cardWidth * scale * 0.62)));
-        const rows = Math.max(1, Math.floor(ch / (cardHeight * scale * 0.46)));
+        const columnFactor = isStarLantern ? 0.5 : 0.62;
+        const rowFactor = isStarLantern ? 0.42 : 0.46;
+        const columns = Math.max(1, Math.floor(cw / (cardWidth * scale * columnFactor)));
+        const rows = Math.max(1, Math.floor(ch / (cardHeight * scale * rowFactor)));
         const maxAllowed = Math.max(2, columns * rows);
         const adminMax = (this.displaySettings && this.displaySettings.maxVisible) || 20;
         return Math.max(2, Math.min(adminMax, maxAllowed));
@@ -922,10 +943,10 @@ class WishDisplay {
         if (this.displayQrPanel.parentElement !== document.body) {
             document.body.appendChild(this.displayQrPanel);
         }
-        const uploadUrl = `${window.location.origin}/upload`;
+        const uploadUrl = `${window.location.origin}${this.basePath}/upload`;
         this.displayQrBox.innerHTML = '';
         const img = document.createElement('img');
-        img.src = '/images/participation-qr.png?v=1';
+        img.src = `https://api.qrserver.com/v1/create-qr-code/?size=520x520&margin=12&data=${encodeURIComponent(uploadUrl)}`;
         img.alt = 'Katılım QR kodu';
         img.dataset.qrUrl = uploadUrl;
         this.displayQrBox.appendChild(img);
@@ -1238,21 +1259,23 @@ class WishDisplay {
         const textEl = card.querySelector('.wish-text');
         const nameEl = card.querySelector('.child-name');
 
-        if (card.classList.contains('lantern-mode')) {
+        if (card.classList.contains('lantern-mode') || card.classList.contains('star-lantern-mode')) {
+            const isStarLantern = card.classList.contains('star-lantern-mode');
+            const textWidth = isStarLantern ? 164 : 148;
             const textBox = card.querySelector('.lantern-text');
             if (textBox) {
-                textBox.style.width = '148px';
+                textBox.style.width = `${textWidth}px`;
                 textBox.style.overflow = 'visible';
             }
 
             if (textEl) {
                 this.fitTextToBox(textEl, {
                     minFont: 10,
-                    maxFont: 14,
-                    maxHeight: 122,
-                    maxWidth: 148,
-                    lineHeight: 1.18,
-                    maxLines: 7
+                    maxFont: isStarLantern ? 20 : 14,
+                    maxHeight: isStarLantern ? 170 : 122,
+                    maxWidth: textWidth,
+                    lineHeight: isStarLantern ? 1.16 : 1.18,
+                    maxLines: isStarLantern ? 6 : 7
                 });
             }
 
@@ -1260,14 +1283,15 @@ class WishDisplay {
                 nameEl.style.whiteSpace = 'nowrap';
                 nameEl.style.wordBreak = 'keep-all';
                 nameEl.style.overflowWrap = 'normal';
-                nameEl.style.width = '160px';
-                nameEl.style.maxWidth = '160px';
+                const nameWidth = isStarLantern ? 172 : 160;
+                nameEl.style.width = `${nameWidth}px`;
+                nameEl.style.maxWidth = `${nameWidth}px`;
                 nameEl.style.textAlign = 'center';
                 this.fitTextToBox(nameEl, {
                     minFont: 9,
-                    maxFont: 13,
-                    maxHeight: 18,
-                    maxWidth: 160,
+                    maxFont: isStarLantern ? 18 : 13,
+                    maxHeight: isStarLantern ? 24 : 18,
+                    maxWidth: nameWidth,
                     lineHeight: 1,
                     maxLines: 1
                 });
@@ -1728,6 +1752,8 @@ class WishDisplay {
         const card = document.createElement('div');
         card.dataset.wishId = wish.id;
         const isMessageWall = this.isMessageWallMode();
+        const isFloatingLantern = this.isFloatingLanternMode();
+        const isStarLantern = this.isStarLanternMode();
         let messageWallCardWidth = 0;
         let messageWallCardHeight = 0;
         let messageWallLayer = 'foreground';
@@ -1749,7 +1775,16 @@ class WishDisplay {
                     <div class="child-name">${wish.childName}</div>
                 </div>
             `;
-        } else if (this.displayMode === 'lantern') {
+        } else if (isStarLantern) {
+            card.className = 'wish-card star-lantern-mode' + (animate ? ' entering' : '');
+            card.innerHTML = `
+                <div class="star-lantern-body" aria-hidden="true"></div>
+                <div class="star-lantern-text lantern-text">
+                    ${wish.wishText ? `<div class="wish-text">${(wish.wishText.length > 140 ? wish.wishText.substring(0, 140) + '...' : wish.wishText).replace(/\n/g, '<br>')}</div>` : ''}
+                    <div class="child-name">${wish.childName}</div>
+                </div>
+            `;
+        } else if (isFloatingLantern) {
             card.className = 'wish-card lantern-mode' + (animate ? ' entering' : '');
             card.innerHTML = `
                 <div class="lantern-body">
@@ -1806,27 +1841,30 @@ class WishDisplay {
         const cw = this.container.offsetWidth;
         const ch = this.container.offsetHeight;
         const padding = 0;
-        const cardWidth = isMessageWall ? (messageWallCardWidth || 280) : (this.displayMode === 'lantern' ? 320 : 320);
-        const maxX = cw - cardWidth;
+        const currentScale = this.displaySettings.scaleMultiplier || 1.0;
+        const cardWidth = isMessageWall ? (messageWallCardWidth || 280) : (isStarLantern ? 340 : 320);
+        const placementCardWidth = isStarLantern ? Math.max(120, cardWidth * currentScale) : cardWidth;
+        const maxX = cw - placementCardWidth;
 
         // Y ekseni: fener modunda ekranın tam altından doğar, rastgele dağılım ile
-        const maxSpawnDepth = Math.min(this.wishCards.length * (isMessageWall ? 45 : (this.displayMode === 'lantern' ? 250 : 150)), isMessageWall ? 360 : ch);
+        const maxSpawnDepth = Math.min(this.wishCards.length * (isMessageWall ? 45 : (isFloatingLantern ? 250 : 150)), isMessageWall ? 360 : ch);
         const spawnOffset = Math.random() * maxSpawnDepth;
         let y;
         if (isMessageWall) {
             y = animate
                 ? ch + 120 + spawnOffset + Math.random() * 80
                 : 0;
-        } else if (animate && this.displayMode === 'lantern') {
+        } else if (animate && isFloatingLantern) {
             y = ch - 200 - Math.random() * 200;
         } else {
-            y = this.displayMode === 'lantern'
+            y = isFloatingLantern
                 ? -200 + Math.random() * (ch + 400)   // Distribute across full visible screen + margins
                 : ch + 200 + spawnOffset + Math.random() * 1000;
         }
 
         // X ekseninde konum — 2D aday skorlama ile en iyi pozisyon
         const tempSwayAmp = isMessageWall ? (7 + Math.random() * 7) : (30 + Math.random() * 30);  // 30-60px (daraltıldı — overlap önleme)
+        const spawnSwayAmp = isStarLantern ? (18 + Math.random() * 20) : tempSwayAmp;
         let x;
         if (isMessageWall) {
             if (animate) {
@@ -1836,20 +1874,20 @@ class WishDisplay {
                 x = initialPlacement.x;
                 y = initialPlacement.y;
             }
-        } else if (this.displayMode === 'lantern') {
-            x = this.findBestSpawnX(y, tempSwayAmp, cardWidth);
+        } else if (isFloatingLantern) {
+            x = this.findBestSpawnX(y, spawnSwayAmp, placementCardWidth);
         } else {
             x = padding + Math.random() * Math.max(0, maxX - padding);
         }
 
         const zDepth = 1.0;
 
-        const rotation = (Math.random() - 0.5) * (isMessageWall ? 2.5 : (this.displayMode === 'lantern' ? 3 : 8));
+        const rotation = (Math.random() - 0.5) * (isMessageWall ? 2.5 : (isFloatingLantern ? 3 : 8));
 
         // CSS left/top yerine performansı artırmak için GPU hızlandırmalı transform3d kullanıyoruz.
         card.style.left = '0px';
         card.style.top = '0px';
-        card.style.opacity = isMessageWall ? (animate ? '0' : (messageWallLayer === 'background' ? '0.24' : '0.96')) : ((animate && this.displayMode === 'lantern') ? '1' : (this.displayMode === 'lantern' ? '0' : '1'));
+        card.style.opacity = isMessageWall ? (animate ? '0' : (messageWallLayer === 'background' ? '0.24' : '0.96')) : ((animate && isFloatingLantern) ? '1' : (isFloatingLantern ? '0' : '1'));
         card.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rotation}deg)`;
 
         card.addEventListener('click', () => {
@@ -1865,21 +1903,21 @@ class WishDisplay {
         this.recordWishShown(wish);
 
         // zDepth yukarıda (spawn overlap kontrolünden önce) hesaplandı
-        const isNewWishEntry = animate && this.displayMode === 'lantern';
+        const isNewWishEntry = animate && isFloatingLantern;
         const cardData = {
             element: card,
             x: x,
             y: y,
-            vx: isMessageWall ? (Math.random() - 0.5) * 0.05 : (Math.random() - 0.5) * (this.displayMode === 'lantern' ? 0.5 : 1.5),
-            vy: -(isMessageWall ? (0.72 + Math.random() * 0.22) : (this.displayMode === 'lantern' ? (0.5 + Math.random() * 0.2) : (1.5 + Math.random() * 2))),
+            vx: isMessageWall ? (Math.random() - 0.5) * 0.05 : (Math.random() - 0.5) * (isFloatingLantern ? 0.5 : 1.5),
+            vy: -(isMessageWall ? (0.72 + Math.random() * 0.22) : (isFloatingLantern ? (0.5 + Math.random() * 0.2) : (1.5 + Math.random() * 2))),
             rotation: rotation,
-            rotationSpeed: (Math.random() - 0.5) * (isMessageWall ? 0.04 : (this.displayMode === 'lantern' ? 0.1 : 0.8)),
-            radius: isMessageWall ? 160 : (this.displayMode === 'lantern' ? 250 : 180),
+            rotationSpeed: (Math.random() - 0.5) * (isMessageWall ? 0.04 : (isFloatingLantern ? 0.1 : 0.8)),
+            radius: isMessageWall ? 160 : (isFloatingLantern ? 250 : 180),
             zDepth: zDepth,
             // Salınım: çoklu sinüs ile doğal rüzgar akışı
             swayPhase: Math.random() * Math.PI * 2,
             swayFreq: isMessageWall ? (0.0018 + Math.random() * 0.0013) : (0.004 + Math.random() * 0.004),
-            swayAmp: tempSwayAmp,
+            swayAmp: spawnSwayAmp,
             sway2Phase: Math.random() * Math.PI * 2,
             sway2Freq: isMessageWall ? (0.003 + Math.random() * 0.0018) : (0.009 + Math.random() * 0.007),
             sway2Amp: isMessageWall ? (2 + Math.random() * 4) : (10 + Math.random() * 15),   // 10-25px (daraltıldı)
@@ -1891,7 +1929,7 @@ class WishDisplay {
             opacity: isMessageWall ? (animate ? 0 : (messageWallLayer === 'background' ? 0.24 : 0.96)) : (isNewWishEntry ? (0.5 + zDepth * 0.5) : 0),
             isNewWish: isMessageWall ? false : isNewWishEntry,                 // Yeni dilek giriş efekti
             cardWidth: cardWidth,
-            cardHeight: isMessageWall ? (messageWallCardHeight || 260) : (this.displayMode === 'lantern' ? 400 : 300),
+            cardHeight: isMessageWall ? (messageWallCardHeight || 260) : (isStarLantern ? 560 : (isFloatingLantern ? 400 : 300)),
             isMessageWall: isMessageWall,
             targetOpacity: isMessageWall ? (messageWallLayer === 'background' ? 0.24 : 0.96) : 1,
             renderScale: isMessageWall ? (messageWallLayer === 'background' ? 0.9 : 1) : 1,
@@ -1906,7 +1944,7 @@ class WishDisplay {
             }, isMessageWall ? 2200 : 1000);
 
             // Fener modunda yeni dilek giriş efekti — 5 saniyelik altın parıltı
-            if (this.displayMode === 'lantern') {
+            if (isFloatingLantern) {
                 card.classList.add('new-wish-highlight');
                 setTimeout(() => {
                     card.classList.remove('new-wish-highlight');
@@ -1934,10 +1972,13 @@ class WishDisplay {
 
             const currentScale = this.displaySettings.scaleMultiplier || 1.0;
             const currentSpeedMulti = this.displaySettings.speedMultiplier || 1.0;
-            const paddingSides = 80; // Min kenar boşluğu — fenerler kenara yapışmasın
             const isMessageWall = this.isMessageWallMode();
-            const cardWidth = isMessageWall ? 280 : (this.displayMode === 'lantern' ? 320 : 320);
-            const maxX = cw - cardWidth; // Account for card width so right edge doesn't clip
+            const isFloatingLantern = this.isFloatingLanternMode();
+            const isStarLantern = this.isStarLanternMode();
+            const paddingSides = isStarLantern ? 12 : 80; // Min kenar boslugu
+            const cardWidth = isMessageWall ? 280 : (isStarLantern ? 340 : 320);
+            const layoutCardWidth = isStarLantern ? Math.max(120, cardWidth * currentScale) : cardWidth;
+            const maxX = cw - layoutCardWidth; // Account for card width so right edge doesn't clip
 
             cards.forEach(cardData => {
                 // Spotlight modunda aktif kartı dondur — animasyonu atla
@@ -2052,7 +2093,7 @@ class WishDisplay {
                         cardData.opacity = 0;
                         cardData.element.style.opacity = '0';
                     }
-                } else if (this.displayMode === 'lantern') {
+                } else if (isFloatingLantern) {
                     // === FENER SALINIMU (SINÜS) — sadece lantern modunda ===
                     cardData.swayPhase += cardData.swayFreq * currentSpeedMulti;
                     cardData.sway2Phase += cardData.sway2Freq * currentSpeedMulti;
@@ -2061,8 +2102,8 @@ class WishDisplay {
                         + Math.sin(cardData.sway2Phase) * cardData.sway2Amp;
                     // === SOFT ANTI-OVERLAP DRIFT ===
                     // Very gentle horizontal push when cards get too close
-                    const scaledCardW = cardWidth * currentScale;
-                    const scaledCardH = (this.displayMode === 'lantern' ? 400 : 300) * currentScale;
+                    const scaledCardW = (cardData.cardWidth || cardWidth) * currentScale;
+                    const scaledCardH = (cardData.cardHeight || (isFloatingLantern ? 400 : 300)) * currentScale;
                     for (const other of cards) {
                         if (other === cardData) continue;
                         const dx = cardData.x - other.x;
@@ -2079,23 +2120,25 @@ class WishDisplay {
                     const driftFromOriginal = cardData.swayBaseX - cardData.x;
                     // (swayBaseX IS the original spawn X, x is computed from it — no clamping needed on swayBaseX itself, 
                     //  but we clamp it to stay within screen bounds)
-                    const swayMaxX = cw - cardWidth;
-                    const swayMinX = 80;
+                    const layoutWidth = isStarLantern ? Math.max(120, scaledCardW) : (cardData.cardWidth || cardWidth);
+                    const swayMaxX = Math.max(paddingSides, cw - layoutWidth - paddingSides);
+                    const swayMinX = paddingSides;
                     cardData.swayBaseX = Math.max(swayMinX, Math.min(swayMaxX, cardData.swayBaseX));
 
                     cardData.x = cardData.swayBaseX + swayX;
 
                     // Soft boundary clamp — pencere küçültüldüğünde fener ekran dışına çıkmasın
-                    cardData.x = Math.max(80, Math.min(cw - 320 - 80, cardData.x));
+                    cardData.x = Math.max(paddingSides, Math.min(cw - layoutWidth - paddingSides, cardData.x));
 
                     cardData.y += Math.sin(cardData.swayYPhase) * cardData.swayYAmp * 0.02;
 
                     // swayBaseX sınırları — fener kenara çıkmasın
-                    if (cardData.swayBaseX < paddingSides + cardData.swayAmp) {
-                        cardData.swayBaseX = paddingSides + cardData.swayAmp;
+                    const swayGuard = isStarLantern ? cardData.swayAmp * 0.35 : cardData.swayAmp;
+                    if (cardData.swayBaseX < paddingSides + swayGuard) {
+                        cardData.swayBaseX = paddingSides + swayGuard;
                     }
-                    if (cardData.swayBaseX > maxX - cardData.swayAmp) {
-                        cardData.swayBaseX = maxX - cardData.swayAmp;
+                    if (cardData.swayBaseX > maxX - swayGuard) {
+                        cardData.swayBaseX = maxX - swayGuard;
                     }
 
                     // === FADE-IN: ekran altından yükselirken belirginleş ===
@@ -2117,7 +2160,7 @@ class WishDisplay {
                         cardData.element.style.opacity = fadeOut;
 
                         if (cardData.y < -200) {
-                            const currentMaxVisible = this.displayMode === 'lantern' ? this.getAdaptiveMaxVisible() : ((this.displaySettings && this.displaySettings.maxVisible) || 12);
+                            const currentMaxVisible = isFloatingLantern ? this.getAdaptiveMaxVisible() : ((this.displaySettings && this.displaySettings.maxVisible) || 12);
                             if (this.wishCards.length > currentMaxVisible) {
                                 cardData.element.remove();
                                 const idx = this.wishCards.indexOf(cardData);
@@ -2144,7 +2187,8 @@ class WishDisplay {
                             cardData.vy = -(0.5 + Math.random() * 0.2);
                             // Ekranın altından yeni spawn — 2D aday skorlama ile en iyi pozisyon
                             cardData.y = ch + 100 + Math.random() * 400;
-                            cardData.swayBaseX = this.findBestSpawnX(cardData.y, cardData.swayAmp, cardData.cardWidth || cardWidth);
+                            const recycleCardWidth = isStarLantern ? Math.max(120, (cardData.cardWidth || cardWidth) * currentScale) : (cardData.cardWidth || cardWidth);
+                            cardData.swayBaseX = this.findBestSpawnX(cardData.y, cardData.swayAmp, recycleCardWidth);
                             cardData.x = cardData.swayBaseX;
                             cardData.swayPhase = Math.random() * Math.PI * 2;
                             cardData.sway2Phase = Math.random() * Math.PI * 2;
@@ -2198,7 +2242,7 @@ class WishDisplay {
                 // Fener modunda salınım x'i halleder, rotation sadece hafif eğim
                 const rot = isMessageWall
                     ? cardData.rotation
-                    : this.displayMode === 'lantern'
+                    : isFloatingLantern
                         ? (Math.sin(cardData.swayPhase) + Math.sin(cardData.sway2Phase) * 0.5) * 1.3  // Doğal salınım eğimi
                         : cardData.rotation;
                 const depthScale = isMessageWall ? currentScale * (cardData.renderScale || 1) : currentScale;
@@ -2222,9 +2266,12 @@ class WishDisplay {
 
     findBestSpawnX(spawnY, swayAmp, cardWidth = 320) {
         const cw = this.container.offsetWidth;
+        const isStarLantern = this.isStarLanternMode();
         // minX/maxX account for sway amplitude so cards don't swing off-screen
-        const minX = 68 + swayAmp;  // paddingSides + swayAmp — kenara yapışmasın
-        const maxX = Math.max(minX, cw - cardWidth - 68 - swayAmp);
+        const edgePadding = isStarLantern ? 12 : 68;
+        const swayGuard = isStarLantern ? swayAmp * 0.35 : swayAmp;
+        const minX = edgePadding + swayGuard;  // paddingSides + swayAmp — kenara yapışmasın
+        const maxX = Math.max(minX, cw - cardWidth - edgePadding - swayGuard);
 
         // Collect positions of on-screen cards
         const ch = this.container.offsetHeight;
@@ -2235,8 +2282,8 @@ class WishDisplay {
             return minX + Math.random() * Math.max(0, maxX - minX);
         }
 
-        // Generate 12 evenly-spaced candidate X positions
-        const numCandidates = 12;
+        // Generate evenly-spaced candidate X positions
+        const numCandidates = isStarLantern ? 18 : 12;
         const candidates = [];
         for (let i = 0; i < numCandidates; i++) {
             candidates.push(minX + (i / (numCandidates - 1)) * Math.max(0, maxX - minX));
@@ -2261,8 +2308,9 @@ class WishDisplay {
             }
         }
 
-        // Add small random jitter (±5% of available width) for organic feel
-        const jitter = (Math.random() - 0.5) * (maxX - minX) * 0.1;
+        // Add small random jitter for organic feel
+        const jitterFactor = isStarLantern ? 0.16 : 0.1;
+        const jitter = (Math.random() - 0.5) * (maxX - minX) * jitterFactor;
         bestX = Math.max(minX, Math.min(maxX, bestX + jitter));
 
         return bestX;
@@ -2373,26 +2421,26 @@ class WishDisplay {
     // === THEME ===
     async loadTheme() {
         try {
-            const res = await fetch('/api/theme');
+            const res = await fetch(`${this.basePath}/api/theme`);
             const data = await res.json();
             this.applyTheme(data.theme);
         } catch (e) { }
     }
 
     applyTheme(theme) {
-        this.currentTheme = theme || 'turktelekom';
+        this.currentTheme = theme === 'aselsan' ? 'etnospor' : (theme || 'default');
         document.documentElement.setAttribute('data-background-theme', this.currentTheme);
         this.applyCanvasSize();
 
         const stageTitle = document.querySelector('.message-stage__headline-text');
         if (stageTitle && this.isMessageWallMode()) {
-            stageTitle.textContent = 'PEKİ SENİN MARKAN İÇİN DİLEĞİN NE?';
+            stageTitle.textContent = 'PEKİ SENİN DİLEĞİN NE?';
         }
     }
 
     async loadDisplayMode() {
         try {
-            const res = await fetch('/api/display-mode');
+            const res = await fetch(`${this.basePath}/api/display-mode`);
             const data = await res.json();
             this.displayMode = data.displayMode || 'balloon';
         } catch (e) { }
@@ -2400,7 +2448,7 @@ class WishDisplay {
 
     async loadDisplaySettings() {
         try {
-            const res = await fetch('/api/display-settings');
+            const res = await fetch(`${this.basePath}/api/display-settings`);
             const data = await res.json();
             this.displaySettings = { ...this.displaySettings, ...data };
             this.applyDisplaySettings();

@@ -1,34 +1,34 @@
 @font-face {
     font-family: 'Centrale Sans';
-    src: url('/fonts/CentraleSans-Regular.otf') format('opentype');
+    src: url('../fonts/CentraleSans-Regular.otf') format('opentype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
 }
 @font-face {
     font-family: 'Centrale Sans';
-    src: url('/fonts/CentraleSans-Bold.otf') format('opentype');
+    src: url('../fonts/CentraleSans-Bold.otf') format('opentype');
     font-weight: 600;
     font-style: normal;
     font-display: swap;
 }
 @font-face {
     font-family: 'Centrale Sans';
-    src: url('/fonts/CentraleSans-Bold.otf') format('opentype');
+    src: url('../fonts/CentraleSans-Bold.otf') format('opentype');
     font-weight: 700;
     font-style: normal;
     font-display: swap;
 }
 @font-face {
     font-family: 'Centrale Sans';
-    src: url('/fonts/CentraleSans-Bold.otf') format('opentype');
+    src: url('../fonts/CentraleSans-Bold.otf') format('opentype');
     font-weight: 800;
     font-style: normal;
     font-display: swap;
 }
 @font-face {
     font-family: 'Centrale Sans';
-    src: url('/fonts/CentraleSans-Bold.otf') format('opentype');
+    src: url('../fonts/CentraleSans-Bold.otf') format('opentype');
     font-weight: 900;
     font-style: normal;
     font-display: swap;
@@ -36,20 +36,20 @@
 
 @font-face {
     font-family: 'Arame';
-    src: url('/fonts/Arame-Bold.ttf') format('truetype');
+    src: url('../fonts/Arame-Bold.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;
     font-display: swap;
 }
 
 
-/* === İYİLİK KUMBARASI — TEMA SİSTEMİ ===
-   Sadece Türk Telekom teması — varsayılan olarak uygulanır.
-   data-theme attribute'üne gerek yok, sayfa açılır açılmaz TT arka planı gelir.
+/* === ETNOSPOR FESTİVALİ — TEMA SİSTEMİ ===
+   Varsayılan arkaplan Etnospor festivali için uygulanır.
+   Eski tema isimleri sadece canlı ayar uyumluluğu için alias olarak korunur.
 */
 
 /* ============================================
-   📡 Türk Telekom — İyilik Feneri (VARSAYILAN)
+   Etnospor Festivali — Dilek Feneri (VARSAYILAN)
    ============================================ */
 
 html {
@@ -57,14 +57,14 @@ html {
 }
 
 .display-container {
-    background: url("/images/BG.png?v=3") center top / cover no-repeat;
+    background: url("../images/BG.png?v=3") center top / cover no-repeat;
     background-color: #0b0f16;
 }
 
 html.day-mode .display-container {
     background-image:
         linear-gradient(180deg, rgba(210, 236, 255, 0.75) 0%, rgba(176, 216, 255, 0.35) 48%, rgba(10, 16, 28, 0.2) 100%),
-        url("/images/BG.png?v=3");
+        url("../images/BG.png?v=3");
     background-position: center top, center top;
     background-size: cover, cover;
     background-repeat: no-repeat, no-repeat;
@@ -1030,7 +1030,7 @@ html.display-mode-messagewall .display-container {
     background:
         radial-gradient(circle at 18% 84%, rgba(255, 118, 160, 0.18) 0%, rgba(255, 118, 160, 0.05) 18%, transparent 36%),
         radial-gradient(circle at 83% 10%, rgba(188, 108, 255, 0.16) 0%, rgba(188, 108, 255, 0.04) 18%, transparent 34%),
-        url("/images/messagewall-background.png?v=1") center/cover no-repeat,
+        url("../images/messagewall-background.png?v=1") center/cover no-repeat,
         #050713;
     overflow: hidden;
 }
@@ -1453,11 +1453,16 @@ html.display-mode-messagewall .wish-card.messagewall-mode.is-background-layer {
 }
 
 html.display-mode-messagewall {
-    background: #050817 !important;
+    background: #004fcd !important;
 }
 
 html.display-mode-messagewall .display-container {
-    background: #050817 url('/images/marka-stage-background.png') center center / 100% 100% no-repeat !important;
+    background:
+        linear-gradient(180deg, rgba(0, 79, 205, 0.9) 0%, rgba(0, 55, 178, 0.86) 50%, rgba(0, 22, 94, 0.92) 100%),
+        radial-gradient(ellipse at 45% 42%, rgba(47, 152, 255, 0.46) 0%, rgba(0, 79, 205, 0.36) 48%, rgba(0, 18, 82, 0.76) 100%),
+        url('../images/etnospor-stage-background.png?v=1') center center / 100% 100% no-repeat !important;
+    background-color: #004fcd !important;
+    background-blend-mode: color, multiply, normal;
 }
 
 html.display-mode-messagewall .display-container::before,
@@ -1584,7 +1589,7 @@ html.display-mode-messagewall .wish-card.messagewall-mode .child-name {
 }
 
 html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--small {
-    --message-frame-image: url('/images/marka-frame-small.png');
+    --message-frame-image: url('../images/marka-frame-small.png');
     --message-fill-top: 18px;
     --message-fill-right: 18px;
     --message-fill-bottom: 46px;
@@ -1609,7 +1614,7 @@ html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--smal
 }
 
 html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero {
-    --message-frame-image: url('/images/marka-frame-large.png');
+    --message-frame-image: url('../images/marka-frame-large.png');
     --message-fill-top: 58px;
     --message-fill-right: 32px;
     --message-fill-bottom: 74px;
@@ -1637,14 +1642,52 @@ html.display-mode-messagewall .wish-card.messagewall-mode.messagewall-slot--hero
     letter-spacing: 0.028em;
 }
 
+html[data-background-theme="etnospor"],
 html[data-background-theme="aselsan"] {
-    background: #061334 !important;
+    background: #004fcd !important;
 }
 
+html[data-background-theme="etnospor"] .display-container,
 html[data-background-theme="aselsan"] .display-container {
-    background: #061334 url('/images/aselsan-keyvisual.png?v=3') center center / 100% 100% no-repeat !important;
+    background:
+        linear-gradient(180deg, rgba(0, 79, 205, 0.9) 0%, rgba(0, 55, 178, 0.86) 50%, rgba(0, 22, 94, 0.92) 100%),
+        radial-gradient(ellipse at 45% 42%, rgba(47, 152, 255, 0.46) 0%, rgba(0, 79, 205, 0.36) 48%, rgba(0, 18, 82, 0.76) 100%),
+        url('../images/etnospor-stage-background.png?v=1') center center / 100% 100% no-repeat !important;
+    background-color: #004fcd !important;
+    background-blend-mode: color, multiply, normal;
 }
 
+html[data-background-theme="etnospor"] .wish-card.lantern-mode .lantern-body,
+html[data-background-theme="aselsan"] .wish-card.lantern-mode .lantern-body {
+    filter:
+        sepia(0.18)
+        saturate(1.55)
+        hue-rotate(18deg)
+        brightness(1.18)
+        contrast(1.08);
+}
+
+html[data-background-theme="etnospor"] .wish-card.lantern-mode .lantern-body::before,
+html[data-background-theme="aselsan"] .wish-card.lantern-mode .lantern-body::before {
+    display: none !important;
+}
+
+html[data-background-theme="etnospor"] .wish-card.lantern-mode .lantern-body::after,
+html[data-background-theme="aselsan"] .wish-card.lantern-mode .lantern-body::after {
+    display: none !important;
+}
+
+html[data-background-theme="etnospor"] .display-container::before,
+html[data-background-theme="etnospor"] .display-container::after,
+html[data-background-theme="etnospor"] .logos-top-bar,
+html[data-background-theme="etnospor"] .header-title-box,
+html[data-background-theme="etnospor"] .message-stage,
+html[data-background-theme="etnospor"] .message-stage::before,
+html[data-background-theme="etnospor"] .message-stage::after,
+html[data-background-theme="etnospor"] .moon,
+html[data-background-theme="etnospor"] .sparkle-star,
+html[data-background-theme="etnospor"] #embers-container,
+html[data-background-theme="etnospor"] .logo-layer,
 html[data-background-theme="aselsan"] .display-container::before,
 html[data-background-theme="aselsan"] .display-container::after,
 html[data-background-theme="aselsan"] .logos-top-bar,

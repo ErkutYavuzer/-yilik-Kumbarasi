@@ -14,7 +14,7 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Chart.js removed - causing infinite growth bug -->
-    <link rel="stylesheet" href="/css/admin.css?v=20260517-pendingwrap">
+    <link rel="stylesheet" href="/css/admin.css?v=20260520-etnospor">
 </head>
 
 <body>
@@ -36,7 +36,7 @@
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
             <div class="logo-text">
-                <h1>ASELSAN<br>HBTKON</h1>
+                <h1>ETNOSPOR<br>FESTİVALİ</h1>
                 <p>Etkinlik Yönetim Paneli</p>
             </div>
             <button type="button" class="sidebar-toggle" id="sidebar-toggle" title="Menüyü Daralt/Aç">
@@ -910,14 +910,10 @@
                             style="width:18px;height:18px;margin-right:8px;vertical-align:middle;"></i> Arkaplan Teması
                     </div>
                     <div class="theme-grid" id="theme-grid">
-                        <button type="button" class="theme-option active" data-theme="turktelekom"
-                            onclick="setTheme('turktelekom')"><i data-lucide="sparkles"
-                            style="width:16px;height:16px;margin:auto;display:block;margin-bottom:6px;"></i> Varsayılan
-                            Sahne</button>
-                        <button type="button" class="theme-option" data-theme="aselsan"
-                            onclick="setTheme('aselsan')"><i data-lucide="shield"
+                        <button type="button" class="theme-option active" data-theme="etnospor"
+                            onclick="setTheme('etnospor')"><i data-lucide="sparkles"
                             style="width:16px;height:16px;margin:auto;display:block;margin-bottom:6px;"></i>
-                            Aselsan</button>
+                            Etnospor Sahnesi</button>
                     </div>
                 </div>
                 <div class="card" style="margin-top:20px;">
@@ -933,10 +929,14 @@
                             onclick="setDisplayMode('lantern')"><i data-lucide="flame"
                                 style="width:16px;height:16px;margin:auto;display:block;margin-bottom:6px;"></i>
                             Fener Akışı</button>
+                        <button type="button" class="display-mode-option theme-option" data-mode="star-lantern"
+                            onclick="setDisplayMode('star-lantern')"><i data-lucide="sparkles"
+                                style="width:16px;height:16px;margin:auto;display:block;margin-bottom:6px;"></i>
+                            Y&#305;ld&#305;z Feneri</button>
                         <button type="button" class="display-mode-option theme-option" data-mode="messagewall"
                             onclick="setDisplayMode('messagewall')"><i data-lucide="panel-top"
                                 style="width:16px;height:16px;margin:auto;display:block;margin-bottom:6px;"></i>
-                            HBTKON Sahnesi</button>
+                            Etnospor Sahnesi</button>
                     </div>
                 </div>
             </div>
@@ -1208,7 +1208,7 @@
             <div class="qr-preview-header">
                 <div>
                     <h3 id="qr-preview-title"><i data-lucide="monitor-cog" style="width:20px;height:20px;"></i> QR Sahne Önizleme</h3>
-                    <p>1344 x 840 Aselsan sahne yerleşimi</p>
+                    <p>1344 x 840 Etnospor sahne yerleşimi</p>
                 </div>
                 <button type="button" class="icon-btn" onclick="closeQrPreviewModal()" aria-label="Kapat">
                     <i data-lucide="x" style="width:18px;height:18px;"></i>
@@ -1318,7 +1318,7 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/admin.js?v=2.0.23"></script>
+    <script src="/js/admin.js?v=2.1.0"></script>
     <script>
         // Init Lucide Icons
         document.addEventListener('DOMContentLoaded', () => {

@@ -1,25 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dilek-kumbarasi-beta
-  namespace: dilek-kumbarasi-beta
+  name: dilek-feneri-demo
+  namespace: dilek-feneri-demo
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: dilek-kumbarasi-beta
+      app: dilek-feneri-demo
   template:
     metadata:
       labels:
-        app: dilek-kumbarasi-beta
+        app: dilek-feneri-demo
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret
       containers:
-        - name: dilek-kumbarasi-beta
-          image: ghcr.io/ayavuzer/dilek-kumbarasi:beta-star-text-narrow-20260520-1
+        - name: app
+          image: ghcr.io/ayavuzer/dilek-kumbarasi:demo-v0.1.12
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
           env:
+            - name: DEMO_MODE
+              value: "true"
+            - name: PUBLIC_BASE_PATH
+              value: /dilek
+            - name: PUBLIC_DOMAIN
+              value: https://demo.mindops.net/dilek
             - name: AI_MODERATION_PROVIDER
               value: gemini
             - name: GEMINI_BASE_URL
@@ -31,29 +39,13 @@ spec:
                 secretKeyRef:
                   name: dilek-kumbarasi-ai
                   key: GEMINI_API_KEY_1
+                  optional: true
             - name: GEMINI_API_KEY_2
               valueFrom:
                 secretKeyRef:
                   name: dilek-kumbarasi-ai
                   key: GEMINI_API_KEY_2
-            - name: MINIMAX_BASE_URL
-              value: https://api.minimax.io/v1
-            - name: MINIMAX_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: dilek-kumbarasi-ai
-                  key: MINIMAX_API_KEY
-            - name: MINIMAX_TEXT_MODEL
-              value: MiniMax-M2.7
-            - name: ANTIGRAVITY_BASE_URL
-              value: https://antigravity2.mindops.net/v1
-            - name: ANTIGRAVITY_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: dilek-kumbarasi-ai
-                  key: ANTIGRAVITY_API_KEY
-            - name: PUBLIC_DOMAIN
-              value: https://dilek-kumbarasi-beta.mindops.net
+                  optional: true
           volumeMounts:
             - mountPath: /app/uploads
               name: dilek-storage
@@ -61,9 +53,20 @@ spec:
             - mountPath: /app/data
               name: dilek-storage
               subPath: data
-      imagePullSecrets:
-        - name: ghcr-secret
       volumes:
         - name: dilek-storage
           persistentVolumeClaim:
-            claimName: dilek-kumbarasi-beta-pvc
+            claimName: dilek-feneri-demo-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dilek-feneri-demo
+  namespace: dilek-feneri-demo
+spec:
+  selector:
+    app: dilek-feneri-demo
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000

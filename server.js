@@ -21,9 +21,28 @@ process.stdin.resume(); // Keep process alive
 
 const app = express();
 const server = http.createServer(app);
+const publicBasePath = normalizeBasePath(process.env.PUBLIC_BASE_PATH || '');
+const isDemoMode = process.env.DEMO_MODE === 'true';
 const io = new Server(server);
 
 const PORT = process.env.PORT || 3000;
+
+function normalizeBasePath(value) {
+    const trimmed = String(value || '').trim().replace(/\/+$/, '');
+    if (!trimmed || trimmed === '/') return '';
+    return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+}
+
+function injectRuntimeConfig(html) {
+    const configScript = `<script>window.__DEMO_BASE_PATH=${JSON.stringify(publicBasePath)};window.__DEMO_MODE=${JSON.stringify(isDemoMode)};</script>`;
+    const baseSegment = publicBasePath.replace(/^\//, '');
+    return html
+        .replace('</head>', `${configScript}\n</head>`)
+        .replace(/\b(href|src)="\/(?!\/)([^"]*)"/g, (match, attribute, value) => {
+            if (!publicBasePath || value.startsWith(`${baseSegment}/`)) return match;
+            return `${attribute}="${publicBasePath}/${value}"`;
+        });
+}
 
 // Uploads klasörünü oluştur
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -194,36 +213,39 @@ const upload = multer({ storage });
 
 function renderDisplayPage(req, res) {
     const displayPath = path.join(__dirname, 'public', 'display.html');
-    const title = 'ASELSAN HBTKON - Dilek Ekranı';
-    const siteName = 'ASELSAN HBTKON';
+    const title = 'Dilek Feneri - Dilek Ekranı';
+    const siteName = 'Dilek Feneri';
     let html = fs.readFileSync(displayPath, 'utf8');
     html = html
         .replace(/__DISPLAY_TITLE__/g, title)
         .replace(/__DISPLAY_SITE__/g, siteName);
+    html = injectRuntimeConfig(html);
     res.set('Content-Type', 'text/html; charset=utf-8');
     res.send(html);
 }
 
 function renderAdminPage(req, res) {
     const adminPath = path.join(__dirname, 'public', 'admin.html');
-    const title = 'ASELSAN HBTKON - Yönetim';
-    const siteName = 'ASELSAN HBTKON';
+    const title = 'Dilek Feneri - Yönetim';
+    const siteName = 'Dilek Feneri';
     let html = fs.readFileSync(adminPath, 'utf8');
     html = html
         .replace(/__ADMIN_TITLE__/g, title)
         .replace(/__ADMIN_SITE__/g, siteName);
+    html = injectRuntimeConfig(html);
     res.set('Content-Type', 'text/html; charset=utf-8');
     res.send(html);
 }
 
 function renderUploadPage(req, res) {
     const uploadPath = path.join(__dirname, 'public', 'upload.html');
-    const title = 'ASELSAN HBTKON - Dileğini Paylaş';
-    const siteName = 'ASELSAN HBTKON';
+    const title = 'Dilek Feneri - Dileğini Paylaş';
+    const siteName = 'Dilek Feneri';
     let html = fs.readFileSync(uploadPath, 'utf8');
     html = html
         .replace(/__UPLOAD_TITLE__/g, title)
         .replace(/__UPLOAD_SITE__/g, siteName);
+    html = injectRuntimeConfig(html);
     res.set('Content-Type', 'text/html; charset=utf-8');
     res.send(html);
 }
@@ -273,7 +295,7 @@ const savedModerationSettings = savedAppSettings.moderationSettings || {};
 let moderationSettings = {
     enabled: typeof savedModerationSettings.enabled === 'boolean' ? savedModerationSettings.enabled : true,
     checkText: typeof savedModerationSettings.checkText === 'boolean' ? savedModerationSettings.checkText : true,
-    model: 'gemini-3-flash',
+    model: 'gemini-3.5-flash',
     strictness: ['strict', 'normal', 'lenient'].includes(savedModerationSettings.strictness) ? savedModerationSettings.strictness : 'normal',
     autoApprove: typeof savedModerationSettings.autoApprove === 'boolean' ? savedModerationSettings.autoApprove : false
 };
@@ -338,6 +360,12 @@ app.get('/marka-bulusmalari-qr-flyer', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'marka-bulusmalari-qr-flyer.html'));
 });
 app.get('/marka-bulusmalari-qr-flyer.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'marka-bulusmalari-qr-flyer.html'));
+});
+app.get('/etnospor-qr-flyer', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'marka-bulusmalari-qr-flyer.html'));
+});
+app.get('/etnospor-qr-flyer.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'marka-bulusmalari-qr-flyer.html'));
 });
 app.get('/aselsan-qr-flyer', (req, res) => {
@@ -680,10 +708,10 @@ app.post('/api/upload', upload.single('photo'), async (req, res) => {
             status: 'pending'
         };
 
-        if (moderationSettings.autoApprove) {
+        if (moderationSettings.autoApprove || isDemoMode) {
             approveWishDirect(wish);
             console.log(`✅ Yeni dilek direkt onaylandı: ${wish.childName}`);
-            res.json({ success: true, wish, approvalMode: 'auto-approved' });
+            res.json({ success: true, wish, approvalMode: isDemoMode ? 'demo-auto-approved' : 'auto-approved' });
             return;
         }
 
@@ -808,14 +836,19 @@ app.get('/api/auto-spotlight/status', (req, res) => {
 });
 
 // === TEMA SİSTEMİ ===
-let currentTheme = savedAppSettings.theme || 'turktelekom';
+function normalizeTheme(theme) {
+    const normalized = String(theme || 'default').trim().toLowerCase();
+    return ['default', 'etnospor', 'aselsan'].includes(normalized) ? normalized : 'default';
+}
+
+let currentTheme = isDemoMode ? 'default' : normalizeTheme(savedAppSettings.theme);
 app.get('/api/theme', (req, res) => {
     res.json({ theme: currentTheme });
 });
 
 app.post('/api/theme', (req, res) => {
     const { theme } = req.body;
-    currentTheme = theme || 'turktelekom';
+    currentTheme = normalizeTheme(theme);
     saveSettings({ theme: currentTheme });
     io.emit('theme-change', currentTheme);
     console.log(`🎨 Tema değiştirildi: ${currentTheme}`);
@@ -823,7 +856,7 @@ app.post('/api/theme', (req, res) => {
 });
 
 // === GÖSTERİM MODU SİSTEMİ ===
-let currentDisplayMode = savedAppSettings.displayMode || 'balloon'; // 'balloon' veya 'lantern'
+let currentDisplayMode = isDemoMode ? 'lantern' : (savedAppSettings.displayMode || 'balloon'); // 'balloon' veya 'lantern'
 
 app.get('/api/display-mode', (req, res) => {
     res.json({ displayMode: currentDisplayMode });
@@ -1097,6 +1130,93 @@ app.get('/api/local-ip', (req, res) => {
         return res.json({ ip: domain, isCustomUrl: true });
     }
     res.json({ ip: getLocalIP() });
+});
+
+function requireDemoOperator(req, res, next) {
+    if (!isDemoMode) {
+        return res.status(404).json({ success: false, error: 'demo-mode-disabled' });
+    }
+    next();
+}
+
+const demoWishTexts = [
+    ['Aylin', 'Kültürümüzün ışığı her şehirde daha parlak yansın.'],
+    ['Deniz', 'Bugün paylaşılan her güzel söz kalpleri aydınlatsın.'],
+    ['Ece', 'Dileklerimiz umutla gökyüzüne yükselsin.'],
+    ['Mert', 'Çocukların hayalleri yıldız fenerleri gibi yükselsin.'],
+    ['Zeynep', 'Aileler birlikte güzel anılar biriktirsin.'],
+    ['Can', 'Her fener yeni bir başlangıca ışık tutsun.'],
+    ['Elif', 'Paylaşmanın gücü bütün alanı aydınlatsın.'],
+    ['Kerem', 'Bugünün dilekleri yarının güzel hikayesi olsun.'],
+    ['Sude', 'Dostluk, emek ve gelenek hep yan yana dursun.'],
+    ['Arda', 'Bu sahneden herkese umut yayılsın.'],
+    ['Mina', 'Köklerimizi tanıyan yeni fikirler büyüsün.'],
+    ['Bora', 'Her ziyaretçi buradan mutlu ayrılsın.'],
+    ['Selin', 'İyilik fenerleri gökyüzünü doldursun.'],
+    ['Eren', 'Takım ruhu ve saygı hep kazansın.'],
+    ['Duru', 'Kültürümüz renkleriyle dünyaya açılsın.'],
+    ['Ali', 'Çocukların merakı hiç eksilmesin.'],
+    ['Maya', 'Bugün kurulan bağlar uzun yıllar sürsün.'],
+    ['Emir', 'Her dilek yeni bir başlangıca dönüşsün.'],
+    ['İrem', 'Sahnedeki ışık herkese cesaret versin.'],
+    ['Kaan', 'Gelenek ve teknoloji birlikte büyüsün.'],
+    ['Nehir', 'Bu alan neşe ve umutla dolsun.'],
+    ['Poyraz', 'Birlikte üretmenin değeri hiç unutulmasın.'],
+    ['Yağmur', 'Her fener güzel bir geleceğe yol göstersin.'],
+    ['Defne', 'Paylaşılan her dilek iyiliğe dönüşsün.'],
+    ['Atlas', 'Bu anı herkes gülümseyerek hatırlasın.'],
+    ['Lina', 'Kültür ağacı gibi köklerimiz güçlensin.'],
+    ['Ozan', 'Sporun ve sanatın dili herkesi birleştirsin.'],
+    ['Ada', 'Çocukların sesi sahnede görünür olsun.'],
+    ['Toprak', 'Bugünden geleceğe güçlü bir iz bırakalım.'],
+    ['Melis', 'Bu akşam kalplerde ışık yaksın.']
+];
+
+function buildDemoWishes(count) {
+    return demoWishTexts.slice(0, count).map(([childName, wishText], index) => ({
+        id: `demo-${Date.now()}-${index + 1}`,
+        childName,
+        wishText,
+        status: 'approved',
+        source: 'demo',
+        createdAt: new Date(Date.now() + index).toISOString()
+    }));
+}
+
+function applyDemoPreset(preset) {
+    const normalized = String(preset || 'small').toLowerCase();
+    pendingWishes.length = 0;
+    currentTheme = 'default';
+    currentDisplayMode = 'lantern';
+    saveSettings({ theme: currentTheme, displayMode: currentDisplayMode });
+    io.emit('theme-change', currentTheme);
+    io.emit('display-mode-change', currentDisplayMode);
+
+    if (normalized === 'empty') {
+        wishes.length = 0;
+    } else {
+        const count = normalized === 'full' || normalized === '30' || normalized === '30 wishes' || normalized === 'star-lantern' || normalized === 'final' ? 30 : 10;
+        wishes = buildDemoWishes(count);
+    }
+
+    saveWishes();
+    savePendingWishes();
+    io.emit('all-cleared');
+    io.emit('all-wishes', wishes);
+    wishes.forEach(wish => io.emit('new-wish', wish));
+    return { preset: normalized, count: wishes.length, theme: currentTheme, displayMode: currentDisplayMode };
+}
+
+app.post('/api/demo/reset', requireDemoOperator, (req, res) => {
+    const result = applyDemoPreset('empty');
+    res.json({ success: true, ...result });
+});
+
+app.post('/api/demo/seed', requireDemoOperator, (req, res) => {
+    const presetMap = { small: '10', full: '30', final: '30' };
+    const requested = String(req.body?.preset || 'small');
+    const result = applyDemoPreset(presetMap[requested] || requested);
+    res.json({ success: true, ...result, display: `${publicBasePath}/display`, upload: `${publicBasePath}/upload` });
 });
 
 // Tek dilek sil (ARŞİVE TAŞI)

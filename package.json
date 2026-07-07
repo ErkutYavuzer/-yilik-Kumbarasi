@@ -1,7 +1,7 @@
 {
     "name": "iyilik-kumbarasi",
     "version": "3.0.0",
-    "description": "Sultangazi Belediyesi - İyilik Kumbarası: Çocukların iyilik dileklerini toplayan ve gösteren interaktif etkinlik sistemi",
+    "description": "Etnospor Festivali: katılımcı dilek ve mesajlarını toplayan canlı etkinlik ekranı",
     "main": "server.js",
     "scripts": {
         "start": "node server.js",
@@ -17,9 +17,8 @@
     "author": "Erkut Yavuzer",
     "license": "MIT",
     "keywords": [
-        "iyilik-kumbarasi",
-        "sultangazi",
-        "belediye",
+        "etnospor",
+        "festival",
         "etkinlik",
         "dilek",
         "socket.io",
